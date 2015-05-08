@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uexplugins>
+
+   <plugin
+        className="org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap"
+        uexName="uexBaiduMap">
+        <method name="open" />
+        <method name="close" />
+        <method name="setMapType" />
+        <method name="setTrafficEnabled" />
+        <method name="setCenter" />
+        <method name="setZoomLevel" />
+        <method name="zoomIn" />
+        <method name="zoomOut" />
+        <method name="rotate" />
+        <method name="overlook" />
+        <method name="setZoomEnable" />
+        <method name="setRotateEnable" />
+        <method name="setCompassEnable" />
+        <method name="setScrollEnable" />
+        <method name="setOverlookEnable" />
+        <method name="addMarkersOverlay" />
+        <method name="setMarkerOverlay" />
+        <method name="showBubble" />
+        <method name="hideBubble" />
+        <method name="removeMakersOverlay" />
+        <method name="removeOverlay"/>
+        <method name="addDotOverlay"/>
+        <method name="addPolylineOverlay"/>
+        <method name="addArcOverlay"/>
+        <method name="addCircleOverlay"/>
+        <method name="addPolygonOverlay"/>
+        <method name="addGroundOverlay"/>
+        <method name="addTextOverlay"/>
+        <method name="poiSearchInCity" />
+        <method name="poiNearbySearch" />
+        <method name="poiBoundSearch" />
+        <method name="busLineSearch" />
+        <method name="removeBusLine" />
+        <method name="preBusLineNode" />
+        <method name="nextBusLineNode" />
+        <method name="searchRoutePlan" />
+        <method name="removeRoutePlan" />
+        <method name="preRouteNode" />
+        <method name="nextRouteNode" />
+        <method name="geocode" />
+        <method name="reverseGeocode" />
+        <method name="getCurrentLocation" />
+        <method name="startLocation" />
+        <method name="stopLocation" />
+        <method name="setMyLocationEnable" />
+        <method name="setUserTrackingMode" />
+        <method name="onMakerClickListner" />
+        <method name="onMakerBubbleClickListner" />
+        <method name="onMarkerClickListener" />
+        <method name="onMarkerBubbleClickListener" />
+        <method name="onMapClickListener" />
+        <method name="onMapDoubleClickListener" />
+        <method name="onMapLongClickListener" />
+        <method name="onSDKReceiverError" />
+        <method name="onReceiveLocation" />
+        <method name="cbGeoCodeResult" />
+        <method name="cbReverseGeoCodeResult" />
+        <method name="cbCurrentLocation" />
+        <method name="cbPoiSearchResult" />
+        <method name="cbBusLineSearchResult" />
+		<method name="hideMap"/>
+        <method name="showMap"/>
+        <method name="zoomControlsEnabled"/>
+    </plugin>
+</uexplugins>
