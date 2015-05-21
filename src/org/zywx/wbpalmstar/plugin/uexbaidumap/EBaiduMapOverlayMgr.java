@@ -522,7 +522,14 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				markerId, mContext, mBaiduMap);
 
 		markerOverlay.setMarker(marker);
-
+        if (markerOverlayOptions.getBubbleTitle() != null) {
+            boolean isUse = markerOverlayOptions.isiUseYOffset();
+            int yOffset = markerOverlayOptions.getyOffset();
+            String title = markerOverlayOptions.getBubbleTitle();
+            String subTitle = markerOverlayOptions.getBubbleSubTitle();
+            String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
+            markerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
+        }
 		Bundle b = new Bundle();
 
 		b.putString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID, markerId);

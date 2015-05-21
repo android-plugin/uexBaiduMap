@@ -50,21 +50,7 @@
         <method name="stopLocation" />
         <method name="setMyLocationEnable" />
         <method name="setUserTrackingMode" />
-        <method name="onMakerClickListner" />
-        <method name="onMakerBubbleClickListner" />
-        <method name="onMarkerClickListener" />
-        <method name="onMarkerBubbleClickListener" />
-        <method name="onMapClickListener" />
-        <method name="onMapDoubleClickListener" />
-        <method name="onMapLongClickListener" />
-        <method name="onSDKReceiverError" />
-        <method name="onReceiveLocation" />
-        <method name="cbGeoCodeResult" />
-        <method name="cbReverseGeoCodeResult" />
-        <method name="cbCurrentLocation" />
-        <method name="cbPoiSearchResult" />
-        <method name="cbBusLineSearchResult" />
-		<method name="hideMap"/>
+	<method name="hideMap"/>
         <method name="showMap"/>
         <method name="zoomControlsEnabled"/>
     </plugin>

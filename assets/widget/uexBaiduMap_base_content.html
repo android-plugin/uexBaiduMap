@@ -30,7 +30,7 @@
 	</style>
     <script src="js/zy_control.js">
     </script>
-    <script src="js/zy_click.js">
+    <script src="js/main.js">
     </script>
     <script type="text/javascript">
     		function setType(){
@@ -62,7 +62,10 @@
     	 		uexBaiduMap.cbOpen = function() {
 				}
 				uexBaiduMap.onZoomLevelChangeListener = function(level, latitude, longitude) {
-					alert("缩放级别： "+ level + "\n中心点的坐标: "+latitude + " : " + longitude);
+					//alert("缩放级别： "+ level + "\n中心点的坐标: "+latitude + " : " + longitude);
+				}
+				uexBaiduMap.onMapStatusChangeListener = function(json){
+				    alert(json);
 				}
     	 	}
     
@@ -122,8 +125,8 @@
                 
         </div>
       </div>
-        
-		 
+
+     </div>
 	</div>
 </body>
 <script>

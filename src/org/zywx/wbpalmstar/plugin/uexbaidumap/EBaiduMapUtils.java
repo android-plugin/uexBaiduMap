@@ -1,9 +1,14 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.webkit.URLUtil;
+
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.route.PlanNode;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,15 +22,10 @@ import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.StateListDrawable;
-import android.webkit.URLUtil;
-
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.route.PlanNode;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 public class EBaiduMapUtils {
 	// 1
@@ -163,6 +163,7 @@ public class EBaiduMapUtils {
 	public final static String MAP_FUN_ON_RECEIVE_LOCATION = "uexBaiduMap.onReceiveLocation";
 	public final static String MAP_FUN_ON_SEARCH_ROUTE_PLAN = "uexBaiduMap.onSearchRoutePlan";
 	public final static String MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER = "uexBaiduMap.onZoomLevelChangeListener";
+    public final static String MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER = "uexBaiduMap.onMapStatusChangeListener";
 
 	public final static String MAP_FUN_CB_GEOCODE_RESULT = "uexBaiduMap.cbGeoCodeResult";
 	public final static String MAP_FUN_CB_REVERSE_GEOCODE_RESULT = "uexBaiduMap.cbReverseGeoCodeResult";

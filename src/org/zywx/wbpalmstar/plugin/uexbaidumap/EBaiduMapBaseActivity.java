@@ -1,9 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.engine.universalex.EUExBase;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,6 +42,11 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.bean.MapStatusChangeBean;
+
 public class EBaiduMapBaseActivity extends Activity implements OnMapClickListener, OnMapStatusChangeListener,
 OnMapLoadedCallback, OnMapDoubleClickListener, OnMapLongClickListener, OnMyLocationClickListener,
 SnapshotReadyCallback, OnGetGeoCoderResultListener {
@@ -66,6 +67,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	private MyLocationListenner myListener = new MyLocationListenner();
 	private GeoCoder mGeoCoder = null;
 	private float defaultLevel;
+    private MapStatusChangeBean changeBean = null;
 	
 	/**
 	 * 构造广播监听类，监听 SDK key 验证以及网络异常广播
@@ -515,7 +517,19 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	 * @param status 地图状态改变开始时的地图状态 
 	 */  
 	public void onMapStatusChangeStart(MapStatus status){
-	}  
+        if (changeBean == null){
+            changeBean = new MapStatusChangeBean();
+        }
+        changeBean.setOldZoom(status.zoom);
+        changeBean.setOldOverlook(status.overlook);
+        changeBean.setOldRotate(status.rotate);
+        changeBean.setOldCenterLongitude(status.target.longitude);
+        changeBean.setOldCenterLatitude(status.target.latitude);
+        changeBean.setOldNortheastLatitude(status.bound.northeast.latitude);
+        changeBean.setOldNortheastLongitude(status.bound.northeast.longitude);
+        changeBean.setOldSouthwestLatitude(status.bound.southwest.latitude);
+        changeBean.setOldCenterLongitude(status.bound.southwest.longitude);
+	}
 	
 	/** 
 	 * 地图状态变化中 
@@ -536,7 +550,67 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 					+ EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "("+ status.zoom + ", " + status.target.latitude + ", " + status.target.longitude +");}";
 			uexBaseObj.onCallback(js);
 		}
-	}  
+        if (uexBaseObj != null && changeBean != null){
+            changeBean.setNewZoom(status.zoom);
+            changeBean.setNewOverlook(status.overlook);
+            changeBean.setNewRotate(status.rotate);
+            changeBean.setNewCenterLongitude(status.target.longitude);
+            changeBean.setNewCenterLatitude(status.target.latitude);
+            changeBean.setNewNortheastLatitude(status.bound.northeast.latitude);
+            changeBean.setNewNortheastLongitude(status.bound.northeast.longitude);
+            changeBean.setNewSouthwestLatitude(status.bound.southwest.latitude);
+            changeBean.setNewSouthwestLongitude(status.bound.southwest.longitude);
+            JSONObject json = new JSONObject();
+            try {
+                if (changeBean.isZoomChanged()){
+                    JSONObject zoomJson = new JSONObject();
+                    zoomJson.put(MapStatusChangeBean.TAG_OLDZOOM, changeBean.getOldZoom());
+                    zoomJson.put(MapStatusChangeBean.TAG_NEWZOOM, changeBean.getNewZoom());
+                    json.put(MapStatusChangeBean.TAG_ZOOM, zoomJson);
+                }
+                if (changeBean.isOverlookChanged()){
+                    JSONObject overlookJson = new JSONObject();
+                    overlookJson.put(MapStatusChangeBean.TAG_OLDOVERLOOK, changeBean.getOldOverlook());
+                    overlookJson.put(MapStatusChangeBean.TAG_NEWOVERLOOK, changeBean.getNewOverlook());
+                    json.put(MapStatusChangeBean.TAG_OVERLOOK, overlookJson);
+                }
+                if (changeBean.isRotateChanged()){
+                    JSONObject rotateJson = new JSONObject();
+                    rotateJson.put(MapStatusChangeBean.TAG_OLDROTATE, changeBean.getOldRotate());
+                    rotateJson.put(MapStatusChangeBean.TAG_NEWROTATE, changeBean.getNewRotate());
+                    json.put(MapStatusChangeBean.TAG_ROTATE, rotateJson);
+                }
+                if (changeBean.isNortheastChanged()){
+                    JSONObject northeastJson = new JSONObject();
+                    northeastJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.bound.northeast.longitude);
+                    northeastJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.bound.northeast.latitude);
+                    json.put(MapStatusChangeBean.TAG_NORTHEAST, northeastJson);
+                }
+                if (changeBean.isSouthWestChanged()){
+                    JSONObject southwestJson = new JSONObject();
+                    southwestJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.bound.southwest.longitude);
+                    southwestJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.bound.southwest.latitude);
+                    json.put(MapStatusChangeBean.TAG_SOUTHWEST, southwestJson);
+                }
+                if ((changeBean.isSouthWestChanged() || changeBean.isNortheastChanged())
+                        && changeBean.isCenterChanged()){
+                    JSONObject centerJson = new JSONObject();
+                    centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.target.longitude);
+                    centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.target.latitude);
+                    json.put(MapStatusChangeBean.TAG_CENTER, centerJson);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (json.keys().hasNext()){
+                String js = EUExBase.SCRIPT_HEADER + "if("
+                        + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "){"
+                        + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "('"+ json.toString() +"');}";
+                uexBaseObj.onCallback(js);
+            }
+            changeBean = null;
+        }
+	}
 
 	/** 
 	 * 地图加载完成回调函数 

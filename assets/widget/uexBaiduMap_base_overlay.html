@@ -81,53 +81,155 @@
     		
     		function addMakersOverLayer() {
     			var makerId = '10001';
-    			var makerInfo = '[{"id":"10001","longitude":"116.400244","latitude":"39.963175","icon":"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png"}, {"id":"10002","longitude":"116.369199","latitude":"39.942821"},{"id":"111","longitude":"116.404","latitude":"39.915","icon":"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png"}]';
+    			var makerInfo = [
+    			    {
+    			        id:"10001",
+    			        longitude:"116.400244",
+    			        latitude:"39.963175",
+    			        icon:"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png",
+    			        bubble:{
+    			            title:"title1",
+    			            bgImage:"res://btn.png"
+    			        }
+    			    },
+    			    {
+    			        id:"10002",
+    			        longitude:"116.369199",
+    			        latitude:"39.942821",
+    			        bubble:{
+    			            title:"title2",
+    			            bgImage:"res://btn.png"
+    			        }
+    			    },
+    			    {
+    			        id:"111",
+    			        longitude:"116.404",
+    			        latitude:"39.915",
+    			        icon:"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png",
+    			        bubble:{
+    			            title:"title3",
+    			            bgImage:"res://btn.png"
+    			        }
+    			    }
+    			];
 
-    			//var makerInfo = '[{"a":"b"}]';
     			currentId = makerId;
+    			var makerInfo = JSON.stringify(makerInfo);
     			uexBaiduMap.addMarkersOverlay(makerInfo);
     			
-    			markerObj1.id = "10001";
+    			/*markerObj1.id = "10001";
     			markerObj1.isShow = 1;
-    			makerInfo = '{"makerInfo":{"bubble":{"title":"afdafdadfadf"}}}'; 
+    			makerInfo = {
+    			    makerInfo:{
+    			        bubble:{
+    			            title:"afdafdadfadf"
+    			        }
+    			    }
+    			};
+    			var makerInfo = JSON.stringify(makerInfo);
     			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);
     			uexBaiduMap.showBubble(makerId);
     			
     			markerObj2.id = "10002";
     			markerObj2.isShow = 0;
     			makerId = '10002';
-    			makerInfo = '{"makerInfo":{"bubble":{"title":"aaaaaaaa"}}}';
-    			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);
+    			makerInfo = {
+    			    makerInfo:{
+    			        bubble:{
+    			            title:"aaaaaaaa"
+    			        }
+    			    }
+    			};
+    			var makerInfo = JSON.stringify(makerInfo);
+    			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);*/
     		}
     		
     		function setMakerOverLayer() {
     			var makerId = '10002';
-    			//var makerInfo = '{"makerInfo":{"longitude":"116.232323","latitude":"39.021514","icon":"res://btn.png"}}';
-    			var makerInfo = '{"makerInfo":{"longitude":"116.232323","latitude":"39.021514","icon":"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png","bubble":{"title":"afdafdadfadf","bgImage":"res://btn.png"}}}';
-    			
+    			var makerInfo = {
+    			    makerInfo:{
+    			        longitude:"116.232323",
+    			        latitude:"39.021514",
+    			        icon:"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png",
+    			        bubble:{
+    			            title:"change-title",
+    			            bgImage:"res://btn.png"
+    			        }
+    			    }
+    			};
+    			var makerInfo = JSON.stringify(makerInfo);
     			uexBaiduMap.setCenter(116.232323, 39.021514);
     			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);
     			uexBaiduMap.setBubbleShow(makerId, isShow);
     		}
     		                   
     		function addLineOverLayer(){
-        		var jssonstr = '{"id":"150","fillColor":"#990033","strokeColor":"#990033","lineWidth":"2.0","property":[{"longitude":"116.232323","latitude":"39.021514"},{"longitude":"118.345","latitude":"40.567"}]}'; //,{"longitude":"117","latitude":"38"},{"longitude":"120","latitude":"39"}
+        		var jssonstr = {
+        		    id:"150",
+        		    fillColor:"#990033",
+        		    strokeColor:"#990033",
+        		    lineWidth:"2.0",
+        		    property:[
+        		        {
+        		            longitude:"116.232323",
+        		            latitude:"39.021514"
+        		        },
+        		        {
+        		            longitude:"118.345",
+        		            latitude:"40.567"
+        		        }
+        		    ]
+        		};
         		uexBaiduMap.setZoomLevel("16");
-        		uexBaiduMap.setCenter("116.232323","39.021514");
+        		uexBaiduMap.setCenter(116.232323,39.021514);
+        		var jssonstr = JSON.stringify(jssonstr);
         		uexBaiduMap.addLineOverLayer(jssonstr);
     		}
     		
     		function addCircleOverLayer(){
-         		var jssonstr = '{"id":"151","longitude":"116.404","latitude":"39.915","radius":"500","fillColor":"#4169E1","strokeColor":"#990033","lineWidth":"2.0"}';
+         		var jssonstr = {
+         		    id:"151",
+         		    longitude:"116.404",
+         		    latitude:"39.915",
+         		    radius:"500",
+         		    fillColor:"#4169E1",
+         		    strokeColor:"#990033",
+         		    lineWidth:"2.0"
+         		};
          		uexBaiduMap.setZoomLevel("16");
-         		uexBaiduMap.setCenter("116.404","39.915");
+         		uexBaiduMap.setCenter(116.404,39.915);
+         		var jssonstr = JSON.stringify(jssonstr);
         		uexBaiduMap.addCircleOverLayer(jssonstr);
     		}
     		
     		function addMultiOverLayer(){
-     			var jssonstr = '{"id":"152","fillColor":"#990033","strokeColor":"#990033","lineWidth":"2.0","property":[{"longitude":"116","latitude":"39"},{"longitude":"115","latitude":"38"},{"longitude":"117","latitude":"38"},{"longitude":"117","latitude":"39"}]}';
+     			var jssonstr = {
+     			    id:"152",
+     			    fillColor:"#990033",
+     			    strokeColor:"#990033",
+     			    lineWidth:"2.0",
+     			    property:[
+     			        {
+     			            longitude:"116",
+     			            latitude:"39"
+     			        },
+     			        {
+     			            longitude:"115",
+     			            latitude:"38"
+     			        },
+     			        {
+     			            longitude:"117",
+     			            latitude:"38"
+     			        },
+     			        {
+     			            longitude:"117",
+     			            latitude:"39"
+     			        }
+     			    ]
+     			};
      			uexBaiduMap.setZoomLevel("10");
      			uexBaiduMap.setCenter("116","39");
+     			var jssonstr = JSON.stringify(jssonstr);
         		uexBaiduMap.addPolygonOverLayer(jssonstr);
     		}
     		
@@ -141,37 +243,104 @@
     		}                                                                                 
     		
         	function addDot() {
-    		 	var jsonstr = '{"id":"150","fillColor":"#990033","radius":"50","latitude":"39.963175","longitude":"116.400244"}';
+    		 	var jsonstr = {
+    		 	    id:"150",
+    		 	    fillColor:"#990033",
+    		 	    radius:"50",
+    		 	    latitude:"39.963175",
+    		 	    longitude:"116.400244"
+    		 	};
+    		 	var jssonstr = JSON.stringify(jssonstr);
     			uexBaiduMap.addDotOverlay(jsonstr);
     		}
     		
     		function addPolyline() {
-    			var jssonstr = '{"id":"151","fillColor":"#990033","lineWidth":"2.0","property":[{"longitude":"116.357428","latitude":"39.93923"},{"longitude":"116.347428","latitude":"39.89923"}]}';
+    			var jssonstr = {
+    			    id:"151",
+    			    fillColor:"#990033",
+    			    lineWidth:"2.0",
+    			    property:[
+    			        {longitude:"116.357428",latitude:"39.93923"},
+    			        {longitude:"116.347428",latitude:"39.89923"}
+    			    ]
+    			};
+    			var jssonstr = JSON.stringify(jssonstr);
     			uexBaiduMap.addPolylineOverlay(jssonstr);
     		}
     		
     		function addArc() {
-    			var jssonstr = '{"id":"152","strokeColor":"#990033","lineWidth":"2.0","startLongitude":"116.400244","startLatitude":"39.963175","centerLongitude":"116.369199","centerLatitude":"39.942821","endLongitude":"116.401394","endLatitude":"39.906965"}';
+    			var jssonstr = {
+    			    id:"152",
+    			    strokeColor:"#990033",
+    			    lineWidth:"2.0",
+    			    startLongitude:"116.400244",
+    			    startLatitude:"39.963175",
+    			    centerLongitude:"116.369199",
+    			    centerLatitude:"39.942821",
+    			    endLongitude:"116.401394",
+    			    endLatitude:"39.906965"
+    			};
+    			var jssonstr = JSON.stringify(jssonstr);
     			uexBaiduMap.addArcOverlay(jssonstr);
     		}
     		
     		function addCircle() {
-    			var jssonstr = '{"id":"153","longitude":"116.404","latitude":"39.915","radius":"1000","fillColor":"#4169E1","strokeColor":"#990033","lineWidth":"4"}';
+    			var jssonstr = {
+    			    id:"153",
+    			    longitude:"116.404",
+    			    latitude:"39.915",
+    			    radius:"1000",
+    			    fillColor:"#4169E1",
+    			    strokeColor:"#990033",
+    			    lineWidth:"4"
+    			};
+    			var jssonstr = JSON.stringify(jssonstr);
     			uexBaiduMap.addCircleOverlay(jssonstr);
     		}
     		
     		function addPolygon() {
-    			var jsonstr = '{"id":"154","fillColor":"#990033","strokeColor":"#990033","lineWidth":"2.0","property":[{"longitude":"116.357428","latitude":"39.93923"},{"longitude":"116.327428","latitude":"39.91923"},{"longitude":"116.347428","latitude":"39.89923"},{"longitude":"116.367428","latitude":"39.89923"}]}';
+    			var jsonstr = {
+    			    id:"154",
+    			    fillColor:"#990033",
+    			    strokeColor:"#990033",
+    			    lineWidth:"2.0",
+    			    property:[
+    			        {longitude:"116.357428",latitude:"39.93923"},
+    			        {longitude:"116.327428",latitude:"39.91923"},
+    			        {longitude:"116.347428",latitude:"39.89923"},
+    			        {longitude:"116.367428",latitude:"39.89923"}
+    			    ]
+    			};
+    			var jssonstr = JSON.stringify(jssonstr);
     			uexBaiduMap.addPolygonOverlay(jsonstr);
     		}
     		
     		function addGround() {
-    			var jsonstr = '{"id":"155","imageUrl":"http://img0.bdstatic.com/img/image/9baf75d938553886ce515def29441ed31409109131.jpg","transparency":"0.5","property":[{"longitude":"116.380338","latitude":"39.92235"},{"longitude":"116.414977","latitude":"39.947246"}]}';
+    			var jsonstr = {
+    			    id:"155",
+    			    imageUrl:"http://img0.bdstatic.com/img/image/9baf75d938553886ce515def29441ed31409109131.jpg",
+    			    transparency:"0.5",
+    			    property:[
+    			        {longitude:"116.380338",latitude:"39.92235"},
+    			        {longitude:"116.414977",latitude:"39.947246"}
+    			    ]
+    			};
+    			var jssonstr = JSON.stringify(jssonstr);
     			uexBaiduMap.addGroundOverlay(jsonstr);
     		}
     		
     		function addText() {
-    			var jsonstr = '{"id":"156","bgColor":"#FFFF00","fontSize":"24","fontColor":"#FF00FF","text":"baidu map","rotate":"-30","longitude":"116.400244","latitude":"39.963175"}';
+    			var jsonstr = {
+    			    id:"156",
+    			    bgColor:"#FFFF00",
+    			    fontSize:"24",
+    			    fontColor:"#FF00FF",
+    			    text:"baidu map",
+    			    rotate:"-30",
+    			    longitude:"116.400244",
+    			    latitude:"39.963175"
+    			};
+    			var jssonstr = JSON.stringify(jssonstr);
     			uexBaiduMap.addTextOverlay(jsonstr);
     		}
 		
@@ -238,8 +407,8 @@
         <input type="button" value="清文字" onclick="clearOver('156');">
         <p></p><br>               
         </div>
-      
-        
+
+     </div>
 		 
 	</div>
 </body>
