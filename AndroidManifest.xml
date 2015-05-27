@@ -44,8 +44,6 @@
 
     <uses-sdk android:minSdkVersion="4" />
 	
-    <permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
-	
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 百度地图 -->
@@ -56,7 +54,6 @@
 	<uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
 	<uses-permission android:name="android.permission.BROADCAST_STICKY" />
 	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />

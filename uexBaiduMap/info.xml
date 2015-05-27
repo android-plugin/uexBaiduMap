@@ -2,24 +2,24 @@
 <uexplugins>
     <plugin
         uexName="uexBaiduMap" version="3.1.18" build="18">
-		<info>18:增加onMapStatusChangeListener监听方法监听地图状态改变，以及添加标注时增加气泡属性</info>
-		<build>17:修复打开百度地图闪黑屏问题</build>
-		<build>16:增加onMarkerClickListener和onMarkerBubbleClickListener接口</build>
-		<build>15:增加onZoomLevelChangeListener地图缩放级别改变时，获取缩放级别和中心点的监听</build>
-		<build>14:增加zoomControlsEnabled显示或隐藏缩放控件</build>
-		<build>13:增加hideMap(隐藏地图)和showMap(显示地图)的接口</build>
-		<build>12:修改添加相同url标注，标注不显示的问题</build>
-		<build>11:修改cbOpen和onSearchRoutePlan的JS回调方式</build>
-		<build>10:增加加载地图完成的cbOpen回调和线路规划搜索结果返回时的监听onSearchRoutePlan</build>
-		<build>9:移动插件包中的定位jar包和so文件至引擎中</build>
-		<build>8:修改在百度地图窗口打开新窗口报错问题</build>
-		<build>7:修改获取当前位置时返回结果错误问题</build>
-		<build>6:增加setUserTrackingMode接口</build>
-		<build>5:修改点击显示线路和添加标注按钮无反应问题</build>
-		<build>4:修改点击标注空指针异常问题</build>
-		<build>3:修改地理编码和反地理编码JSON回调方法名称</build>
-		<build>2:添加标注支持网络图片的功能</build>
-		<build>1:增加清除公交线路和清除线路规划接口</build>
-		<build>0:百度地图插件，封装最新的百度地图API</build>
+        <info>18:增加onMapStatusChangeListener监听方法监听地图状态改变，以及添加标注时增加气泡属性</info>
+        <build>17:修复打开百度地图闪黑屏问题</build>
+        <build>16:增加onMarkerClickListener和onMarkerBubbleClickListener接口</build>
+        <build>15:增加onZoomLevelChangeListener地图缩放级别改变时，获取缩放级别和中心点的监听</build>
+        <build>14:增加zoomControlsEnabled显示或隐藏缩放控件</build>
+        <build>13:增加hideMap(隐藏地图)和showMap(显示地图)的接口</build>
+        <build>12:修改添加相同url标注，标注不显示的问题</build>
+        <build>11:修改cbOpen和onSearchRoutePlan的JS回调方式</build>
+        <build>10:增加加载地图完成的cbOpen回调和线路规划搜索结果返回时的监听onSearchRoutePlan</build>
+        <build>9:移动插件包中的定位jar包和so文件至引擎中</build>
+        <build>8:修改在百度地图窗口打开新窗口报错问题</build>
+        <build>7:修改获取当前位置时返回结果错误问题</build>
+        <build>6:增加setUserTrackingMode接口</build>
+        <build>5:修改点击显示线路和添加标注按钮无反应问题</build>
+        <build>4:修改点击标注空指针异常问题</build>
+        <build>3:修改地理编码和反地理编码JSON回调方法名称</build>
+        <build>2:添加标注支持网络图片的功能</build>
+        <build>1:增加清除公交线路和清除线路规划接口</build>
+        <build>0:百度地图插件，封装最新的百度地图API</build>
     </plugin>
 </uexplugins>
