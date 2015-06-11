@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.1.18" build="18">
-        <info>18:增加onMapStatusChangeListener监听方法监听地图状态改变，以及添加标注时增加气泡属性</info>
+        uexName="uexBaiduMap" version="3.1.19" build="19">
+        <info>19:解决百度地图上箭头不转动的问题</info>
+        <build>18:增加onMapStatusChangeListener监听方法监听地图状态改变，以及添加标注时增加气泡属性</build>
         <build>17:修复打开百度地图闪黑屏问题</build>
         <build>16:增加onMarkerClickListener和onMarkerBubbleClickListener接口</build>
         <build>15:增加onZoomLevelChangeListener地图缩放级别改变时，获取缩放级别和中心点的监听</build>

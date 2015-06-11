@@ -68,6 +68,9 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	private GeoCoder mGeoCoder = null;
 	private float defaultLevel;
     private MapStatusChangeBean changeBean = null;
+
+	private MyOrientationListener myOrientationListener;
+    private int mXDirection=0;
 	
 	/**
 	 * 构造广播监听类，监听 SDK key 验证以及网络异常广播
@@ -133,7 +136,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
 		mSDKReceiver = new SDKReceiver();  
 		registerReceiver(mSDKReceiver, iFilter);
-
+        initOritationListener();
 		// 定位初始化
 		mLocClient = new LocationClient(getApplicationContext());
 		mLocClient.registerLocationListener(myListener);
@@ -161,6 +164,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		super.onPause();
 		// activity 暂停时同时暂停地图控件
 		mMapView.onPause();
+        myOrientationListener.stop();
 	}
 
 	@Override
@@ -168,6 +172,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		super.onResume();
 		// activity 恢复时同时恢复地图控件
 		mMapView.onResume();
+        myOrientationListener.start();
 	}
 
 	@Override
@@ -289,7 +294,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	public void poiNearbySearch(double lng, double lat, int radius, String searchKey, int pageNum) {
 		eBaiduMapPoiSearch.poiNearbySearch(lng, lat, radius, searchKey, pageNum);
 	}
-	
+
 	public void poiBoundSearch(double east, double north, double west, double south, String searchKey, int pageNum) {
 		eBaiduMapPoiSearch.poiBoundSearch(east, north, west, south, searchKey, pageNum);
 	}
@@ -430,7 +435,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 			MyLocationData locationData = new MyLocationData.Builder()
 					.accuracy(location.getRadius())
 					// 此处设置开发者获取到的方向信息，顺时针0-360
-					.direction(100).latitude(location.getLatitude())
+					.direction(mXDirection).latitude(location.getLatitude())
 					.longitude(location.getLongitude()).build();
 			mBaiduMap.setMyLocationData(locationData);
 			if (isOneTimeLocation) {
@@ -612,7 +617,39 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
         }
 	}
 
-	/** 
+    /**
+     * 初始化方向传感器
+     */
+    private void initOritationListener()
+    {
+        myOrientationListener = new MyOrientationListener(
+                getApplicationContext());
+        myOrientationListener
+                .setOnOrientationListener(new MyOrientationListener.OnOrientationListener()
+                {
+                    @Override
+                    public void onOrientationChanged(float x)
+                    {
+                        MyLocationData locationData=mBaiduMap.getLocationData();
+                        if (locationData==null){
+                            return;
+                        }
+                        mXDirection = (int) x;
+                        // 构造定位数据
+                        MyLocationData locData = new MyLocationData.Builder()
+                                .accuracy(locationData.accuracy)
+                                        // 此处设置开发者获取到的方向信息，顺时针0-360
+                                .direction(mXDirection)
+                                .latitude(locationData.latitude)
+                                .longitude(locationData.longitude).build();
+                        // 设置定位数据
+                        mBaiduMap.setMyLocationData(locData);
+                    }
+                });
+    }
+
+
+    /**
 	 * 地图加载完成回调函数 
 	 */  
 	public void onMapLoaded(){
