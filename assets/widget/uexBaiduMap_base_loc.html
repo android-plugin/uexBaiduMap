@@ -44,6 +44,10 @@
     	 			alert("onSDKReceiverError: "+json);
     	 		}
 				uexBaiduMap.cbCurrentLocation = function makerListner(json) {
+				    var data = JSON.parse(json);
+				    var longitude = data.longitude;
+				    var latitude = data.latitude;
+				    uexBaiduMap.setCenter(longitude, latitude);
     	 			alert("cbCurrentLocation: "+json);
     	 		}
 				uexBaiduMap.onReceiveLocation = function makerListner(json) {
@@ -118,6 +122,7 @@
         
 		 
 	</div>
+    </div>
 </body>
 <script>
 
