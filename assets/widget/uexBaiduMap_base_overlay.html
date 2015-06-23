@@ -70,7 +70,7 @@
     		function openmap(){
     			var divTop = document.getElementById("topDiv").offsetTop + document.getElementById("topDiv").offsetHeight + 60;
         		var w = screen.availWidth-20;
-        		var h = screen.availHeight/2;
+        		var h = screen.availHeight-divTop;
         		isSetLoc = 0;
         		uexBaiduMap.open(10, divTop, w, h,'116.401','39.925');
     		}
@@ -340,7 +340,8 @@
     			    longitude:"116.400244",
     			    latitude:"39.963175"
     			};
-    			var jssonstr = JSON.stringify(jssonstr);
+    			var jsonstr = JSON.stringify(jsonstr);
+    			uexBaiduMap.setCenter("116.400244", "39.963175");
     			uexBaiduMap.addTextOverlay(jsonstr);
     		}
 		
