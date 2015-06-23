@@ -205,25 +205,23 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
         activity = (EBaiduMapBaseActivity)mContext;
 
         if (activity != null) {
-
             EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
-
             Bundle b = arg0.getExtraInfo();
-
-            String markerId =  (String)b.get(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID);
-
-
-
-            String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "){" + EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "('"
-                    + markerId
-                    + "');}";
-            uexBaiduMap.onCallback(js);
-            
-            String json = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER + "){" + EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER + "('"
-            		+ markerId
-            		+ "');}";
-            uexBaiduMap.onCallback(json);
-
+            if (b != null){
+                String markerId =  (String)b.get(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID);
+                String js = EUExBaiduMap.SCRIPT_HEADER + "if(" +
+                        EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "){" +
+                        EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "('"
+                        + markerId
+                        + "');}";
+                uexBaiduMap.onCallback(js);
+                String json = EUExBaiduMap.SCRIPT_HEADER + "if(" +
+                        EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER + "){" +
+                        EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER + "('"
+                        + markerId
+                        + "');}";
+                uexBaiduMap.onCallback(json);
+            }
             return true;
         }
 
