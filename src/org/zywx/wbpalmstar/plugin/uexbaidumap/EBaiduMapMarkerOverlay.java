@@ -82,11 +82,13 @@ public class EBaiduMapMarkerOverlay extends EBaiduMapOverlay implements OnInfoWi
 		
 		LatLng ll = mMarker.getPosition();
 		
-		if (isUseYOffset) { //重新生成对象，设置位置偏移
-			
-			mInfoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(bubbleView), ll, yOffset, this);
-		} else {
-			mInfoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(bubbleView), ll, bubbleDefaultYOffset, this);
+		try {
+			if (isUseYOffset) { //重新生成对象，设置位置偏移
+				mInfoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(bubbleView), ll, yOffset, this);
+			} else {
+				mInfoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(bubbleView), ll, bubbleDefaultYOffset, this);
+			}
+		} catch (Exception e) {
 		}
 		
 	}
