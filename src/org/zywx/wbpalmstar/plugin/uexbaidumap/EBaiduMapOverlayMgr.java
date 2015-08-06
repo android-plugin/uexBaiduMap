@@ -41,7 +41,7 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 
     public void removeMarkerOverlay(String markerId) {
         try {
-            EBaiduMapOverlay mapMarkerOverlay = (EBaiduMapOverlay) mEbaiduMapOverlays.get(markerId);
+			EBaiduMapMarkerOverlay  mapMarkerOverlay = (EBaiduMapMarkerOverlay ) mEbaiduMapOverlays.get(markerId);
             if (mapMarkerOverlay == null) {
                 return;
             }
