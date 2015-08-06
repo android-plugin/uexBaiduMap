@@ -40,29 +40,15 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	}
 
     public void removeMarkerOverlay(String markerId) {
-
-
         try {
-
-            EBaiduMapMarkerOverlay mapMarkerOverlay = (EBaiduMapMarkerOverlay) mEbaiduMapOverlays.get(markerId);
-
+            EBaiduMapOverlay mapMarkerOverlay = (EBaiduMapOverlay) mEbaiduMapOverlays.get(markerId);
             if (mapMarkerOverlay == null) {
-
                 return;
             }
-
-
-            // 1
             mEbaiduMapOverlays.remove(markerId);
-
-            // 2
             mapMarkerOverlay.clearOverlay();
-
-
-
-
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
         }
     }
 
