@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.1.22" build="22">
-        <info>22:修复加入百度地图插件后uexLocation.openLocation()中的onchange事件不能使用问题</info>
+        uexName="uexBaiduMap" version="3.1.23" build="23">
+        <info>23:修复不能清除地图上覆盖物的问题</info>
+        <build>22:修复加入百度地图插件后uexLocation.openLocation()中的onchange事件不能使用问题</build>
         <build>21:规避百度地图SDK的BitmapDescriptorFactory中fromView方法重复调用crash问题</build>
         <build>20:修复点击路径规划中的起终点标注时，应用崩溃的问题</build>
         <build>19:解决百度地图上箭头不转动的问题</build>
