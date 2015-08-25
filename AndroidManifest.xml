@@ -14,7 +14,7 @@
         
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="BMZtlp2EMfWQgMG8nOqu6KzG" />
+            android:value="Nk2qEjVyXGRGfl5ts5sA4daj" />
         
         <activity
             android:name="org.zywx.wbpalmstar.engine.EBrowserActivity"

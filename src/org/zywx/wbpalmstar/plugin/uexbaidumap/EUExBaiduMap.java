@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -22,6 +23,8 @@ import android.widget.RelativeLayout;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+
+import java.util.Arrays;
 
 public class EUExBaiduMap extends EUExBase implements Parcelable {
 
@@ -203,7 +206,8 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 	}
 	
 	public void geocode(String[] params){
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GEOCODE, params);
+        Log.i("djf","geocode->" + Arrays.toString(params));
+        sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GEOCODE, params);
 	}
 	
 	public void reverseGeocode(String[] params){
@@ -425,7 +429,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	private void handleOpen(Message msg) {
 		String[] params = msg.getData().getStringArray(
-				EBaiduMapUtils.MAP_FUN_PARAMS_KEY);
+                EBaiduMapUtils.MAP_FUN_PARAMS_KEY);
 		if (params.length != 4 && params.length != 6) {
 			return;
 		}
@@ -696,7 +700,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			String searchKey = json
 					.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_SEARCHKEY);
 			int pageNum = Integer.parseInt(json
-					.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_PAGENUM));
+                    .getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_PAGENUM));
 			eBaiduMapBaseActivity.poiSearchInCity(city, searchKey, pageNum);
 		} catch (Exception e) {
 		}
@@ -718,8 +722,8 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			String pageNum = json
 					.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_PAGENUM);
 			eBaiduMapBaseActivity.poiNearbySearch(Double.parseDouble(lng),
-					Double.parseDouble(lat), (int) Float.parseFloat(radius),
-					searchKey, Integer.parseInt(pageNum));
+                    Double.parseDouble(lat), (int) Float.parseFloat(radius),
+                    searchKey, Integer.parseInt(pageNum));
 		} catch (Exception e) {
 		}
 	}
@@ -837,12 +841,17 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 	private void handleGeocode(String[] params,
 			EBaiduMapBaseActivity eBaiduMapBaseActivity) {
 		try {
-			JSONObject jsonObject = new JSONObject(params[0]);
-			String cityStr = jsonObject
-					.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
-			String addrStr = jsonObject
-					.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS);
-			eBaiduMapBaseActivity.geocode(cityStr, addrStr);
+            if (params != null && params.length > 0){
+                JSONObject jsonObject = new JSONObject(params[0]);
+                if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY) &&
+                        jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)){
+                    String cityStr = jsonObject
+                            .getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
+                    String addrStr = jsonObject
+                            .getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS);
+                    eBaiduMapBaseActivity.geocode(cityStr, addrStr);
+                }
+            }
 		} catch (Exception e) {
 		}
 	}

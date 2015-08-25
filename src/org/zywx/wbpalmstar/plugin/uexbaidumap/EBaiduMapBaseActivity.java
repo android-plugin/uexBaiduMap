@@ -332,7 +332,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
     }
 
 	public void geocode(String city, String address) {
-		Log.i(LTAG, "geocode");
+		Log.i(LTAG, "geocode-》" + city + "," + address);
 		mGeoCoder.geocode(new GeoCodeOption().city(city).address(address));
 	}
 	
@@ -345,10 +345,10 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	@Override
 	public void onGetGeoCodeResult(GeoCodeResult result) {
 		if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-			jsonLatLngCallback(null,EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
+			jsonLatLngCallback(null, EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
 			return;
 		}
-		jsonLatLngCallback(result.getLocation(),EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
+		jsonLatLngCallback(result.getLocation(), EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
 	}
 
 	@Override
@@ -490,9 +490,11 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		if (uexBaseObj != null) {
 			JSONObject jsonObject = new JSONObject();
 			try {
-				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
-				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" 
+                if (point != null){
+                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
+                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
+                }
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){"
 						+ header + "('"+ jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
