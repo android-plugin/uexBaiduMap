@@ -239,13 +239,13 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
         String nodeTitle = null;
         Object step = mRouteLine.getAllStep().get(routeNodeIndex);
         if (step instanceof DrivingRouteLine.DrivingStep) {
-            nodeLocation = ((DrivingRouteLine.DrivingStep) step).getEntrace().getLocation();
+            nodeLocation = ((DrivingRouteLine.DrivingStep) step).getEntrance().getLocation();
             nodeTitle = ((DrivingRouteLine.DrivingStep) step).getInstructions();
         } else if (step instanceof WalkingRouteLine.WalkingStep) {
-            nodeLocation = ((WalkingRouteLine.WalkingStep) step).getEntrace().getLocation();
+            nodeLocation = ((WalkingRouteLine.WalkingStep) step).getEntrance().getLocation();
             nodeTitle = ((WalkingRouteLine.WalkingStep) step).getInstructions();
         } else if (step instanceof TransitRouteLine.TransitStep) {
-            nodeLocation = ((TransitRouteLine.TransitStep) step).getEntrace().getLocation();
+            nodeLocation = ((TransitRouteLine.TransitStep) step).getEntrance().getLocation();
             nodeTitle = ((TransitRouteLine.TransitStep) step).getInstructions();
         }
 		showRouteNodeInfo(nodeLocation, nodeTitle);

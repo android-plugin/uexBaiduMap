@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.1.23" build="23">
-        <info>23:修复地理编码接口当地址错误时程序崩溃的问题</info>
+        uexName="uexBaiduMap" version="3.1.24" build="24">
+        <info>24:修改百度地图中引用的jar包，解除与百度导航插件之间的打包冲突问题</info>
+        <build>23:修复地理编码接口当地址错误时程序崩溃的问题</build>
         <build>22:修复加入百度地图插件后uexLocation.openLocation()中的onchange事件不能使用问题</build>
         <build>21:规避百度地图SDK的BitmapDescriptorFactory中fromView方法重复调用crash问题</build>
         <build>20:修复点击路径规划中的起终点标注时，应用崩溃的问题</build>
