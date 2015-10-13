@@ -3,6 +3,7 @@ package org.zywx.wbpalmstar.plugin.uexbaidumap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 
 import android.content.Context;
 import android.util.Log;
@@ -102,12 +103,11 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener,
 		if (result.error == SearchResult.ERRORNO.AMBIGUOUS_KEYWORD) {
 			Log.i(TAG, "onGetPoiResult AMBIGUOUS_KEYWORD");
 			// 当输入关键字在本市没有找到，但在其他城市找到时，返回包含该关键字信息的城市列表
-			String strInfo = "在";
+			String strInfo = EUExUtil.getString("plugin_baidu_map_suggest_city_list");
 			for (CityInfo cityInfo : result.getSuggestCityList()) {
 				strInfo += cityInfo.city;
 				strInfo += ",";
 			}
-			strInfo += "找到结果";
 			Toast.makeText(mContext, strInfo, Toast.LENGTH_LONG).show();
 		}
 	}
