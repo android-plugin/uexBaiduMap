@@ -21,9 +21,9 @@ public class EBaiduMapMarkerOverlay extends EBaiduMapOverlay implements OnInfoWi
 	private InfoWindow mInfoWindow = null;
 	private String bubbleTitleStr = null;
 	private final int bubbleDefaultYOffset = -75;
+
 	
-	
-	public EBaiduMapMarkerOverlay(String id, Context context, BaiduMap baiduMap) {
+	public EBaiduMapMarkerOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
 		
 		super(id, context, baiduMap);
 
@@ -124,9 +124,9 @@ public class EBaiduMapMarkerOverlay extends EBaiduMapOverlay implements OnInfoWi
 	public void onInfoWindowClick() {
 		// TODO Auto-generated method stub
 		
-		EBaiduMapBaseActivity activity = (EBaiduMapBaseActivity)mContext;
+		EBaiduMapBaseFragment activity = mBaseFragment;
 		
-		if (activity != null && activity instanceof EBaiduMapBaseActivity) {
+		if (activity != null && activity instanceof EBaiduMapBaseFragment) {
 			
 			EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
 			

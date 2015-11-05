@@ -3,13 +3,11 @@ package org.zywx.wbpalmstar.plugin.uexbaidumap;
 import java.util.HashMap;
 
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
-import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 
 import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.InfoWindow;
@@ -45,10 +43,12 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 	private RoutePlanSearch mRoutePlanSearch = null;
     private RouteLine mRouteLine = null; //保存路径数据的变量，供浏览节点时使用
 	private int routeNodeIndex = -1; //路径节点索引,供浏览节点时使用
+    private EBaiduMapBaseFragment baseFragment;
 
-	public EBaiduMapRoutePlanSearch(Context context, BaiduMap baiduMap,
+	public EBaiduMapRoutePlanSearch(EBaiduMapBaseFragment context, BaiduMap baiduMap,
 			MapView mapView) {
-		mContext = context;
+        baseFragment = context;
+		mContext = context.getActivity();
 		mBaiduMap = baiduMap;
 		mMapView = mapView;
 		mRoutePlanOverlays = new HashMap<String, OverlayManager>();
@@ -285,8 +285,8 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 	}
 	
 	private void jsonRouteResultCallback(SearchResult result) {
-		EBaiduMapBaseActivity activity;
-		activity = (EBaiduMapBaseActivity) mContext;
+		EBaiduMapBaseFragment activity;
+		activity = baseFragment;
 		if (activity != null) {
 			int resultId = -1;
 			switch (result.error) {

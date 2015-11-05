@@ -1,14 +1,17 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -44,14 +47,15 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.base.view.BaseFragment;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.bean.MapStatusChangeBean;
 
-public class EBaiduMapBaseActivity extends Activity implements OnMapClickListener, OnMapStatusChangeListener,
+public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickListener, OnMapStatusChangeListener,
 OnMapLoadedCallback, OnMapDoubleClickListener, OnMapLongClickListener, OnMyLocationClickListener,
 SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	
-	private static final String LTAG = EBaiduMapBaseActivity.class.getSimpleName();
+	private static final String LTAG = EBaiduMapBaseFragment.class.getSimpleName();
 	private MapView mMapView = null;
 	private BaiduMap mBaiduMap = null;
 	private UiSettings mUiSettings = null;
@@ -71,6 +75,8 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 
 	private MyOrientationListener myOrientationListener;
     private int mXDirection=0;
+    private LatLng mCenter = null;
+    private View overlayView;
 	
 	/**
 	 * 构造广播监听类，监听 SDK key 验证以及网络异常广播
@@ -105,62 +111,76 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Intent intent = getIntent();
-		if (intent.hasExtra(EBaiduMapUtils.MAP_EXTRA_LNG) && intent.hasExtra(EBaiduMapUtils.MAP_EXTRA_LAN)) {
-			// 当用intent参数时，设置中心点为指定点
-			Bundle b = intent.getExtras();
-			LatLng p = new LatLng(b.getDouble(EBaiduMapUtils.MAP_EXTRA_LAN), b.getDouble(EBaiduMapUtils.MAP_EXTRA_LNG));
-			mMapView = new MapView(this,
-					new BaiduMapOptions().mapStatus(new MapStatus.Builder()
-							.target(p).build()));
-		} else {
-			mMapView = new MapView(this, new BaiduMapOptions());
-		}
-		
-		if (intent.hasExtra(EBaiduMapUtils.MAP_EXTRA_UEXBASE_OBJ)) {
-			setUexBaseObj((EUExBaiduMap)intent.getParcelableExtra(EBaiduMapUtils.MAP_EXTRA_UEXBASE_OBJ));
-		}
-		
-		setContentView(mMapView);
-		mBaiduMap = mMapView.getMap();
-		mUiSettings = mBaiduMap.getUiSettings();
-		eBaiduMapOverlayMgr = new EBaiduMapOverlayMgr(this, mBaiduMap, mMapView);
-		eBaiduMapPoiSearch = new EBaiduMapPoiSearch(this, mBaiduMap, mMapView);
-		eBaiduMapBusLineSearch = new EBaiduMapBusLineSearch(this, mBaiduMap, mMapView);
-		eBaiduMapRoutePlanSearch = new EBaiduMapRoutePlanSearch(this, mBaiduMap, mMapView);
-
-		IntentFilter iFilter = new IntentFilter();  
-		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
-		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
-		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
-		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
-		mSDKReceiver = new SDKReceiver();  
-		registerReceiver(mSDKReceiver, iFilter);
-        initOritationListener();
-		// 定位初始化
-		mLocClient = new LocationClient(getApplicationContext());
-		mLocClient.registerLocationListener(myListener);
-		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true);// 打开gps
-		option.setCoorType("bd09ll"); // 设置坐标类型
-		option.setScanSpan(2000);
-		mLocClient.setLocOption(option);
-		
-		mGeoCoder = GeoCoder.newInstance();
-		mGeoCoder.setOnGetGeoCodeResultListener(this);
-		
-		mBaiduMap.setOnMapClickListener(this);
-		mBaiduMap.setOnMapStatusChangeListener(this);
-		mBaiduMap.setOnMapLoadedCallback(this);
-		mBaiduMap.setOnMapDoubleClickListener(this);
-		mBaiduMap.setOnMapLongClickListener(this);
-		mBaiduMap.setOnMyLocationClickListener(this);
-		
-		defaultLevel = mBaiduMap.getMapStatus().zoom;
 	}
 
-	@Override
-	protected void onPause() {
+    public void setStartCenter(LatLng center){
+        this.mCenter = center;
+    }
+
+    public void setBaseObj(EUExBaiduMap baseObj){
+        setUexBaseObj(baseObj);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FrameLayout bg = new FrameLayout(this.getActivity());
+
+        if (mCenter == null){
+            mMapView = new MapView(this.getActivity(),
+                    new BaiduMapOptions().mapStatus(new MapStatus.Builder()
+                            .target(mCenter).build()));
+        }else{
+            mMapView = new MapView(this.getActivity(), new BaiduMapOptions());
+        }
+        bg.addView(mMapView);
+        overlayView = new View(this.getActivity());
+        FrameLayout.LayoutParams fl = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        overlayView.setBackgroundColor(Color.TRANSPARENT);
+        overlayView.setLayoutParams(fl);
+        overlayView.setVisibility(View.GONE);
+        bg.addView(overlayView);
+        mBaiduMap = mMapView.getMap();
+        mUiSettings = mBaiduMap.getUiSettings();
+        eBaiduMapOverlayMgr = new EBaiduMapOverlayMgr(this, mBaiduMap, mMapView);
+        eBaiduMapPoiSearch = new EBaiduMapPoiSearch(this, mBaiduMap, mMapView);
+        eBaiduMapBusLineSearch = new EBaiduMapBusLineSearch(this, mBaiduMap, mMapView);
+        eBaiduMapRoutePlanSearch = new EBaiduMapRoutePlanSearch(this, mBaiduMap, mMapView);
+
+        IntentFilter iFilter = new IntentFilter();
+        iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
+        iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
+        iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
+        iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
+        mSDKReceiver = new SDKReceiver();
+        this.getActivity().registerReceiver(mSDKReceiver, iFilter);
+        initOritationListener();
+        // 定位初始化
+        mLocClient = new LocationClient(this.getActivity().getApplicationContext());
+        mLocClient.registerLocationListener(myListener);
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true);// 打开gps
+        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setScanSpan(2000);
+        mLocClient.setLocOption(option);
+
+        mGeoCoder = GeoCoder.newInstance();
+        mGeoCoder.setOnGetGeoCodeResultListener(this);
+
+        mBaiduMap.setOnMapClickListener(this);
+        mBaiduMap.setOnMapStatusChangeListener(this);
+        mBaiduMap.setOnMapLoadedCallback(this);
+        mBaiduMap.setOnMapDoubleClickListener(this);
+        mBaiduMap.setOnMapLongClickListener(this);
+        mBaiduMap.setOnMyLocationClickListener(this);
+
+        defaultLevel = mBaiduMap.getMapStatus().zoom;
+
+        return bg;
+    }
+
+    @Override
+	public void onPause() {
 		super.onPause();
 		// activity 暂停时同时暂停地图控件
 		mMapView.onPause();
@@ -168,17 +188,21 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	}
 
 	@Override
-	protected void onResume() {
+    public void onResume() {
 		super.onResume();
 		// activity 恢复时同时恢复地图控件
 		mMapView.onResume();
         myOrientationListener.start();
 	}
 
+    public void readyToDestroy(){
+        overlayView.setVisibility(View.VISIBLE);
+    }
+
 	@Override
-	protected void onDestroy() {
+    public void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(mSDKReceiver);
+		this.getActivity().unregisterReceiver(mSDKReceiver);
 		eBaiduMapOverlayMgr.clearMapOverLayMgr();
 		eBaiduMapPoiSearch.destroy();
 		eBaiduMapBusLineSearch.destroy();
@@ -625,7 +649,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
     private void initOritationListener()
     {
         myOrientationListener = new MyOrientationListener(
-                getApplicationContext());
+                this.getActivity().getApplicationContext());
         myOrientationListener
                 .setOnOrientationListener(new MyOrientationListener.OnOrientationListener()
                 {

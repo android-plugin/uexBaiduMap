@@ -1,6 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -22,15 +21,16 @@ import java.util.HashMap;
 public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 
 	private HashMap<String, EBaiduMapOverlay> mEbaiduMapOverlays;
-	protected Context mContext;
+	protected EBaiduMapBaseFragment baseFragment;
+    private Context mContext;
 	protected BaiduMap mBaiduMap;
 	protected MapView mMapView;
 	private ImageLoaderManager manager;
 	private Map<String, Bitmap> marks;
 	
-	public EBaiduMapOverlayMgr(Context context, BaiduMap baiduMap, MapView mapView) {
-		
-		mContext = context;
+	public EBaiduMapOverlayMgr(EBaiduMapBaseFragment context, BaiduMap baiduMap, MapView mapView) {
+		baseFragment = context;
+		mContext = context.getActivity();
 		mBaiduMap = baiduMap;
 		mMapView = mapView;
 		mEbaiduMapOverlays = new HashMap<String, EBaiduMapOverlay>();
@@ -186,9 +186,9 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
     public boolean onMarkerClick(Marker arg0) {
         // TODO Auto-generated method stub
 
-        EBaiduMapBaseActivity activity;
+        EBaiduMapBaseFragment activity;
 
-        activity = (EBaiduMapBaseActivity)mContext;
+        activity = baseFragment;
 
         if (activity != null) {
             EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
@@ -238,7 +238,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				b.putString(info.getIdStr(), info.getExtraStr());
 				dot.setExtraInfo(b);
 			}
-			EBaiduMapDotOverlay eBaiduMapDotOverlay = new EBaiduMapDotOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapDotOverlay eBaiduMapDotOverlay = new EBaiduMapDotOverlay(info.getIdStr(),
+                    baseFragment, mBaiduMap);
 			eBaiduMapDotOverlay.setDot(dot);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapDotOverlay);
 		} catch (Exception e) {
@@ -279,7 +280,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				b.putString(info.getIdStr(), info.getExtraStr());
 				polyline.setExtraInfo(b);
 			}
-			EBaiduMapPolylineOverlay eBaiduMapPolylineOverlay = new EBaiduMapPolylineOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapPolylineOverlay eBaiduMapPolylineOverlay = new EBaiduMapPolylineOverlay(
+                    info.getIdStr(), baseFragment, mBaiduMap);
 			eBaiduMapPolylineOverlay.setPolyline(polyline);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapPolylineOverlay);
 		} catch (Exception e) {
@@ -308,7 +310,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				b.putString(info.getIdStr(), info.getExtraStr());
 				arc.setExtraInfo(b);
 			}
-			EBaiduMapArcOverlay eBaiduMapArcOverlay = new EBaiduMapArcOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapArcOverlay eBaiduMapArcOverlay = new EBaiduMapArcOverlay(info.getIdStr(),
+                    baseFragment, mBaiduMap);
 			eBaiduMapArcOverlay.setArc(arc);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapArcOverlay);
 		} catch (Exception e) {
@@ -340,7 +343,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				b.putString(info.getIdStr(), info.getExtraStr());
 				circle.setExtraInfo(b);
 			}
-			EBaiduMapCircleOverlay eBaiduMapCircleOverlay  = new EBaiduMapCircleOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapCircleOverlay eBaiduMapCircleOverlay  = new EBaiduMapCircleOverlay(
+                    info.getIdStr(), baseFragment, mBaiduMap);
 			eBaiduMapCircleOverlay.setCircle(circle);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapCircleOverlay);
 		} catch (Exception e) {
@@ -371,7 +375,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				b.putString(info.getIdStr(),info.getExtraStr());
 				polygon.setExtraInfo(b);
 			}
-			EBaiduMapPolygonOverlay eBaiduMapPolygonOverlay = new EBaiduMapPolygonOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapPolygonOverlay eBaiduMapPolygonOverlay = new EBaiduMapPolygonOverlay(
+                    info.getIdStr(), baseFragment, mBaiduMap);
 			eBaiduMapPolygonOverlay.setPolygon(polygon);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapPolygonOverlay);
 		} catch (Exception e) {
@@ -432,7 +437,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 						b.putString(info.getIdStr(), info.getExtraStr());
 						groundOverlay.setExtraInfo(b);
 					}
-					EBaiduMapGroundOverlay eBaiduMapGroundOverlay = new EBaiduMapGroundOverlay(info.getIdStr(), mContext, mBaiduMap);
+					EBaiduMapGroundOverlay eBaiduMapGroundOverlay = new EBaiduMapGroundOverlay(
+                            info.getIdStr(), baseFragment, mBaiduMap);
 					eBaiduMapGroundOverlay.setGroundOverlay(groundOverlay);
 					mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapGroundOverlay);
 				}
@@ -473,7 +479,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				b.putString(info.getIdStr(), info.getExtraStr());
 				text.setExtraInfo(b);
 			}
-			EBaiduMapTextOverlay eBaiduMapTextOverlay = new EBaiduMapTextOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapTextOverlay eBaiduMapTextOverlay = new EBaiduMapTextOverlay(info.getIdStr(),
+                    baseFragment, mBaiduMap);
 			eBaiduMapTextOverlay.setText(text);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapTextOverlay);
 		} catch (Exception e) {
@@ -503,7 +510,7 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 		Marker marker = (Marker) mBaiduMap.addOverlay(ooM);
 
 		EBaiduMapMarkerOverlay markerOverlay = new EBaiduMapMarkerOverlay(
-				markerId, mContext, mBaiduMap);
+				markerId, baseFragment, mBaiduMap);
 
 		markerOverlay.setMarker(marker);
         if (markerOverlayOptions.getBubbleTitle() != null) {

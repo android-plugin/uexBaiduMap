@@ -9,7 +9,7 @@ public class EBaiduMapGroundOverlay extends EBaiduMapOverlay {
 
 	private GroundOverlay groundOverlay = null;
 	
-	public EBaiduMapGroundOverlay(String id, Context context, BaiduMap baiduMap) {
+	public EBaiduMapGroundOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
 		super(id, context, baiduMap);
 	}
 	

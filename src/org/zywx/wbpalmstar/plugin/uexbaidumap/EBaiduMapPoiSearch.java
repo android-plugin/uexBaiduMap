@@ -38,10 +38,12 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener,
 	protected MapView mMapView;
 	private PoiSearch mPoiSearch = null;
 	private SuggestionSearch mSuggestionSearch = null;
+    private EBaiduMapBaseFragment baseFragment;
 
-	public EBaiduMapPoiSearch(Context context, BaiduMap baiduMap,
+	public EBaiduMapPoiSearch(EBaiduMapBaseFragment context, BaiduMap baiduMap,
 			MapView mapView) {
-		mContext = context;
+		mContext = context.getActivity();
+        baseFragment = context;
 		mBaiduMap = baiduMap;
 		mMapView = mapView;
 		// 初始化搜索模块，注册搜索事件监听
@@ -151,8 +153,8 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener,
 	}
 
 	private void jsonPoiResultCallback(PoiResult result) {
-		EBaiduMapBaseActivity activity;
-		activity = (EBaiduMapBaseActivity) mContext;
+		EBaiduMapBaseFragment activity;
+		activity = baseFragment;
 		if (activity != null) {
 			try {
 				JSONObject jsonPoi = new JSONObject();
@@ -217,8 +219,8 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener,
 	}
 	
 	private void jsonNoResultCallback() {
-		EBaiduMapBaseActivity activity;
-		activity = (EBaiduMapBaseActivity) mContext;
+		EBaiduMapBaseFragment activity;
+		activity = baseFragment;
 		if (activity != null) {
 			EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
 			String js = EUExBaiduMap.SCRIPT_HEADER + "if("

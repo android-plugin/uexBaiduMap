@@ -9,7 +9,7 @@ public class EBaiduMapCircleOverlay extends EBaiduMapOverlay {
 
 	private Circle circle = null;
 	
-	public EBaiduMapCircleOverlay(String id, Context context, BaiduMap baiduMap) {
+	public EBaiduMapCircleOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
 		super(id, context, baiduMap);
 	}
 	

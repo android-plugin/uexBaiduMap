@@ -4,11 +4,6 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="4poCiO7OnF0DAw5w202kzRkf" />
-        <activity
-            android:name="org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapBaseActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait" >
-        </activity>
          <service
             android:name="com.baidu.location.f"
             android:enabled="true"

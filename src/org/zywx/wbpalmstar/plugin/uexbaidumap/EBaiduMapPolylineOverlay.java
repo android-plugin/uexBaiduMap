@@ -8,7 +8,7 @@ import com.baidu.mapapi.map.Polyline;
 public class EBaiduMapPolylineOverlay extends EBaiduMapOverlay {
 
 	private Polyline polyline = null;
-	public EBaiduMapPolylineOverlay(String id, Context context,
+	public EBaiduMapPolylineOverlay(String id, EBaiduMapBaseFragment context,
 			BaiduMap baiduMap) {
 		super(id, context, baiduMap);
 	}

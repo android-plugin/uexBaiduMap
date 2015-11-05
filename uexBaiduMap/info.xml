@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.1.25" build="25">
-        <info>25:国际化</info>
+        uexName="uexBaiduMap" version="3.1.26" build="26">
+        <info>26:去掉插件中的ActivityGroup,配合引擎升级</info>
+        <build>25:国际化</build>
         <build>24:修改百度地图中引用的jar包，解除与百度导航插件之间的打包冲突问题</build>
         <build>23:修复地理编码接口当地址错误时程序崩溃的问题</build>
         <build>22:修复加入百度地图插件后uexLocation.openLocation()中的onchange事件不能使用问题</build>

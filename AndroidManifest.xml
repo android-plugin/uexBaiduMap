@@ -23,18 +23,42 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/browser_main_theme"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
+            android:windowSoftInputMode="stateHidden|adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="appcanscheme"/>
+            </intent-filter>
+        </activity>
+         <activity
+            android:name="org.zywx.wbpalmstar.platform.mam.PolicyActivity"
+            android:configChanges="orientation|keyboardHidden|navigation" android:windowSoftInputMode="adjustPan"/>
+         <activity
+            android:name="org.zywx.wbpalmstar.platform.mam.PolicyInfoActivity"
+            android:configChanges="orientation|keyboardHidden|navigation" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name="org.zywx.wbpalmstar.engine.TempActivity"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:theme="@style/browser_loading_theme"/>
+        <activity android:name="org.zywx.wbpalmstar.engine.LoadingActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/browser_loading_theme"
+            android:screenOrientation="portrait"
+            android:launchMode="standard"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity
-            android:name="org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapBaseActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait" >
-        </activity>
+        <receiver
+            android:name="org.zywx.wbpalmstar.platform.push.PushRecieveMsgReceiver">
+            <intent-filter>
+                <action android:name="org.zywx.push.receive" />
+            </intent-filter>
+        </receiver>
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"

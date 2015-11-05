@@ -9,7 +9,7 @@ public class EBaiduMapPolygonOverlay extends EBaiduMapOverlay {
 
 	private Polygon polygon = null;
 	
-	public EBaiduMapPolygonOverlay(String id, Context context, BaiduMap baiduMap) {
+	public EBaiduMapPolygonOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
 		super(id, context, baiduMap);
 	}
 	

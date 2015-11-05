@@ -9,7 +9,7 @@ public class EBaiduMapTextOverlay extends EBaiduMapOverlay {
 
 	private Text text = null;
 	
-	public EBaiduMapTextOverlay(String id, Context context, BaiduMap baiduMap) {
+	public EBaiduMapTextOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
 		super(id, context, baiduMap);
 	}
 

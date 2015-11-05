@@ -46,10 +46,12 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 	private int busLineIndex = 0;
 	private int busNodeIndex = -2; // 公交节点索引,供浏览节点时使用
 	private BusLineResult mBusRoute = null; // 保存驾车/步行路线数据的变量，供浏览节点时使用
+    private EBaiduMapBaseFragment baseFragment;
 
-	public EBaiduMapBusLineSearch(Context context, BaiduMap baiduMap,
+	public EBaiduMapBusLineSearch(EBaiduMapBaseFragment context, BaiduMap baiduMap,
 			MapView mapView) {
-		mContext = context;
+		mContext = context.getActivity();
+        baseFragment = context;
 		mBaiduMap = baiduMap;
 		mMapView = mapView;
 		// 初始化搜索模块，注册搜索事件监听
@@ -149,8 +151,8 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 	}
 
 	private void jsonBusLineResultCallback(BusLineResult result) {
-		EBaiduMapBaseActivity activity;
-		activity = (EBaiduMapBaseActivity) mContext;
+		EBaiduMapBaseFragment activity;
+		activity = baseFragment;
 		if (activity != null) {
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm");
@@ -196,8 +198,8 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 	}
 	
 	private void jsonNoResultCallback() {
-		EBaiduMapBaseActivity activity;
-		activity = (EBaiduMapBaseActivity) mContext;
+		EBaiduMapBaseFragment activity;
+		activity = baseFragment;
 		if (activity != null) {
 			EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
 			String js = EUExBaiduMap.SCRIPT_HEADER + "if("

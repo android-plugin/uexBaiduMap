@@ -8,7 +8,7 @@ import com.baidu.mapapi.map.Dot;
 public class EBaiduMapDotOverlay extends EBaiduMapOverlay {
 
 	private Dot dot = null;
-	public EBaiduMapDotOverlay(String id, Context context, BaiduMap baiduMap) {
+	public EBaiduMapDotOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
 		super(id, context, baiduMap);
 	}
 

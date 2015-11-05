@@ -8,13 +8,15 @@ import com.baidu.mapapi.map.BaiduMap;
 public abstract class EBaiduMapOverlay {
 	
 	protected String mIDString;
-	protected Context mContext;
+	protected EBaiduMapBaseFragment mBaseFragment;
+    protected Context mContext;
 	protected BaiduMap mBaiduMap;
 	
-	public EBaiduMapOverlay(String id, Context context, BaiduMap baiduMap) {
+	public EBaiduMapOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
 		
 		mIDString = id;
-		mContext = context;
+        mBaseFragment = context;
+        mContext = context.getActivity();
 		mBaiduMap = baiduMap;
 	}
 	public abstract void clearOverlay();
