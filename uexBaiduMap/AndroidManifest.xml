@@ -3,7 +3,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="4poCiO7OnF0DAw5w202kzRkf" />
+            android:value="$uexBaiduMap_APIKey$" />
          <service
             android:name="com.baidu.location.f"
             android:enabled="true"
