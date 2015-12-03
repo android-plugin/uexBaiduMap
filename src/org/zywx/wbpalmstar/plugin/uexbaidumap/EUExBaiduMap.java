@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
+import android.widget.RelativeLayout;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
@@ -444,18 +445,18 @@ public class EUExBaiduMap extends EUExBase{
 
             String activityId = EBaiduMapUtils.MAP_ACTIVITY_ID
                     + EUExBaiduMap.this.hashCode();
-//            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
-//            lp.leftMargin = x;
-//            lp.topMargin = y;
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
+            lp.leftMargin = x;
+            lp.topMargin = y;
 
-            android.widget.AbsoluteLayout.LayoutParams lp = new
-                    android.widget.AbsoluteLayout.LayoutParams(
-                    w,
-                    h,
-                    x,
-                    y);
-            addFragmentToWebView(mapBaseFragment, lp, activityId);
-            //addFragmentToCurrentWindow(mapBaseFragment, lp, activityId);
+//            android.widget.AbsoluteLayout.LayoutParams lp = new
+//                    android.widget.AbsoluteLayout.LayoutParams(
+//                    w,
+//                    h,
+//                    x,
+//                    y);
+            //addFragmentToWebView(mapBaseFragment, lp, activityId);
+            addFragmentToCurrentWindow(mapBaseFragment, lp, activityId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -465,16 +466,16 @@ public class EUExBaiduMap extends EUExBase{
         if (mapBaseFragment != null){
             String activityId = EBaiduMapUtils.MAP_ACTIVITY_ID
                     + EUExBaiduMap.this.hashCode();
-            removeFragmentFromWebView(activityId);
-            mapBaseFragment = null;
-//            mapBaseFragment.readyToDestroy();
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    removeFragmentFromWindow(mapBaseFragment);
-//                    mapBaseFragment = null;
-//                }
-//            },30);
+//            removeFragmentFromWebView(activityId);
+//            mapBaseFragment = null;
+            mapBaseFragment.readyToDestroy();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    removeFragmentFromWindow(mapBaseFragment);
+                    mapBaseFragment = null;
+                }
+            },10);
         }
     }
 

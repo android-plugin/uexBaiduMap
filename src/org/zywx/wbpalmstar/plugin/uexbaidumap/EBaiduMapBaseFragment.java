@@ -125,7 +125,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FrameLayout bg = new FrameLayout(this.getActivity());
 
-        if (mCenter == null){
+        if (mCenter != null){
             mMapView = new MapView(this.getActivity(),
                     new BaiduMapOptions().mapStatus(new MapStatus.Builder()
                             .target(mCenter).build()));
@@ -136,7 +136,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
         overlayView = new View(this.getActivity());
         FrameLayout.LayoutParams fl = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        overlayView.setBackgroundColor(Color.TRANSPARENT);
+        overlayView.setBackgroundColor(Color.WHITE);
         overlayView.setLayoutParams(fl);
         overlayView.setVisibility(View.GONE);
         bg.addView(overlayView);
@@ -190,6 +190,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	@Override
     public void onResume() {
 		super.onResume();
+        Log.i("djf-" + LTAG, "onResume");
 		// activity 恢复时同时恢复地图控件
 		mMapView.onResume();
         myOrientationListener.start();

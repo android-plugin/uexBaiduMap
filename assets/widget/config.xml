@@ -12,5 +12,8 @@
   <showmyspace>false</showmyspace>  
   <bgcolor>#fefefe</bgcolor>  
   <widgetOne version="[widgetOneVersion]"/>  
-  <orientation>15</orientation> 
+  <orientation>15</orientation>
+    <config desc="uexBaiduMap" type="KEY" >
+        <param platform="Android" name="$uexBaiduMap_APIKey$" value="Nk2qEjVyXGRGfl5ts5sA4daj"/>
+    </config>
 </widget>
