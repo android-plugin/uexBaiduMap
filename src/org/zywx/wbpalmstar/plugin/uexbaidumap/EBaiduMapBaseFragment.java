@@ -190,7 +190,6 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	@Override
     public void onResume() {
 		super.onResume();
-        Log.i("djf-" + LTAG, "onResume");
 		// activity 恢复时同时恢复地图控件
 		mMapView.onResume();
         myOrientationListener.start();
