@@ -68,6 +68,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	// 定位相关
 	private LocationClient mLocClient;
 	boolean isOneTimeLocation = false;// 是否是一次定位
+	boolean isStartDurationLocation = false;// 是否开启持续定位
 	private MyLocationListenner myListener = new MyLocationListenner();
 	private GeoCoder mGeoCoder = null;
 	private float defaultLevel;
@@ -391,8 +392,8 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		Log.i(LTAG, "getCurrentLocation");
 		if(mLocClient != null && !mLocClient.isStarted()) {
 			mLocClient.start();
-			isOneTimeLocation = true;
 		}
+		isOneTimeLocation = true;// 一次定位开启
 	}
 
 	/**
@@ -402,6 +403,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		Log.i(LTAG, "startLocation");
 		if(mLocClient != null && !mLocClient.isStarted()) {
 			mLocClient.start();
+			isStartDurationLocation = true;
 		}
 	}
 	
@@ -413,9 +415,10 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		if(mLocClient != null && mLocClient.isStarted()) {
 			// 退出时销毁定位
 			mLocClient.stop();
-			// 关闭定位图层
-			setMyLocationEnabled(false);
+			isStartDurationLocation = false;
 		}
+		// 关闭定位图层
+		setMyLocationEnabled(false);
 	}
 	
 	/**
@@ -428,6 +431,9 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 			if(mLocClient != null && !mLocClient.isStarted()) {
 				mLocClient.start();
 			}
+			isStartDurationLocation = true;
+		} else {
+			isStartDurationLocation = false;
 		}
 	}
 	
@@ -466,7 +472,10 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 				jsonReceiveLocationCallback(location,
 						EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION);
 				isOneTimeLocation = false;
-				mLocClient.stop();
+				// 如果不是持续定位，每次定位后停止定位服务
+				if (!isStartDurationLocation) {
+					mLocClient.stop();
+				}
 			} else {
 				jsonReceiveLocationCallback(location,
 						EBaiduMapUtils.MAP_FUN_ON_RECEIVE_LOCATION);
