@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.baidu.mapapi.SDKInitializer;
@@ -427,6 +428,7 @@ public class EUExBaiduMap extends EUExBase {
 	}
 
 	private void handleOpen(Message msg) {
+
 		String[] params = msg.getData().getStringArray(EBaiduMapUtils.MAP_FUN_PARAMS_KEY);
 		if (params == null || (params.length != 4 && params.length != 6)) {
 			return;
@@ -490,9 +492,12 @@ public class EUExBaiduMap extends EUExBase {
 				}
 			}, 10);
 		}
-		if (mapBaseNoMapViewManager != null) {
-			mapBaseNoMapViewManager.destory();
-		}
+
+		// by waka
+		// 关闭后会出问题
+		// if (mapBaseNoMapViewManager != null) {
+		// mapBaseNoMapViewManager.destory();
+		// }
 	}
 
 	private void handleSetMapType(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
@@ -701,6 +706,7 @@ public class EUExBaiduMap extends EUExBase {
 			}
 
 		} catch (Exception e) {
+			Log.e("waka", e.getMessage(), e);
 		}
 	}
 

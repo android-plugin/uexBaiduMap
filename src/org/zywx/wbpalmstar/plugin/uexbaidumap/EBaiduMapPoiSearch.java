@@ -42,7 +42,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 	private EBaiduMapBaseNoMapViewManager mEBaiduMapBaseNoMapViewManager;
 
 	/**
-	 * 不开启MapView的构造方法 
+	 * 不开启MapView的构造方法
 	 * 
 	 * @param mapBaseNoMapViewManager
 	 */
@@ -78,6 +78,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 		LatLng ll = new LatLng(lat, lng);
 		mPoiSearch.searchNearby(
 				(new PoiNearbySearchOption()).location(ll).radius(radius).keyword(searchKey).pageNum(pageNum));
+		Log.i(TAG, "end poiNearbySearch");
 	}
 
 	public void poiBoundSearch(double east, double north, double west, double south, String searchKey, int pageNum) {
@@ -99,6 +100,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 
 	@Override
 	public void onGetPoiResult(PoiResult result) {
+		Log.i(TAG, "start onGetPoiResult");
 		if (result == null || result.error == SearchResult.ERRORNO.RESULT_NOT_FOUND) {
 			jsonNoResultCallback();
 			return;
@@ -241,5 +243,6 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 	public void destroy() {
 		mPoiSearch.destroy();
 		mSuggestionSearch.destroy();
+		Log.i("waka", "mPoiSearch.destroy()	mSuggestionSearch.destroy()");
 	}
 }
