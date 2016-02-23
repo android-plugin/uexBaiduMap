@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +23,9 @@ public class EUExBaiduMap extends EUExBase {
 	private static boolean isBaiduSdkInit = false;
 	private EBaiduMapBaseFragment mapBaseFragment;
 	private EBaiduMapBaseNoMapViewManager mapBaseNoMapViewManager;// 百度地图一些不需要打开地图的功能管理器
+
+	/* 回调 */
+	private static final String FUNC_GET_DISTANCE_CALLBACK = "uexBaiduMap.cbGetDistance";// 得到两点之间距离回调
 
 	public EUExBaiduMap(Context context, EBrowserView inParent) {
 		super(context, inParent);
@@ -231,6 +235,41 @@ public class EUExBaiduMap extends EUExBase {
 
 	public void zoomControlsEnabled(String[] params) {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ZOOMCONTROLSENABLED, params);
+	}
+
+	/* 计算两点之间的距离 by waka */
+
+	public void getDistance(String[] params) {
+
+		if (params.length < 4) {
+			return;
+		}
+
+		try {
+
+			double lat1 = Double.valueOf(params[0]);
+			double lon1 = Double.valueOf(params[1]);
+			double lat2 = Double.valueOf(params[2]);
+			double lon2 = Double.valueOf(params[3]);
+
+			double distance = -1;
+
+			// 判断，如果是小距离
+			if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
+					&& (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
+				distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2, lat2);
+			}
+			// 大距离
+			else {
+				distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2, lat2);
+			}
+
+			jsCallback(FUNC_GET_DISTANCE_CALLBACK, 0, EUExCallback.F_C_TEXT, "" + distance);
+
+		} catch (NumberFormatException e) {
+			e.getStackTrace();
+		}
+
 	}
 
 	@Override
