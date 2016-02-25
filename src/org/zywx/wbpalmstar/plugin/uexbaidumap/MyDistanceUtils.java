@@ -17,6 +17,24 @@ public class MyDistanceUtils {
 	public static final double DEF_PI180 = 0.01745329252; // PI/180.0
 	public static final double DEF_R = 6370693.5; // radius of earth
 
+	/* 智能计算使用哪种方法计算距离 */
+	public static double getDistance(double lon1, double lat1, double lon2, double lat2) {
+
+		double distance = -1;
+
+		// 判断，如果是小距离
+		if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
+				&& (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
+			distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2, lat2);
+		}
+		// 大距离
+		else {
+			distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2, lat2);
+		}
+
+		return distance;
+	}
+
 	/* 利用勾股定理计算，适用于两点距离很近的情况 */
 	public static double getShortDistance(double lon1, double lat1, double lon2, double lat2) {
 		double ew1, ns1, ew2, ns2;

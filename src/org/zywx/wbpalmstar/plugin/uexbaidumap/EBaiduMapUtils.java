@@ -94,6 +94,7 @@ public class EBaiduMapUtils {
 	public final static String MAP_PARAMS_JSON_KEY_ID = "id";
 	public final static String MAP_PARAMS_JSON_KEY_LNG = "longitude";
 	public final static String MAP_PARAMS_JSON_KEY_LAT = "latitude";
+	public final static String MAP_PARAMS_JSON_KEY_DISTANCE = "distance";//by waka 新增字段distance
 	public final static String MAP_PARAMS_JSON_KEY_ICON = "icon";
 	public final static String MAP_PARAMS_JSON_KEY_BUBBLE = "bubble";
 	public final static String MAP_PARAMS_JSON_KEY_TITLE = "title";

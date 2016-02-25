@@ -38,6 +38,11 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 	private PoiSearch mPoiSearch = null;
 	private SuggestionSearch mSuggestionSearch = null;
 	private EBaiduMapBaseFragment baseFragment = null;
+	
+	//change by waka
+	//记录下传入的经纬度
+	private double mLongitude;
+	private double mLatitude;
 
 	private EBaiduMapBaseNoMapViewManager mEBaiduMapBaseNoMapViewManager;
 
@@ -75,6 +80,10 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 
 	public void poiNearbySearch(double lng, double lat, int radius, String searchKey, int pageNum) {
 		Log.i(TAG, "poiNearbySearch");
+		
+		mLongitude = lng;
+		mLatitude = lat;
+		
 		LatLng ll = new LatLng(lat, lng);
 		mPoiSearch.searchNearby(
 				(new PoiNearbySearchOption()).location(ll).radius(radius).keyword(searchKey).pageNum(pageNum));
@@ -160,6 +169,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 		}
 	}
 
+	//change by waka 增加distance字段
 	private void jsonPoiResultCallback(PoiResult result) {
 		try {
 			JSONObject jsonPoi = new JSONObject();
@@ -174,6 +184,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 				if (poi.location != null) {
 					jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, poi.location.longitude);
 					jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, poi.location.latitude);
+					jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_DISTANCE,MyDistanceUtils.getDistance(mLongitude, mLatitude, poi.location.longitude, poi.location.latitude));
 				}
 				jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_NAME, poi.name);
 				jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_UID, poi.uid);
