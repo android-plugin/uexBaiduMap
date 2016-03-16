@@ -423,10 +423,11 @@ public class EUExBaiduMap extends EUExBase{
         boolean isUseLngLat = false;
 
         try {
-            x = Integer.parseInt(params[0]);
-            y = Integer.parseInt(params[1]);
-            w = Integer.parseInt(params[2]);
-            h = Integer.parseInt(params[3]);
+        	//修复了前端调用open方法时传入小数时抛出NumberFormatException的问题 by waka 2016/01/23
+            x = (int) Double.parseDouble(params[0]);
+            y = (int) Double.parseDouble(params[1]);
+            w = (int) Double.parseDouble(params[2]);
+            h = (int) Double.parseDouble(params[3]);
 
             if (params.length == 6) {
                 lng = Double.parseDouble(params[4]);
