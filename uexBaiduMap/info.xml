@@ -1,14 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.1.31" build="31">
-        <info>31:修复了当open时传入的x,y,w,h为double型时，抛出NumberFormatException的错误</info>
+        uexName="uexBaiduMap" version="3.1.32" build="32">
+        <info>32:1.增加底部卡片样式气泡
+                 2.卡片样式增加fontSize和fontColor字段
+                 3.修复卡片样式气泡无法隐藏问题
+                 4.修复无法自动读取子应用的widget/wgtRes里图片问题
+                 5.修复无法加载网络背景图片问题</info>
+        <build>31:修复了当open时传入的x,y,w,h为double型时，抛出NumberFormatException的错误</build>
         <build>30:这是一个旧插件，旧引擎用的旧插件</build>
         <build>29:修复了持续定位时cbCurrentLocation回调不生效的问题</build>
         <!-- <build>28:修复open接口传入的中心点不生效的问题</build> -->
         <build>27:修改插件，使其支持config配置APIKey</build>
         <!-- <build>26:去掉插件中的ActivityGroup,配合引擎升级</build> -->
-        <info>25:国际化</info>
+        <build>25:国际化</build>
         <build>24:修改百度地图中引用的jar包，解除与百度导航插件之间的打包冲突问题</build>
         <build>23:修复地理编码接口当地址错误时程序崩溃的问题</build>
         <build>22:修复加入百度地图插件后uexLocation.openLocation()中的onchange事件不能使用问题</build>

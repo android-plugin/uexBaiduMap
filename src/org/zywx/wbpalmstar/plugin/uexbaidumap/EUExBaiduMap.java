@@ -2,6 +2,7 @@ package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.EBrowserActivity;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 
@@ -14,10 +15,12 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -30,6 +33,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	private static boolean isBaiduSdkInit = false;
 	private static LocalActivityManager mgr;
+    private RelativeLayout.LayoutParams mParms;
 
 	public EUExBaiduMap(Context context, EBrowserView inParent) {
 		super(context, inParent);
@@ -40,6 +44,10 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			isBaiduSdkInit = true;
 		}
 	}
+
+    public EBrowserView getEBrowserView() {
+        return mBrwView;
+    }
 
 	// uexBaiduMap.open(x, y, width, height, longitude, latitude)
 	public void open(String[] params) {
@@ -857,6 +865,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 	}
 
 	private void addView2CurrentWindow(View child, RelativeLayout.LayoutParams parms) {
+        mParms = parms;
 		int l = (int) (parms.leftMargin);
 		int t = (int) (parms.topMargin);
 		int w = parms.width;
@@ -868,6 +877,38 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 		adptLayoutParams(parms, lp);
 		mBrwView.addViewToCurrentWindow(child, lp);
 	}
+
+    public void addCardView2Window(View child) {
+        int mParmsLeft = (int) (mParms.leftMargin);
+        int mParmsTop = (int) (mParms.topMargin);
+        int mParmsWidth = mParms.width;
+        int mParmsHeight = mParms.height;
+        int bottomMargin = 60;
+        int leftMargin = 50;
+        int rightMargin = 50;
+        EBrowserActivity activity = (EBrowserActivity) mContext;
+        if (activity != null && activity instanceof EBrowserActivity) {
+            DisplayMetrics dm = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int heightPixels = dm.heightPixels;
+            int diffHei = heightPixels - mParmsTop - mParmsHeight;
+            if (diffHei > 0) {
+                bottomMargin = diffHei + bottomMargin;
+            }
+            int widthPixels = dm.widthPixels;
+            int diffWid = widthPixels - mParmsWidth - mParmsLeft;
+            if (diffWid > 0) {
+                rightMargin = diffWid + rightMargin;
+            }
+        }
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.BOTTOM;
+        lp.bottomMargin = bottomMargin;
+        lp.leftMargin = mParmsLeft + leftMargin;
+        lp.rightMargin = rightMargin;
+        mBrwView.addViewToCurrentWindow(child, lp);
+    }
 
 	@Override
 	public int describeContents() {
