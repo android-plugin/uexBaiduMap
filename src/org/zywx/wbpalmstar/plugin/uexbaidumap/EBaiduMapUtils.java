@@ -31,8 +31,8 @@ public class EBaiduMapUtils {
 	// 1
 	public static final String MAP_FUN_PARAMS_KEY = "mapFunParamsKey";
 	public static final String MAP_ACTIVITY_ID = "mapActivityID";
-	
-	//2
+
+	// 2
 	public static final int MAP_MSG_CODE_OPEN = 0;
 	public static final int MAP_MSG_CODE_CLOSE = 1;
 	public static final int MAP_MSG_CODE_SETMAPTYPE = 2;
@@ -51,11 +51,10 @@ public class EBaiduMapUtils {
 	public static final int MAP_MSG_CODE_ADDMARKERSOVERLAY = 15;
 	public static final int MAP_MSG_CODE_SETMARKERSOVERLAY = 16;
 	public static final int MAP_MSG_CODE_SHOWBUBBLE = 17;
-    public static final int MAP_MSG_CODE_HIDEBUBBLE = 18;
-    public static final int MAP_MSG_CODE_REMOVEMAKERSOVER = 19;
-	
-    
-    public static final int MAP_MSG_CODE_REMOVEOVERLAY = 20;
+	public static final int MAP_MSG_CODE_HIDEBUBBLE = 18;
+	public static final int MAP_MSG_CODE_REMOVEMAKERSOVER = 19;
+
+	public static final int MAP_MSG_CODE_REMOVEOVERLAY = 20;
 	public static final int MAP_MSG_CODE_ADDDOTOVERLAY = 21;
 	public static final int MAP_MSG_CODE_ADDPOLYLINEOVERLAY = 22;
 	public static final int MAP_MSG_CODE_ADDARCOVERLAY = 23;
@@ -84,16 +83,20 @@ public class EBaiduMapUtils {
 	public static final int MAP_MSG_CODE_HIDEMAP = 46;
 	public static final int MAP_MSG_CODE_SHOWMAP = 47;
 	public static final int MAP_MSG_CODE_ZOOMCONTROLSENABLED = 48;
-	//3
+	public static final int MAP_MSG_CODE_GETDISTANCE = 49;
+	// 3
 	public final static String MAP_EXTRA_LAN = "org.zywx.wbpalmstar.plugin.uexbaidumap.MAP_EXTRA_LAN";
 	public final static String MAP_EXTRA_LNG = "org.zywx.wbpalmstar.plugin.uexbaidumap.MAP_EXTRA_LNG";
 	public final static String MAP_EXTRA_UEXBASE_OBJ = "org.zywx.wbpalmstar.plugin.uexbaidumap.MAP_EXTRA_UEXBASE_OBJ";
-	
-	//4
+
+	// 4
 	public final static String MAP_PARAMS_JSON_KEY_MARKERINFO = "makerInfo";
 	public final static String MAP_PARAMS_JSON_KEY_ID = "id";
 	public final static String MAP_PARAMS_JSON_KEY_LNG = "longitude";
 	public final static String MAP_PARAMS_JSON_KEY_LAT = "latitude";
+	public final static String MAP_PARAMS_JSON_KEY_DISTANCE = "distance";// by
+																			// waka
+																			// 新增字段distance
 	public final static String MAP_PARAMS_JSON_KEY_ICON = "icon";
 	public final static String MAP_PARAMS_JSON_KEY_BUBBLE = "bubble";
 	public final static String MAP_PARAMS_JSON_KEY_TITLE = "title";
@@ -106,7 +109,7 @@ public class EBaiduMapUtils {
 	public static final String MAP_PARAMS_JSON_KEY_CITY = "city";
 	public static final String MAP_PARAMS_JSON_KEY_NAME = "name";
 	public static final String MAP_PARAMS_JSON_KEY_TYPE = "type";
-	public static final String  MAP_TAG = "MapUtillity";
+	public static final String MAP_TAG = "MapUtillity";
 	public static final String MAP_PARAMS_JSON_KEY_FILLCOLOR = "fillColor";
 	public static final String MAP_PARAMS_JSON_KEY_LINEWIDTH = "lineWidth";
 	public static final String MAP_PARAMS_JSON_KEY_PROPERTY = "property";
@@ -135,7 +138,7 @@ public class EBaiduMapUtils {
 	public static final String MAP_PARAMS_JSON_KEY_SEARCHKEY = "searchKey";
 	public static final String MAP_PARAMS_JSON_KEY_PAGENUM = "pageNum";
 	public static final String MAP_PARAMS_JSON_KEY_TIMESTAMP = "timestamp";
-	
+
 	public static final String MAP_PARAMS_JSON_KEY_START_LATITUDE = "startLatitude";
 	public static final String MAP_PARAMS_JSON_KEY_START_LONGITUDE = "startLongitude";
 	public static final String MAP_PARAMS_JSON_KEY_CENTER_LATITUDE = "centerLatitude";
@@ -150,8 +153,8 @@ public class EBaiduMapUtils {
 	public static final String MAP_PARAMS_JSON_KEY_FONTCOLOR = "fontColor";
 	public static final String MAP_PARAMS_JSON_KEY_BGCOLOR = "bgColor";
 	public static final String MAP_PARAMS_JSON_KEY_NORTHEAST = "northeast";
-    public static final String MAP_PARAMS_JSON_KEY_SOUTHWEST = "southwest";	
-	//5 
+	public static final String MAP_PARAMS_JSON_KEY_SOUTHWEST = "southwest";
+	// 5
 	public final static String MAP_FUN_ON_MAKER_CLICK_LISTNER = "uexBaiduMap.onMakerClickListner";
 	public final static String MAP_FUN_ON_MAKER_BUBBLE_CLICK_LISTNER = "uexBaiduMap.onMakerBubbleClickListner";
 	public final static String MAP_FUN_ON_MARKER_CLICK_LISTENER = "uexBaiduMap.onMarkerClickListener";
@@ -163,7 +166,7 @@ public class EBaiduMapUtils {
 	public final static String MAP_FUN_ON_RECEIVE_LOCATION = "uexBaiduMap.onReceiveLocation";
 	public final static String MAP_FUN_ON_SEARCH_ROUTE_PLAN = "uexBaiduMap.onSearchRoutePlan";
 	public final static String MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER = "uexBaiduMap.onZoomLevelChangeListener";
-    public final static String MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER = "uexBaiduMap.onMapStatusChangeListener";
+	public final static String MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER = "uexBaiduMap.onMapStatusChangeListener";
 
 	public final static String MAP_FUN_CB_GEOCODE_RESULT = "uexBaiduMap.cbGeoCodeResult";
 	public final static String MAP_FUN_CB_REVERSE_GEOCODE_RESULT = "uexBaiduMap.cbReverseGeoCodeResult";
@@ -171,36 +174,32 @@ public class EBaiduMapUtils {
 	public final static String MAP_FUN_CB_POISEARCH_RESULT = "uexBaiduMap.cbPoiSearchResult";
 	public final static String MAP_FUN_CB_BUSLINE_SEARCH_RESULT = "uexBaiduMap.cbBusLineSearchResult";
 	public final static String MAP_FUN_CB_OPEN = "uexBaiduMap.cbOpen";
-	
-	
+
+	public final static String MAP_FUN_CB_GET_DISTANCE = "uexBaiduMap.cbGetDistance";// 计算两点之间的距离by_waka
+
 	public static Bitmap getDefaultMarkerBitMap(Context ctx) {
-	
+
 		Bitmap bitmap;
-		
+
 		int defaultMarkerDrawableId = EUExUtil.getResDrawableID("plugin_map_icon_marker_default");
-		
+
 		bitmap = BitmapFactory.decodeResource(ctx.getResources(), defaultMarkerDrawableId);
-		
+
 		return bitmap;
 	}
-	
-	
-	public static StateListDrawable bgColorDrawableSelector(Bitmap nomal,
-			Bitmap focus) {
+
+	public static StateListDrawable bgColorDrawableSelector(Bitmap nomal, Bitmap focus) {
 
 		BitmapDrawable nomalBitmap = new BitmapDrawable(nomal);
 		BitmapDrawable focusBitmap = new BitmapDrawable(focus);
 		StateListDrawable selector = new StateListDrawable();
-		selector.addState(new int[] { android.R.attr.state_pressed },
-				focusBitmap);
-		selector.addState(new int[] { android.R.attr.state_selected },
-				focusBitmap);
-		selector.addState(new int[] { android.R.attr.state_focused },
-				focusBitmap);
+		selector.addState(new int[] { android.R.attr.state_pressed }, focusBitmap);
+		selector.addState(new int[] { android.R.attr.state_selected }, focusBitmap);
+		selector.addState(new int[] { android.R.attr.state_focused }, focusBitmap);
 		selector.addState(new int[] {}, nomalBitmap);
 		return selector;
 	}
-	
+
 	public static Bitmap getBitMapFromImageUrl(Context ctx, String imgUrl) {
 		if (imgUrl == null || imgUrl.length() == 0) {
 			return null;
@@ -227,7 +226,7 @@ public class EBaiduMapUtils {
 			} else if (imgUrl.startsWith("/")) {
 				bitmap = BitmapFactory.decodeFile(imgUrl);
 			} else if (imgUrl.startsWith("http://")) {
-				
+
 			}
 		} catch (OutOfMemoryError e) {
 			e.printStackTrace();
@@ -243,104 +242,93 @@ public class EBaiduMapUtils {
 		return bitmap;
 	}
 
+	public static EBaiduMapMarkerOverlayOptions getMarkerOverlayOpitonsWithJSON(String jsonStr) {
 
-    public static EBaiduMapMarkerOverlayOptions getMarkerOverlayOpitonsWithJSON(String jsonStr) {
+		EBaiduMapMarkerOverlayOptions markerOverlayOptions = null;
 
-        EBaiduMapMarkerOverlayOptions markerOverlayOptions = null;
+		try {
 
-        try {
+			String markerId = null;
+			String lngStr = null;
+			String latStr = null;
+			String iconPath = null;
 
-            String markerId = null;
-            String lngStr = null;
-            String latStr = null;
-            String iconPath = null;
+			JSONObject makerJsonObject = new JSONObject(jsonStr);
 
-            JSONObject makerJsonObject = new JSONObject(jsonStr);
+			if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID)) {
+				markerId = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID);
+			}
 
-            if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID)) {
-                markerId = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID);
-            }
+			if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG)) {
+				lngStr = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG);
+			}
 
+			if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT)) {
+				latStr = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT);
+			}
 
-            if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG)) {
-                lngStr = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG);
-            }
+			if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ICON)) {
 
+				iconPath = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ICON);
 
-            if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT)) {
-                latStr = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT);
-            }
+			}
 
+			markerOverlayOptions = new EBaiduMapMarkerOverlayOptions();
 
+			markerOverlayOptions.setIdStr(markerId);
+			markerOverlayOptions.setLngStr(lngStr);
+			markerOverlayOptions.setLatStr(latStr);
+			markerOverlayOptions.setIconPath(iconPath);
 
-            if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ICON)) {
+			int yOffset = 0;
+			String title = null;
+			String subTitle = null;
+			String bgImgPath = null;
+			boolean isUseYOffset = false;
 
-                iconPath = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ICON);
+			if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BUBBLE)) {
 
-            }
+				String bubbleStr = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BUBBLE);
 
-            markerOverlayOptions = new EBaiduMapMarkerOverlayOptions();
+				JSONObject bubbleJsonObject = new JSONObject(bubbleStr);
 
-            markerOverlayOptions.setIdStr(markerId);
-            markerOverlayOptions.setLngStr(lngStr);
-            markerOverlayOptions.setLatStr(latStr);
-            markerOverlayOptions.setIconPath(iconPath);
+				if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TITLE)) {
+					title = bubbleJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TITLE);
+				}
 
+				if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_SUBTITLE)) {
+					subTitle = bubbleJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_SUBTITLE);
+				}
 
-            int yOffset = 0;
-            String title = null;
-            String subTitle = null;
-            String bgImgPath = null;
-            boolean isUseYOffset = false;
+				if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BGIMG)) {
+					bgImgPath = bubbleJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BGIMG);
 
+				}
 
-            if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BUBBLE)) {
+				if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_YOFFSET)) {
+					yOffset = bubbleJsonObject.getInt(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_YOFFSET);
 
-                String bubbleStr = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BUBBLE);
+					isUseYOffset = true;
+				} else {
+					isUseYOffset = false;
+				}
 
-                JSONObject bubbleJsonObject  = new JSONObject(bubbleStr);
+			}
 
+			markerOverlayOptions.setBubbleBgImgPath(bgImgPath);
+			markerOverlayOptions.setBubbleSubTitle(subTitle);
+			markerOverlayOptions.setBubbleTitle(title);
+			markerOverlayOptions.setyOffset(yOffset);
+			markerOverlayOptions.setiUseYOffset(isUseYOffset);
 
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
-                if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TITLE)) {
-                    title = bubbleJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TITLE);
-                }
+		return markerOverlayOptions;
 
+	}
 
-                if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_SUBTITLE)) {
-                    subTitle = bubbleJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_SUBTITLE);
-                }
-
-                if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BGIMG)) {
-                    bgImgPath = bubbleJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BGIMG);
-
-                }
-
-                if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_YOFFSET)) {
-                    yOffset = bubbleJsonObject.getInt(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_YOFFSET);
-
-                    isUseYOffset = true;
-                } else {
-                    isUseYOffset = false;
-                }
-
-
-            }
-
-            markerOverlayOptions.setBubbleBgImgPath(bgImgPath);
-            markerOverlayOptions.setBubbleSubTitle(subTitle);
-            markerOverlayOptions.setBubbleTitle(title);
-            markerOverlayOptions.setyOffset(yOffset);
-            markerOverlayOptions.setiUseYOffset(isUseYOffset);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return markerOverlayOptions;
-
-    }
-    
 	public static EBaiduMapRoutePlanOptions paraseRoutePlanOptions(String msg) {
 		EBaiduMapRoutePlanOptions routePlanOptions = null;
 		try {
@@ -373,8 +361,7 @@ public class EBaiduMapUtils {
 			try {
 				float longitude = Float.parseFloat(longitudeStr);
 				float latitude = Float.parseFloat(latitudeStr);
-				planNode = PlanNode
-						.withLocation(new LatLng(latitude, longitude));
+				planNode = PlanNode.withLocation(new LatLng(latitude, longitude));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
@@ -383,14 +370,13 @@ public class EBaiduMapUtils {
 		}
 		return planNode;
 	}
-	
+
 	public static byte[] transStreamToBytes(InputStream is, int buffSize) {
 		if (is == null) {
 			return null;
 		}
 		if (buffSize <= 0) {
-			throw new IllegalArgumentException(
-					"buffSize can not less than zero.....");
+			throw new IllegalArgumentException("buffSize can not less than zero.....");
 		}
 		byte[] data = null;
 		byte[] buffer = new byte[buffSize];
@@ -421,15 +407,13 @@ public class EBaiduMapUtils {
 			BasicHttpParams httpParams = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
 			HttpConnectionParams.setSoTimeout(httpParams, 30000);
-			HttpResponse httpResponse = new DefaultHttpClient(httpParams)
-					.execute(httpGet);
+			HttpResponse httpResponse = new DefaultHttpClient(httpParams).execute(httpGet);
 			int responseCode = httpResponse.getStatusLine().getStatusCode();
 			if (responseCode == HttpURLConnection.HTTP_OK) {
 				is = httpResponse.getEntity().getContent();
 				byte[] data = transStreamToBytes(is, 4096);
 				if (data != null) {
-					bitmap = BitmapFactory
-							.decodeByteArray(data, 0, data.length);
+					bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 				}
 			}
 		} catch (Exception e) {
@@ -589,7 +573,7 @@ public class EBaiduMapUtils {
 		}
 		return dotInfo;
 	}
-	
+
 	public static EBaiduMapPolygonOptions parasePolygonInfoJson(String msg) {
 		EBaiduMapPolygonOptions polygonInfo = null;
 		if (msg == null || msg.length() == 0) {
@@ -633,14 +617,17 @@ public class EBaiduMapUtils {
 			return arcInfo;
 		}
 		try {
-			arcInfo  = new EBaiduMapArcOptions();
+			arcInfo = new EBaiduMapArcOptions();
 			JSONObject json = new JSONObject(msg);
 			arcInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
 			arcInfo.setStrokeColor(json.getString(MAP_PARAMS_JSON_KEY_STROKECOLOR));
 			arcInfo.setLineWidth(json.getString(MAP_PARAMS_JSON_KEY_LINEWIDTH));
-			arcInfo.setStart(json.getDouble(MAP_PARAMS_JSON_KEY_START_LATITUDE), json.getDouble(MAP_PARAMS_JSON_KEY_START_LONGITUDE));
-			arcInfo.setCenter(json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LATITUDE), json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LONGITUDE));
-			arcInfo.setEnd(json.getDouble(MAP_PARAMS_JSON_KEY_END_LATITUDE), json.getDouble(MAP_PARAMS_JSON_KEY_END_LONGITUDE));
+			arcInfo.setStart(json.getDouble(MAP_PARAMS_JSON_KEY_START_LATITUDE),
+					json.getDouble(MAP_PARAMS_JSON_KEY_START_LONGITUDE));
+			arcInfo.setCenter(json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LATITUDE),
+					json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LONGITUDE));
+			arcInfo.setEnd(json.getDouble(MAP_PARAMS_JSON_KEY_END_LATITUDE),
+					json.getDouble(MAP_PARAMS_JSON_KEY_END_LONGITUDE));
 			if (json.has(MAP_PARAMS_JSON_KEY_EXTRAINFO)) {
 				arcInfo.setExtraStr(json.getString(MAP_PARAMS_JSON_KEY_EXTRAINFO));
 			}
@@ -670,7 +657,7 @@ public class EBaiduMapUtils {
 			groundInfo.setImageUrl(json.getString(MAP_PARAMS_JSON_KEY_IMAGEURL));
 			groundInfo.setTransparency(json.getString(MAP_PARAMS_JSON_KEY_TRANSPARENCY));
 			JSONArray property = json.getJSONArray(MAP_PARAMS_JSON_KEY_PROPERTY);
-			if(property == null || property.length() > 2) {
+			if (property == null || property.length() > 2) {
 				return null;
 			}
 			for (int i = 0; i < property.length(); i++) {
@@ -680,10 +667,10 @@ public class EBaiduMapUtils {
 				LatLng latLng = new LatLng(latitude, longitude);
 				groundInfo.addList(latLng);
 			}
-			if(json.has(MAP_PARAMS_JSON_KEY_IMAGEWIDTH)) {
+			if (json.has(MAP_PARAMS_JSON_KEY_IMAGEWIDTH)) {
 				groundInfo.setGroundWidth(json.getString(MAP_PARAMS_JSON_KEY_IMAGEWIDTH));
 			}
-			if(json.has(MAP_PARAMS_JSON_KEY_IMAGEHEIGHT)) {
+			if (json.has(MAP_PARAMS_JSON_KEY_IMAGEHEIGHT)) {
 				groundInfo.setGroundHeight(json.getString(MAP_PARAMS_JSON_KEY_IMAGEHEIGHT));
 			}
 			if (json.has(MAP_PARAMS_JSON_KEY_EXTRAINFO)) {
@@ -715,13 +702,13 @@ public class EBaiduMapUtils {
 			textInfo.setFontSize(json.getString(MAP_PARAMS_JSON_KEY_FONTSIZE));
 			textInfo.setText(json.getString(MAP_PARAMS_JSON_KEY_TEXT));
 			textInfo.setLatLng(json.getDouble(MAP_PARAMS_JSON_KEY_LAT), json.getDouble(MAP_PARAMS_JSON_KEY_LNG));
-			if(json.has(MAP_PARAMS_JSON_KEY_BGCOLOR)) {
+			if (json.has(MAP_PARAMS_JSON_KEY_BGCOLOR)) {
 				textInfo.setBgColor(json.getString(MAP_PARAMS_JSON_KEY_BGCOLOR));
 			}
-			if(json.has(MAP_PARAMS_JSON_KEY_FONTCOLOR)) {
+			if (json.has(MAP_PARAMS_JSON_KEY_FONTCOLOR)) {
 				textInfo.setFontColor(json.getString(MAP_PARAMS_JSON_KEY_FONTCOLOR));
 			}
-			if(json.has(MAP_PARAMS_JSON_KEY_ROTATE)) {
+			if (json.has(MAP_PARAMS_JSON_KEY_ROTATE)) {
 				textInfo.setRotate(json.getString(MAP_PARAMS_JSON_KEY_ROTATE));
 			}
 			if (json.has(MAP_PARAMS_JSON_KEY_EXTRAINFO)) {
@@ -740,30 +727,30 @@ public class EBaiduMapUtils {
 		}
 		return textInfo;
 	}
-//	public static String getImagePath(Context ctx, String imgUrl) {
-//		if (imgUrl == null || imgUrl.length() == 0) {
-//			return null;
-//		}
-//
-//		String imgPath = null;
-//
-//		try {
-//			if (imgUrl.startsWith(BUtility.F_Widget_RES_path)) {
-//				try {
-//					ctx.getAssets().g
-//					if (is != null) {
-//						bitmap = BitmapFactory.decodeStream(is);
-//					}
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//			}
-//		} catch (OutOfMemoryError e) {
-//			e.printStackTrace();
-//		} finally {
-//			
-//		}
-//		return imgPath;
-//	}
-//	
+	// public static String getImagePath(Context ctx, String imgUrl) {
+	// if (imgUrl == null || imgUrl.length() == 0) {
+	// return null;
+	// }
+	//
+	// String imgPath = null;
+	//
+	// try {
+	// if (imgUrl.startsWith(BUtility.F_Widget_RES_path)) {
+	// try {
+	// ctx.getAssets().g
+	// if (is != null) {
+	// bitmap = BitmapFactory.decodeStream(is);
+	// }
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// } catch (OutOfMemoryError e) {
+	// e.printStackTrace();
+	// } finally {
+	//
+	// }
+	// return imgPath;
+	// }
+	//
 
 }

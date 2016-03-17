@@ -53,5 +53,6 @@
         <method name="hideMap"/>
         <method name="showMap"/>
         <method name="zoomControlsEnabled"/>
+        <method name="getDistance"/>
     </plugin>
 </uexplugins>

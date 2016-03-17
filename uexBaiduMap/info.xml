@@ -1,8 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.2.30" build="30">
-        <info>30:修复了前端调用open方法时传入小数时抛出NumberFormatException的问题</info>
+        uexName="uexBaiduMap" version="3.2.32" build="32">
+        <info>32.1:增加了getDistance得到两点间直线距离方法
+                 2:在回调方法cbPoiSearchResult中增加distance字段，返回距离
+                 3：规范代码，与之前使用同一种风格</info>
+        <build>31:增加了，当不打开地图View时，也可以调用poi搜索功能（目前支持城市检索，周边检索，区域检索）
+              31.1:修复了打开地图再关闭地图，搜索poi无效的问题</build>
+        <build>30:修复了前端调用open方法时传入小数时抛出NumberFormatException的问题</build>
         <build>29:修复了持续定位时cbCurrentLocation回调不生效的问题</build>
         <build>28:修复open接口传入的中心点不生效的问题</build>
         <build>27:修改插件，使其支持config配置APIKey</build>
