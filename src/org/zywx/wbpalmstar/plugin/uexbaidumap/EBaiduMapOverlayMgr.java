@@ -1,6 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -150,8 +149,11 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				
 				return;
 			}
-			
-			mapMarkerOverlay.setBubbleShow(true);
+            if (mapMarkerOverlay.isShowBottomCard()) {
+                mapMarkerOverlay.setBottomCardShow(mMapView, true);
+            } else {
+                mapMarkerOverlay.setBubbleShow(true);
+            }
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -159,11 +161,14 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	}
 
     public void hideBubble() {
-
         try {
-
             mBaiduMap.hideInfoWindow();
-
+            for (String s : mEbaiduMapOverlays.keySet()) {
+                EBaiduMapMarkerOverlay mapMarkerOverlay = (EBaiduMapMarkerOverlay) mEbaiduMapOverlays.get(s);
+                if (mapMarkerOverlay.isShowBottomCard()) {
+                    mapMarkerOverlay.setBottomCardShow(mMapView, false);
+                }
+            }
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -507,12 +512,17 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 
 		markerOverlay.setMarker(marker);
         if (markerOverlayOptions.getBubbleTitle() != null) {
-            boolean isUse = markerOverlayOptions.isiUseYOffset();
-            int yOffset = markerOverlayOptions.getyOffset();
-            String title = markerOverlayOptions.getBubbleTitle();
-            String subTitle = markerOverlayOptions.getBubbleSubTitle();
+            String bottomBubbleCard = markerOverlayOptions.getBottomBubbleCard();
             String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
-            markerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
+            if (bottomBubbleCard != null && !bottomBubbleCard.isEmpty()) {
+                markerOverlay.setBottomBubbleCard(mMapView, bottomBubbleCard, bgImgPath);
+            } else {
+                boolean isUse = markerOverlayOptions.isiUseYOffset();
+                int yOffset = markerOverlayOptions.getyOffset();
+                String title = markerOverlayOptions.getBubbleTitle();
+                String subTitle = markerOverlayOptions.getBubbleSubTitle();
+                markerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
+            }
         }
 		Bundle b = new Bundle();
 
@@ -533,12 +543,20 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 			mapMarkerOverlay.getMarker().setPosition(llMarker);
 		}
 		if (markerOverlayOptions.getBubbleTitle() != null) {
-			boolean isUse = markerOverlayOptions.isiUseYOffset();
-			int yOffset = markerOverlayOptions.getyOffset();
-			String title = markerOverlayOptions.getBubbleTitle();
-			String subTitle = markerOverlayOptions.getBubbleSubTitle();
-			String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
-			mapMarkerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
+            String bottomBubbleCard = markerOverlayOptions.getBottomBubbleCard();
+            String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
+            if (bottomBubbleCard != null && !bottomBubbleCard.isEmpty()) {
+                mapMarkerOverlay.setBottomBubbleCard(mMapView, bottomBubbleCard, bgImgPath);
+            } else {
+                if (mapMarkerOverlay.isShowBottomCard()) {
+                    mapMarkerOverlay.setBottomCardShow(null, false);
+                }
+                boolean isUse = markerOverlayOptions.isiUseYOffset();
+                int yOffset = markerOverlayOptions.getyOffset();
+                String title = markerOverlayOptions.getBubbleTitle();
+                String subTitle = markerOverlayOptions.getBubbleSubTitle();
+                mapMarkerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
+            }
 		}
 	}
 

@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Environment;
+import android.webkit.CookieManager;
 import android.webkit.URLUtil;
 
 import com.baidu.mapapi.model.LatLng;
@@ -12,6 +14,7 @@ import com.baidu.mapapi.search.route.PlanNode;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.cookie.SM;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -20,12 +23,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class EBaiduMapUtils {
 	// 1
@@ -98,6 +106,11 @@ public class EBaiduMapUtils {
 	public final static String MAP_PARAMS_JSON_KEY_BUBBLE = "bubble";
 	public final static String MAP_PARAMS_JSON_KEY_TITLE = "title";
 	public final static String MAP_PARAMS_JSON_KEY_SUBTITLE = "subTitle";
+    public final static String MAP_PARAMS_JSON_KEY_BOTTOMCARD = "bottomCard";
+    public final static String MAP_PARAMS_JSON_KEY_CARDTITLE1 = "cardTitle1";
+    public final static String MAP_PARAMS_JSON_KEY_CARDTITLE2 = "cardTitle2";
+    public final static String MAP_PARAMS_JSON_KEY_CARDTITLE3 = "cardTitle3";
+    public final static String MAP_PARAMS_JSON_KEY_CARDTITLE4 = "cardTitle4";
 	public final static String MAP_PARAMS_JSON_KEY_BGIMG = "bgImage";
 	public final static String MAP_PARAMS_JSON_KEY_YOFFSET = "yOffset";
 	public final static String MAP_PARAMS_JSON_KEY_ADDRESS = "address";
@@ -200,49 +213,90 @@ public class EBaiduMapUtils {
 		selector.addState(new int[] {}, nomalBitmap);
 		return selector;
 	}
-	
-	public static Bitmap getBitMapFromImageUrl(Context ctx, String imgUrl) {
-		if (imgUrl == null || imgUrl.length() == 0) {
-			return null;
-		}
 
-		Bitmap bitmap = null;
-		InputStream is = null;
-		try {
-			if (imgUrl.startsWith(BUtility.F_Widget_RES_SCHEMA)) {
-				is = BUtility.getInputStreamByResPath(ctx, imgUrl);
-				bitmap = BitmapFactory.decodeStream(is);
-			} else if (imgUrl.startsWith(BUtility.F_FILE_SCHEMA)) {
-				imgUrl = imgUrl.replace(BUtility.F_FILE_SCHEMA, "");
-				bitmap = BitmapFactory.decodeFile(imgUrl);
-			} else if (imgUrl.startsWith(BUtility.F_Widget_RES_path)) {
-				try {
-					is = ctx.getAssets().open(imgUrl);
-					if (is != null) {
-						bitmap = BitmapFactory.decodeStream(is);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else if (imgUrl.startsWith("/")) {
-				bitmap = BitmapFactory.decodeFile(imgUrl);
-			} else if (imgUrl.startsWith("http://")) {
-				
-			}
-		} catch (OutOfMemoryError e) {
-			e.printStackTrace();
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return bitmap;
-	}
+    public static Bitmap getBitMapFromImageUrl(Context ctx, String imgUrl) {
+        if (imgUrl == null || imgUrl.length() == 0) {
+            return null;
+        }
 
+        Bitmap bitmap = null;
+        EBaiduMapBaseActivity activity = (EBaiduMapBaseActivity)ctx;
+        if (null != activity) {
+            EUExBaiduMap baiduMap = activity.getUexBaseObj();
+            if (null != baiduMap) {
+                EBrowserView eBrwView = baiduMap.getEBrowserView();
+                imgUrl = BUtility.makeRealPath(imgUrl, eBrwView);
+                if (imgUrl.startsWith(BUtility.F_Widget_RES_path)) {
+                    InputStream is = null;
+                    try {
+                        is = ctx.getAssets().open(imgUrl);
+                        if (is != null) {
+                            bitmap = BitmapFactory.decodeStream(is);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (is != null) {
+                            try {
+                                is.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                } else if (imgUrl.startsWith("/")) {
+                    bitmap = BitmapFactory.decodeFile(imgUrl);
+                } else if (imgUrl.startsWith("http://")) {
+                    bitmap = makeBitmapForHttp(ctx, imgUrl);
+                }
+            }
+        }
+        return bitmap;
+    }
+
+    private static Bitmap makeBitmapForHttp(Context ctx, String imgUrl) {
+        Bitmap bitmap = null;
+        try {
+            URL uRL = new URL(imgUrl);
+            HttpURLConnection connection = (HttpURLConnection) uRL
+                    .openConnection();
+            String cookie = CookieManager.getInstance().getCookie(imgUrl);
+            if (null != cookie) {
+                connection.setRequestProperty(SM.COOKIE, cookie);
+            }
+            connection.connect();
+            if (200 == connection.getResponseCode()) {
+                InputStream input = connection.getInputStream();
+                if (input != null) {
+                    Environment.getDownloadCacheDirectory();
+                    File ecd = ctx.getExternalCacheDir();
+                    File file = new File(ecd, "markBgImage"
+                            + makeFileSuffix(imgUrl));
+                    OutputStream outStream = new FileOutputStream(file);
+                    byte buf[] = new byte[8 * 1024];
+                    while (true) {
+                        int numread = input.read(buf);
+                        if (numread == -1) {
+                            break;
+                        }
+                        outStream.write(buf, 0, numread);
+                    }
+                    bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    private static String makeFileSuffix(String url) {
+        int index = url.lastIndexOf(".");
+        if (index < 0) {
+            return null;
+        }
+        return url.substring(index + 1);
+    }
 
     public static EBaiduMapMarkerOverlayOptions getMarkerOverlayOpitonsWithJSON(String jsonStr) {
 
@@ -292,6 +346,7 @@ public class EBaiduMapUtils {
             String subTitle = null;
             String bgImgPath = null;
             boolean isUseYOffset = false;
+            String bottomBubbleCard = null;
 
 
             if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BUBBLE)) {
@@ -323,8 +378,9 @@ public class EBaiduMapUtils {
                 } else {
                     isUseYOffset = false;
                 }
-
-
+                if (bubbleJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BOTTOMCARD)) {
+                    bottomBubbleCard = bubbleJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BOTTOMCARD);
+                }
             }
 
             markerOverlayOptions.setBubbleBgImgPath(bgImgPath);
@@ -332,6 +388,7 @@ public class EBaiduMapUtils {
             markerOverlayOptions.setBubbleTitle(title);
             markerOverlayOptions.setyOffset(yOffset);
             markerOverlayOptions.setiUseYOffset(isUseYOffset);
+            markerOverlayOptions.setBottomBubbleCard(bottomBubbleCard);
 
         } catch (JSONException e) {
             e.printStackTrace();
