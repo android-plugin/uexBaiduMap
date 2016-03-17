@@ -237,39 +237,8 @@ public class EUExBaiduMap extends EUExBase {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ZOOMCONTROLSENABLED, params);
 	}
 
-	/* 计算两点之间的距离 by waka */
-
-	public void getDistance(String[] params) {
-
-		if (params.length < 4) {
-			return;
-		}
-
-		try {
-
-			double lat1 = Double.valueOf(params[0]);
-			double lon1 = Double.valueOf(params[1]);
-			double lat2 = Double.valueOf(params[2]);
-			double lon2 = Double.valueOf(params[3]);
-
-			double distance = -1;
-
-			// 判断，如果是小距离
-			if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
-					&& (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
-				distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2, lat2);
-			}
-			// 大距离
-			else {
-				distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2, lat2);
-			}
-
-			jsCallback(FUNC_GET_DISTANCE_CALLBACK, 0, EUExCallback.F_C_TEXT, "" + distance);
-
-		} catch (NumberFormatException e) {
-			e.getStackTrace();
-		}
-
+	public void getDistance(String[] params) {// 计算两点之间的距离 by waka
+		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETDISTANCE, params);
 	}
 
 	@Override
@@ -428,6 +397,10 @@ public class EUExBaiduMap extends EUExBase {
 			case EBaiduMapUtils.MAP_MSG_CODE_ZOOMCONTROLSENABLED:
 				handleZoomControlsEnabled(params, eBaiduMapBaseFragment);
 				break;
+			case EBaiduMapUtils.MAP_MSG_CODE_GETDISTANCE:// 计算两点之间的距离 by waka
+				handleGetDistance(params);
+				break;
+
 			default:
 				break;
 			}
@@ -451,6 +424,12 @@ public class EUExBaiduMap extends EUExBase {
 			case EBaiduMapUtils.MAP_MSG_CODE_POIBOUNDSEARCH:
 				handlePoiBoundSearch(params, null);
 				break;
+
+			// 计算两点之间的距离 by waka
+			case EBaiduMapUtils.MAP_MSG_CODE_GETDISTANCE:
+				handleGetDistance(params);
+				break;
+
 			default:
 				break;
 			}
@@ -1031,6 +1010,36 @@ public class EUExBaiduMap extends EUExBase {
 				eBaiduMapBaseFragment.zoomControlsEnabled(true);
 			}
 		} catch (Exception e) {
+		}
+	}
+
+	private void handleGetDistance(String[] params) {
+		if (params.length < 4) {
+			return;
+		}
+		try {
+
+			double lat1 = Double.valueOf(params[0]);
+			double lon1 = Double.valueOf(params[1]);
+			double lat2 = Double.valueOf(params[2]);
+			double lon2 = Double.valueOf(params[3]);
+
+			double distance = -1;
+
+			// 判断，如果是小距离
+			if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
+					&& (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
+				distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2, lat2);
+			}
+			// 大距离
+			else {
+				distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2, lat2);
+			}
+
+			jsCallback(EBaiduMapUtils.MAP_FUN_CB_GET_DISTANCE, 0, EUExCallback.F_C_TEXT, "" + distance);
+
+		} catch (NumberFormatException e) {
+			e.getStackTrace();
 		}
 	}
 }
