@@ -12,7 +12,7 @@
         android:label="@string/app_name" >
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="Yw7OZG1INy4N4DQumYfaldgl" />
+            android:value="WGXxRR8ZaDFLBvHtxWgutDaq" />
 
         <activity
             android:name="org.zywx.wbpalmstar.engine.EBrowserActivity"
@@ -41,7 +41,7 @@
         </service>
     </application>
 
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="8" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
