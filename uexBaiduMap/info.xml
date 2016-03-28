@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.1.34" build="34">
-        <info>34.1:增加了getDistance得到两点间直线距离方法
-                 2:在回调方法cbPoiSearchResult中增加distance字段，返回距离</info>
+        uexName="uexBaiduMap" version="3.1.35" build="35">
+        <info>35:在handleCloseBaiduMap中添加空指针判断，避免一些极端情况下程序崩溃</info>
+        <build>34.1:增加了getDistance得到两点间直线距离方法
+                 2:在回调方法cbPoiSearchResult中增加distance字段，返回距离</build>
         <build>33.1:增加了，当不打开地图View时，也可以调用poi搜索功能（目前支持城市检索，周边检索，区域检索）
                   2:修复了打开地图再关闭地图，搜索poi无效的问题</build>
         <build>32:1.增加底部卡片样式气泡
