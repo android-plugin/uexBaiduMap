@@ -47,10 +47,10 @@ import org.json.JSONObject;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.bean.MapStatusChangeBean;
 
-public class EBaiduMapBaseActivity extends Activity implements OnMapClickListener, OnMapStatusChangeListener,
-OnMapLoadedCallback, OnMapDoubleClickListener, OnMapLongClickListener, OnMyLocationClickListener,
-SnapshotReadyCallback, OnGetGeoCoderResultListener {
-	
+public class EBaiduMapBaseActivity extends Activity
+		implements OnMapClickListener, OnMapStatusChangeListener, OnMapLoadedCallback, OnMapDoubleClickListener,
+		OnMapLongClickListener, OnMyLocationClickListener, SnapshotReadyCallback, OnGetGeoCoderResultListener {
+
 	private static final String LTAG = EBaiduMapBaseActivity.class.getSimpleName();
 	private MapView mMapView = null;
 	private BaiduMap mBaiduMap = null;
@@ -68,41 +68,39 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	private MyLocationListenner myListener = new MyLocationListenner();
 	private GeoCoder mGeoCoder = null;
 	private float defaultLevel;
-    private MapStatusChangeBean changeBean = null;
+	private MapStatusChangeBean changeBean = null;
 
 	private MyOrientationListener myOrientationListener;
-    private int mXDirection=0;
-	
+	private int mXDirection = 0;
+
 	/**
 	 * 构造广播监听类，监听 SDK key 验证以及网络异常广播
 	 */
-	private class SDKReceiver extends BroadcastReceiver {  
-	    public void onReceive(Context context, Intent intent) { 
-	    	String action = intent.getAction();
-	    	if (action
-	    			.equals(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
-	    		jsonSDKReceiverErrorCallback(action);
-	    	} else if (action
-	    			.equals(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
-	    		jsonSDKReceiverErrorCallback(action);
-	    	}
-	    }  
+	private class SDKReceiver extends BroadcastReceiver {
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (action.equals(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
+				jsonSDKReceiverErrorCallback(action);
+			} else if (action.equals(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
+				jsonSDKReceiverErrorCallback(action);
+			}
+		}
 	}
-	
+
 	private void jsonSDKReceiverErrorCallback(String errorInfo) {
 		if (uexBaseObj != null) {
 			JSONObject jsonObject = new JSONObject();
 			try {
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ERRORINFO, errorInfo);
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "){" 
-						+ EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "('"+ jsonObject.toString() + "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "){"
+						+ EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "('" + jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -111,17 +109,15 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 			// 当用intent参数时，设置中心点为指定点
 			Bundle b = intent.getExtras();
 			LatLng p = new LatLng(b.getDouble(EBaiduMapUtils.MAP_EXTRA_LAN), b.getDouble(EBaiduMapUtils.MAP_EXTRA_LNG));
-			mMapView = new MapView(this,
-					new BaiduMapOptions().mapStatus(new MapStatus.Builder()
-							.target(p).build()));
+			mMapView = new MapView(this, new BaiduMapOptions().mapStatus(new MapStatus.Builder().target(p).build()));
 		} else {
 			mMapView = new MapView(this, new BaiduMapOptions());
 		}
-		
+
 		if (intent.hasExtra(EBaiduMapUtils.MAP_EXTRA_UEXBASE_OBJ)) {
-			setUexBaseObj((EUExBaiduMap)intent.getParcelableExtra(EBaiduMapUtils.MAP_EXTRA_UEXBASE_OBJ));
+			setUexBaseObj((EUExBaiduMap) intent.getParcelableExtra(EBaiduMapUtils.MAP_EXTRA_UEXBASE_OBJ));
 		}
-		
+
 		setContentView(mMapView);
 		mBaiduMap = mMapView.getMap();
 		mUiSettings = mBaiduMap.getUiSettings();
@@ -130,14 +126,14 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		eBaiduMapBusLineSearch = new EBaiduMapBusLineSearch(this, mBaiduMap, mMapView);
 		eBaiduMapRoutePlanSearch = new EBaiduMapRoutePlanSearch(this, mBaiduMap, mMapView);
 
-		IntentFilter iFilter = new IntentFilter();  
+		IntentFilter iFilter = new IntentFilter();
 		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
 		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
 		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
 		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
-		mSDKReceiver = new SDKReceiver();  
+		mSDKReceiver = new SDKReceiver();
 		registerReceiver(mSDKReceiver, iFilter);
-        initOritationListener();
+		initOritationListener();
 		// 定位初始化
 		mLocClient = new LocationClient(getApplicationContext());
 		mLocClient.registerLocationListener(myListener);
@@ -146,17 +142,17 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		option.setCoorType("bd09ll"); // 设置坐标类型
 		option.setScanSpan(2000);
 		mLocClient.setLocOption(option);
-		
+
 		mGeoCoder = GeoCoder.newInstance();
 		mGeoCoder.setOnGetGeoCodeResultListener(this);
-		
+
 		mBaiduMap.setOnMapClickListener(this);
 		mBaiduMap.setOnMapStatusChangeListener(this);
 		mBaiduMap.setOnMapLoadedCallback(this);
 		mBaiduMap.setOnMapDoubleClickListener(this);
 		mBaiduMap.setOnMapLongClickListener(this);
 		mBaiduMap.setOnMyLocationClickListener(this);
-		
+
 		defaultLevel = mBaiduMap.getMapStatus().zoom;
 	}
 
@@ -165,7 +161,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		super.onPause();
 		// activity 暂停时同时暂停地图控件
 		mMapView.onPause();
-        myOrientationListener.stop();
+		myOrientationListener.stop();
 	}
 
 	@Override
@@ -173,7 +169,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		super.onResume();
 		// activity 恢复时同时恢复地图控件
 		mMapView.onResume();
-        myOrientationListener.start();
+		myOrientationListener.start();
 	}
 
 	@Override
@@ -190,26 +186,27 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		mMapView.onDestroy();
 		Log.i(LTAG, "onDestroy");
 	}
-	
+
 	public void setMapType(int type) {
 		mBaiduMap.setMapType(type);
 	}
-	
+
 	public void setTrafficEnabled(boolean enable) {
 		mBaiduMap.setTrafficEnabled(enable);
 	}
-	
+
 	public void setCenter(double lng, double lat, boolean isUseAnimate) {
 		LatLng ll = new LatLng(lat, lng);
+		Log.i("uexBaiduMap", "【setCenter】 经度longitude=" + lng + " 纬度latitude=" + lat);
 		MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
-		
+
 		if (isUseAnimate) {
 			mBaiduMap.animateMapStatus(u);
 		} else {
 			mBaiduMap.setMapStatus(u);
-		}	
+		}
 	}
-	
+
 	/**
 	 * 处理缩放 sdk 缩放级别范围： [3.0,19.0]
 	 */
@@ -217,46 +214,46 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(zoomLevel);
 		mBaiduMap.animateMapStatus(u);
 	}
-	
+
 	public void zoomIn() {
 		MapStatusUpdate u = MapStatusUpdateFactory.zoomIn();
 		mBaiduMap.animateMapStatus(u);
 	}
-	
+
 	public void zoomOut() {
 		MapStatusUpdate u = MapStatusUpdateFactory.zoomOut();
 		mBaiduMap.animateMapStatus(u);
 	}
-	
+
 	public void rotate(int angle) {
 		MapStatus ms = new MapStatus.Builder(mBaiduMap.getMapStatus()).rotate(angle).build();
 		MapStatusUpdate u = MapStatusUpdateFactory.newMapStatus(ms);
 		mBaiduMap.animateMapStatus(u);
 	}
-	
+
 	public void overlook(int angle) {
 		MapStatus ms = new MapStatus.Builder(mBaiduMap.getMapStatus()).overlook(angle).build();
 		MapStatusUpdate u = MapStatusUpdateFactory.newMapStatus(ms);
 		mBaiduMap.animateMapStatus(u);
 	}
-	
-	public void setZoomEnable(boolean enable){
+
+	public void setZoomEnable(boolean enable) {
 		mUiSettings.setZoomGesturesEnabled(enable);
 	}
 
-	public void setRotateEnable(boolean enable){
+	public void setRotateEnable(boolean enable) {
 		mUiSettings.setRotateGesturesEnabled(enable);
 	}
-	
-	public void setCompassEnable(boolean enable){
+
+	public void setCompassEnable(boolean enable) {
 		mUiSettings.setCompassEnabled(enable);
 	}
-	
-	public void setScrollEnable(boolean enable){
+
+	public void setScrollEnable(boolean enable) {
 		mUiSettings.setScrollGesturesEnabled(enable);
 	}
-	
-	public void setOverlookEnable(boolean enable){
+
+	public void setOverlookEnable(boolean enable) {
 		mUiSettings.setOverlookingGesturesEnabled(enable);
 	}
 
@@ -264,21 +261,21 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		eBaiduMapOverlayMgr.addMarkerOverlay(markerInfo);
 	}
 
-    public void removeMarkerOverlay(String markerId) {
-        eBaiduMapOverlayMgr.removeMarkerOverlay(markerId);
-    }
-	
+	public void removeMarkerOverlay(String markerId) {
+		eBaiduMapOverlayMgr.removeMarkerOverlay(markerId);
+	}
+
 	public void setMarkerOverlay(String markerId, String markerInfo) {
 		eBaiduMapOverlayMgr.setMarkerOverlay(markerId, markerInfo);
 	}
-	
+
 	public void showBubble(String markerId) {
 		eBaiduMapOverlayMgr.showBubble(markerId);
 	}
 
-    public void hideBubble() {
-        eBaiduMapOverlayMgr.hideBubble();
-    }
+	public void hideBubble() {
+		eBaiduMapOverlayMgr.hideBubble();
+	}
 
 	public EUExBaiduMap getUexBaseObj() {
 		return uexBaseObj;
@@ -287,11 +284,11 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	public void setUexBaseObj(EUExBaiduMap uexBaseObj) {
 		this.uexBaseObj = uexBaseObj;
 	}
-	
+
 	public void poiSearchInCity(String city, String searchKey, int pageNum) {
 		eBaiduMapPoiSearch.poiSearchInCity(city, searchKey, pageNum);
 	}
-	
+
 	public void poiNearbySearch(double lng, double lat, int radius, String searchKey, int pageNum) {
 		eBaiduMapPoiSearch.poiNearbySearch(lng, lat, radius, searchKey, pageNum);
 	}
@@ -311,7 +308,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	public void preBusLineNode() {
 		eBaiduMapBusLineSearch.preBusLineNode();
 	}
-	
+
 	public void nextBusLineNode() {
 		eBaiduMapBusLineSearch.nextBusLineNode();
 	}
@@ -319,24 +316,24 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	public void searchRoutePlan(EBaiduMapRoutePlanOptions routePlanOptions) {
 		eBaiduMapRoutePlanSearch.searchRoutePlan(routePlanOptions);
 	}
-	
+
 	public void removeRoutePlan(String routePlanId) {
 		eBaiduMapRoutePlanSearch.removeRoutePlan(routePlanId);
-    }
-    
-    public void preRouteNode() {
-    	eBaiduMapRoutePlanSearch.preRouteNode();
-    }
-    
-    public void nextRouteNode() {
-    	eBaiduMapRoutePlanSearch.nextRouteNode();
-    }
+	}
+
+	public void preRouteNode() {
+		eBaiduMapRoutePlanSearch.preRouteNode();
+	}
+
+	public void nextRouteNode() {
+		eBaiduMapRoutePlanSearch.nextRouteNode();
+	}
 
 	public void geocode(String city, String address) {
 		Log.i(LTAG, "geocode-》" + city + "," + address);
 		mGeoCoder.geocode(new GeoCodeOption().city(city).address(address));
 	}
-	
+
 	public void reverseGeoCode(double lng, double lat) {
 		Log.i(LTAG, "reverseGeoCode");
 		LatLng ll = new LatLng(lat, lng);
@@ -355,10 +352,10 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	@Override
 	public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
 		if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-			jsonAddressCallback(null,EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
+			jsonAddressCallback(null, EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
 			return;
 		}
-		jsonAddressCallback(result.getAddress(),EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
+		jsonAddressCallback(result.getAddress(), EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
 	}
 
 	/**
@@ -366,7 +363,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	 */
 	public void getCurrentLocation() {
 		Log.i(LTAG, "getCurrentLocation");
-		if(mLocClient != null && !mLocClient.isStarted()) {
+		if (mLocClient != null && !mLocClient.isStarted()) {
 			mLocClient.start();
 			isOneTimeLocation = true;
 		}
@@ -378,18 +375,18 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 	 */
 	public void startLocation() {
 		Log.i(LTAG, "startLocation");
-		if(mLocClient != null && !mLocClient.isStarted()) {
+		if (mLocClient != null && !mLocClient.isStarted()) {
 			mLocClient.start();
 			isStartDurationLocation = true;
 		}
 	}
-	
+
 	/**
 	 * 结束定位
 	 */
 	public void stopLocation() {
 		Log.i(LTAG, "stopLocation");
-		if(mLocClient != null && mLocClient.isStarted()) {
+		if (mLocClient != null && mLocClient.isStarted()) {
 			// 退出时销毁定位
 			mLocClient.stop();
 			isStartDurationLocation = false;
@@ -397,7 +394,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		// 关闭定位图层
 		setMyLocationEnabled(false);
 	}
-	
+
 	/**
 	 * 显示或隐藏用户位置
 	 */
@@ -405,7 +402,7 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		Log.i(LTAG, "setMyLocationEnabled");
 		mBaiduMap.setMyLocationEnabled(enable);
 		if (enable) {
-			if(mLocClient != null && !mLocClient.isStarted()) {
+			if (mLocClient != null && !mLocClient.isStarted()) {
 				mLocClient.start();
 				isStartDurationLocation = true;
 			} else {
@@ -413,20 +410,17 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 			}
 		}
 	}
-	
+
 	public void setUserTrackingMode(int mode) {
 		if (mode == 0) {
-			mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
-					LocationMode.NORMAL, true, null));
+			mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(LocationMode.NORMAL, true, null));
 		} else if (mode == 1) {
-			mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
-					LocationMode.FOLLOWING, true, null));
+			mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(LocationMode.FOLLOWING, true, null));
 		} else if (mode == 2) {
-			mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
-					LocationMode.COMPASS, true, null));
+			mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(LocationMode.COMPASS, true, null));
 		}
 	}
-	
+
 	/**
 	 * 定位SDK监听函数
 	 */
@@ -435,35 +429,30 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 		public void onReceiveLocation(BDLocation location) {
 			// map view 销毁后不在处理新接收的位置
 			if (location == null || mMapView == null) {
-				jsonReceiveLocationCallback(null,
-						EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION);
+				jsonReceiveLocationCallback(null, EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION);
 				return;
 			}
-			MyLocationData locationData = new MyLocationData.Builder()
-					.accuracy(location.getRadius())
+			MyLocationData locationData = new MyLocationData.Builder().accuracy(location.getRadius())
 					// 此处设置开发者获取到的方向信息，顺时针0-360
-					.direction(mXDirection).latitude(location.getLatitude())
-					.longitude(location.getLongitude()).build();
+					.direction(mXDirection).latitude(location.getLatitude()).longitude(location.getLongitude()).build();
 			mBaiduMap.setMyLocationData(locationData);
 			if (isOneTimeLocation) {
-				jsonReceiveLocationCallback(location,
-						EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION);
+				jsonReceiveLocationCallback(location, EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION);
 				isOneTimeLocation = false;
-				
+
 				// 如果不是持续定位，每次定位后停止定位服务
 				if (!isStartDurationLocation) {
 					mLocClient.stop();
 				}
 			} else {
-				jsonReceiveLocationCallback(location,
-						EBaiduMapUtils.MAP_FUN_ON_RECEIVE_LOCATION);
+				jsonReceiveLocationCallback(location, EBaiduMapUtils.MAP_FUN_ON_RECEIVE_LOCATION);
 			}
 		}
 
 		public void onReceivePoi(BDLocation poiLocation) {
 		}
 	}
-	
+
 	private void jsonReceiveLocationCallback(BDLocation location, String header) {
 		if (uexBaseObj != null) {
 			JSONObject jsonObject = new JSONObject();
@@ -471,287 +460,291 @@ SnapshotReadyCallback, OnGetGeoCoderResultListener {
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(location.getLatitude()));
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(location.getLongitude()));
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TIMESTAMP, location.getTime());
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" 
-						+ header + "('"+ jsonObject.toString() + "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString()
+						+ "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" 
-						+ header + "('"+ null + "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + null + "');}";
 				uexBaseObj.onCallback(js);
 				e.printStackTrace();
 			}
 		}
-	}  
-	
+	}
+
 	private void jsonAddressCallback(String address, String header) {
 		if (uexBaseObj != null) {
 			JSONObject jsonObject = new JSONObject();
 			try {
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" 
-						+ header + "('"+ jsonObject.toString() + "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString()
+						+ "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
-	}  
-	
+	}
+
 	private void jsonLatLngCallback(LatLng point, String header) {
 		if (uexBaseObj != null) {
 			JSONObject jsonObject = new JSONObject();
 			try {
-                if (point != null){
-                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
-                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
-                }
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){"
-						+ header + "('"+ jsonObject.toString() + "');}";
+				if (point != null) {
+					jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
+					jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
+				}
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString()
+						+ "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
-	}  
-	
-	/** 
-	 * 地图单击事件回调函数 
-	 * @param point 点击的地理坐标 
-	 */  
-	public void onMapClick(LatLng point){  
+	}
+
+	/**
+	 * 地图单击事件回调函数
+	 * 
+	 * @param point
+	 *            点击的地理坐标
+	 */
+	public void onMapClick(LatLng point) {
 		jsonLatLngCallback(point, EBaiduMapUtils.MAP_FUN_ON_MAP_CLICK_LISTNER);
 	}
-	
-	/** 
-	 * 地图内 Poi 单击事件回调函数 
-	 * @param poi 点击的 poi 信息 
-	 */  
-	public boolean onMapPoiClick(MapPoi poi){
-		return false;  
-	}  
-	
-	/** 
-	 * 手势操作地图，设置地图状态等操作导致地图状态开始改变。 
-	 * @param status 地图状态改变开始时的地图状态 
-	 */  
-	public void onMapStatusChangeStart(MapStatus status){
-        if (changeBean == null){
-            changeBean = new MapStatusChangeBean();
-        }
-        changeBean.setOldZoom(status.zoom);
-        changeBean.setOldOverlook(status.overlook);
-        changeBean.setOldRotate(status.rotate);
-        changeBean.setOldCenterLongitude(status.target.longitude);
-        changeBean.setOldCenterLatitude(status.target.latitude);
-        changeBean.setOldNortheastLatitude(status.bound.northeast.latitude);
-        changeBean.setOldNortheastLongitude(status.bound.northeast.longitude);
-        changeBean.setOldSouthwestLatitude(status.bound.southwest.latitude);
-        changeBean.setOldCenterLongitude(status.bound.southwest.longitude);
+
+	/**
+	 * 地图内 Poi 单击事件回调函数
+	 * 
+	 * @param poi
+	 *            点击的 poi 信息
+	 */
+	public boolean onMapPoiClick(MapPoi poi) {
+		return false;
 	}
-	
-	/** 
-	 * 地图状态变化中 
-	 * @param status 当前地图状态 
-	 */  
-	public void onMapStatusChange(MapStatus status){
-	}  
-	
-	/** 
-	 * 地图状态改变结束 
-	 * @param status 地图状态改变结束后的地图状态 
-	 */  
-	public void onMapStatusChangeFinish(MapStatus status){
-		if(uexBaseObj != null && status.zoom != defaultLevel) {
+
+	/**
+	 * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
+	 * 
+	 * @param status
+	 *            地图状态改变开始时的地图状态
+	 */
+	public void onMapStatusChangeStart(MapStatus status) {
+		if (changeBean == null) {
+			changeBean = new MapStatusChangeBean();
+		}
+		changeBean.setOldZoom(status.zoom);
+		changeBean.setOldOverlook(status.overlook);
+		changeBean.setOldRotate(status.rotate);
+		changeBean.setOldCenterLongitude(status.target.longitude);
+		changeBean.setOldCenterLatitude(status.target.latitude);
+		changeBean.setOldNortheastLatitude(status.bound.northeast.latitude);
+		changeBean.setOldNortheastLongitude(status.bound.northeast.longitude);
+		changeBean.setOldSouthwestLatitude(status.bound.southwest.latitude);
+		changeBean.setOldCenterLongitude(status.bound.southwest.longitude);
+	}
+
+	/**
+	 * 地图状态变化中
+	 * 
+	 * @param status
+	 *            当前地图状态
+	 */
+	public void onMapStatusChange(MapStatus status) {
+	}
+
+	/**
+	 * 地图状态改变结束
+	 * 
+	 * @param status
+	 *            地图状态改变结束后的地图状态
+	 */
+	public void onMapStatusChangeFinish(MapStatus status) {
+		if (uexBaseObj != null && status.zoom != defaultLevel) {
 			defaultLevel = status.zoom;
-			String js = EUExBase.SCRIPT_HEADER + "if("
-					+ EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "){"
-					+ EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "("+ status.zoom + ", " + status.target.latitude + ", " + status.target.longitude +");}";
+			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "){"
+					+ EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "(" + status.zoom + ", "
+					+ status.target.latitude + ", " + status.target.longitude + ");}";
 			uexBaseObj.onCallback(js);
 		}
-        if (uexBaseObj != null && changeBean != null){
-            changeBean.setNewZoom(status.zoom);
-            changeBean.setNewOverlook(status.overlook);
-            changeBean.setNewRotate(status.rotate);
-            changeBean.setNewCenterLongitude(status.target.longitude);
-            changeBean.setNewCenterLatitude(status.target.latitude);
-            changeBean.setNewNortheastLatitude(status.bound.northeast.latitude);
-            changeBean.setNewNortheastLongitude(status.bound.northeast.longitude);
-            changeBean.setNewSouthwestLatitude(status.bound.southwest.latitude);
-            changeBean.setNewSouthwestLongitude(status.bound.southwest.longitude);
-            JSONObject json = new JSONObject();
-            try {
-                if (changeBean.isZoomChanged()){
-                    JSONObject zoomJson = new JSONObject();
-                    zoomJson.put(MapStatusChangeBean.TAG_OLDZOOM, changeBean.getOldZoom());
-                    zoomJson.put(MapStatusChangeBean.TAG_NEWZOOM, changeBean.getNewZoom());
-                    json.put(MapStatusChangeBean.TAG_ZOOM, zoomJson);
-                }
-                if (changeBean.isOverlookChanged()){
-                    JSONObject overlookJson = new JSONObject();
-                    overlookJson.put(MapStatusChangeBean.TAG_OLDOVERLOOK, changeBean.getOldOverlook());
-                    overlookJson.put(MapStatusChangeBean.TAG_NEWOVERLOOK, changeBean.getNewOverlook());
-                    json.put(MapStatusChangeBean.TAG_OVERLOOK, overlookJson);
-                }
-                if (changeBean.isRotateChanged()){
-                    JSONObject rotateJson = new JSONObject();
-                    rotateJson.put(MapStatusChangeBean.TAG_OLDROTATE, changeBean.getOldRotate());
-                    rotateJson.put(MapStatusChangeBean.TAG_NEWROTATE, changeBean.getNewRotate());
-                    json.put(MapStatusChangeBean.TAG_ROTATE, rotateJson);
-                }
-                if (changeBean.isNortheastChanged()){
-                    JSONObject northeastJson = new JSONObject();
-                    northeastJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.bound.northeast.longitude);
-                    northeastJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.bound.northeast.latitude);
-                    json.put(MapStatusChangeBean.TAG_NORTHEAST, northeastJson);
-                }
-                if (changeBean.isSouthWestChanged()){
-                    JSONObject southwestJson = new JSONObject();
-                    southwestJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.bound.southwest.longitude);
-                    southwestJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.bound.southwest.latitude);
-                    json.put(MapStatusChangeBean.TAG_SOUTHWEST, southwestJson);
-                }
-                if ((changeBean.isSouthWestChanged() || changeBean.isNortheastChanged())
-                        && changeBean.isCenterChanged()){
-                    JSONObject centerJson = new JSONObject();
-                    centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.target.longitude);
-                    centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.target.latitude);
-                    json.put(MapStatusChangeBean.TAG_CENTER, centerJson);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (json.keys().hasNext()){
-                String js = EUExBase.SCRIPT_HEADER + "if("
-                        + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "){"
-                        + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "('"+ json.toString() +"');}";
-                uexBaseObj.onCallback(js);
-            }
-            changeBean = null;
-        }
+		if (uexBaseObj != null && changeBean != null) {
+			changeBean.setNewZoom(status.zoom);
+			changeBean.setNewOverlook(status.overlook);
+			changeBean.setNewRotate(status.rotate);
+			changeBean.setNewCenterLongitude(status.target.longitude);
+			changeBean.setNewCenterLatitude(status.target.latitude);
+			changeBean.setNewNortheastLatitude(status.bound.northeast.latitude);
+			changeBean.setNewNortheastLongitude(status.bound.northeast.longitude);
+			changeBean.setNewSouthwestLatitude(status.bound.southwest.latitude);
+			changeBean.setNewSouthwestLongitude(status.bound.southwest.longitude);
+			JSONObject json = new JSONObject();
+			try {
+				if (changeBean.isZoomChanged()) {
+					JSONObject zoomJson = new JSONObject();
+					zoomJson.put(MapStatusChangeBean.TAG_OLDZOOM, changeBean.getOldZoom());
+					zoomJson.put(MapStatusChangeBean.TAG_NEWZOOM, changeBean.getNewZoom());
+					json.put(MapStatusChangeBean.TAG_ZOOM, zoomJson);
+				}
+				if (changeBean.isOverlookChanged()) {
+					JSONObject overlookJson = new JSONObject();
+					overlookJson.put(MapStatusChangeBean.TAG_OLDOVERLOOK, changeBean.getOldOverlook());
+					overlookJson.put(MapStatusChangeBean.TAG_NEWOVERLOOK, changeBean.getNewOverlook());
+					json.put(MapStatusChangeBean.TAG_OVERLOOK, overlookJson);
+				}
+				if (changeBean.isRotateChanged()) {
+					JSONObject rotateJson = new JSONObject();
+					rotateJson.put(MapStatusChangeBean.TAG_OLDROTATE, changeBean.getOldRotate());
+					rotateJson.put(MapStatusChangeBean.TAG_NEWROTATE, changeBean.getNewRotate());
+					json.put(MapStatusChangeBean.TAG_ROTATE, rotateJson);
+				}
+				if (changeBean.isNortheastChanged()) {
+					JSONObject northeastJson = new JSONObject();
+					northeastJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.bound.northeast.longitude);
+					northeastJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.bound.northeast.latitude);
+					json.put(MapStatusChangeBean.TAG_NORTHEAST, northeastJson);
+				}
+				if (changeBean.isSouthWestChanged()) {
+					JSONObject southwestJson = new JSONObject();
+					southwestJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.bound.southwest.longitude);
+					southwestJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.bound.southwest.latitude);
+					json.put(MapStatusChangeBean.TAG_SOUTHWEST, southwestJson);
+				}
+				if ((changeBean.isSouthWestChanged() || changeBean.isNortheastChanged())
+						&& changeBean.isCenterChanged()) {
+					JSONObject centerJson = new JSONObject();
+					centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.target.longitude);
+					centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.target.latitude);
+					json.put(MapStatusChangeBean.TAG_CENTER, centerJson);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			if (json.keys().hasNext()) {
+				String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "){"
+						+ EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "('" + json.toString() + "');}";
+				uexBaseObj.onCallback(js);
+			}
+			changeBean = null;
+		}
 	}
 
-    /**
-     * 初始化方向传感器
-     */
-    private void initOritationListener()
-    {
-        myOrientationListener = new MyOrientationListener(
-                getApplicationContext());
-        myOrientationListener
-                .setOnOrientationListener(new MyOrientationListener.OnOrientationListener()
-                {
-                    @Override
-                    public void onOrientationChanged(float x)
-                    {
-                        MyLocationData locationData=mBaiduMap.getLocationData();
-                        if (locationData==null){
-                            return;
-                        }
-                        mXDirection = (int) x;
-                        // 构造定位数据
-                        MyLocationData locData = new MyLocationData.Builder()
-                                .accuracy(locationData.accuracy)
-                                        // 此处设置开发者获取到的方向信息，顺时针0-360
-                                .direction(mXDirection)
-                                .latitude(locationData.latitude)
-                                .longitude(locationData.longitude).build();
-                        // 设置定位数据
-                        mBaiduMap.setMyLocationData(locData);
-                    }
-                });
-    }
+	/**
+	 * 初始化方向传感器
+	 */
+	private void initOritationListener() {
+		myOrientationListener = new MyOrientationListener(getApplicationContext());
+		myOrientationListener.setOnOrientationListener(new MyOrientationListener.OnOrientationListener() {
+			@Override
+			public void onOrientationChanged(float x) {
+				MyLocationData locationData = mBaiduMap.getLocationData();
+				if (locationData == null) {
+					return;
+				}
+				mXDirection = (int) x;
+				// 构造定位数据
+				MyLocationData locData = new MyLocationData.Builder().accuracy(locationData.accuracy)
+						// 此处设置开发者获取到的方向信息，顺时针0-360
+						.direction(mXDirection).latitude(locationData.latitude).longitude(locationData.longitude)
+						.build();
+				// 设置定位数据
+				mBaiduMap.setMyLocationData(locData);
+			}
+		});
+	}
 
-
-    /**
-	 * 地图加载完成回调函数 
-	 */  
-	public void onMapLoaded(){
+	/**
+	 * 地图加载完成回调函数
+	 */
+	public void onMapLoaded() {
 		if (uexBaseObj != null) {
-			String js = EUExBase.SCRIPT_HEADER + "if("
-					+ EBaiduMapUtils.MAP_FUN_CB_OPEN + "){"
+			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "){"
 					+ EBaiduMapUtils.MAP_FUN_CB_OPEN + "();}";
 			uexBaseObj.onCallback(js);
 		}
-	}  
-
-	/** 
-	 * 地图双击事件监听回调函数 
-	 * @param point 双击的地理坐标 
-	 */  
-	public void onMapDoubleClick(LatLng point){  
-		jsonLatLngCallback(point, EBaiduMapUtils.MAP_FUN_ON_MAP_DOUBLE_CLICK_LISTNER);
-	}  
-
-	/** 
-	 * 地图长按事件监听回调函数 
-	 * @param point 长按的地理坐标 
-	 */  
-	public void onMapLongClick(LatLng point){  
-		jsonLatLngCallback(point, EBaiduMapUtils.MAP_FUN_ON_MAP_LONG_CLICK_LISTNER);
-	}  
-
-	/** 
-	 * 地图定位图标点击事件监听函数 
-	 */  
-	public boolean onMyLocationClick(){  
-		return true; 
-	}  
-	
-	/** 
-	 * 地图截屏回调接口 
-	 * @param snapshot 截屏返回的 bitmap 数据 
-	 */  
-	public void onSnapshotReady(Bitmap snapshot){  
-	}  
-	
-	
-	public void removeOverlay(String overlayInfo){
-		eBaiduMapOverlayMgr.removeOverlay(overlayInfo);
-		
 	}
-	
-	public void addDotOverlay(String dotInfo){
+
+	/**
+	 * 地图双击事件监听回调函数
+	 * 
+	 * @param point
+	 *            双击的地理坐标
+	 */
+	public void onMapDoubleClick(LatLng point) {
+		jsonLatLngCallback(point, EBaiduMapUtils.MAP_FUN_ON_MAP_DOUBLE_CLICK_LISTNER);
+	}
+
+	/**
+	 * 地图长按事件监听回调函数
+	 * 
+	 * @param point
+	 *            长按的地理坐标
+	 */
+	public void onMapLongClick(LatLng point) {
+		jsonLatLngCallback(point, EBaiduMapUtils.MAP_FUN_ON_MAP_LONG_CLICK_LISTNER);
+	}
+
+	/**
+	 * 地图定位图标点击事件监听函数
+	 */
+	public boolean onMyLocationClick() {
+		return true;
+	}
+
+	/**
+	 * 地图截屏回调接口
+	 * 
+	 * @param snapshot
+	 *            截屏返回的 bitmap 数据
+	 */
+	public void onSnapshotReady(Bitmap snapshot) {
+	}
+
+	public void removeOverlay(String overlayInfo) {
+		eBaiduMapOverlayMgr.removeOverlay(overlayInfo);
+
+	}
+
+	public void addDotOverlay(String dotInfo) {
 		eBaiduMapOverlayMgr.addDotOverlay(dotInfo);
 	}
-	
-	public void addPolylineOverlay(String polylineInfo){
+
+	public void addPolylineOverlay(String polylineInfo) {
 		eBaiduMapOverlayMgr.addPolylineOverlay(polylineInfo);
 	}
-	
-	public void addArcOverlay(String arcInfo){
+
+	public void addArcOverlay(String arcInfo) {
 		eBaiduMapOverlayMgr.addArcOverlay(arcInfo);
 	}
-	
-	public void addCircleOverlay(String circleInfo){
+
+	public void addCircleOverlay(String circleInfo) {
 		eBaiduMapOverlayMgr.addCircleOverlay(circleInfo);
 	}
-	
-	public void addPolygonOverlay(String polygonInfo){
+
+	public void addPolygonOverlay(String polygonInfo) {
 		eBaiduMapOverlayMgr.addPolygonOverlay(polygonInfo);
 	}
-	
-	public void addGroundOverlay(String groundInfo){
+
+	public void addGroundOverlay(String groundInfo) {
 		eBaiduMapOverlayMgr.addGroundOverlay(groundInfo);
 	}
-	
-	public void addTextOverlay(String textInfo){
+
+	public void addTextOverlay(String textInfo) {
 		eBaiduMapOverlayMgr.addTextOverlay(textInfo);
 	}
 
 	public void hideMap() {
-		if(mMapView != null) {
+		if (mMapView != null) {
 			mMapView.setVisibility(View.INVISIBLE);
 		}
 	}
 
 	public void showMap() {
-		if(mMapView != null) {
+		if (mMapView != null) {
 			mMapView.setVisibility(View.VISIBLE);
 		}
 	}
-	
+
 	public void zoomControlsEnabled(boolean zoomControlsEnabled) {
-		if(mMapView != null) {
+		if (mMapView != null) {
 			mMapView.showZoomControls(zoomControlsEnabled);
 		}
 	}

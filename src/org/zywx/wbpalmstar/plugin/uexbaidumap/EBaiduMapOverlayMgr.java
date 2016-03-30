@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+
 import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
 import com.baidu.mapapi.model.LatLng;
@@ -17,8 +19,7 @@ import org.zywx.wbpalmstar.base.cache.ImageLoaderManager;
 import java.util.Map;
 import java.util.HashMap;
 
-
-public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
+public class EBaiduMapOverlayMgr implements OnMarkerClickListener {
 
 	private HashMap<String, EBaiduMapOverlay> mEbaiduMapOverlays;
 	protected Context mContext;
@@ -26,62 +27,62 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	protected MapView mMapView;
 	private ImageLoaderManager manager;
 	private Map<String, Bitmap> marks;
-	
+
 	public EBaiduMapOverlayMgr(Context context, BaiduMap baiduMap, MapView mapView) {
-		
+
 		mContext = context;
 		mBaiduMap = baiduMap;
 		mMapView = mapView;
 		mEbaiduMapOverlays = new HashMap<String, EBaiduMapOverlay>();
 		manager = ImageLoaderManager.initImageLoaderManager(mContext);
-        mBaiduMap.setOnMarkerClickListener(this);
-        marks = new HashMap<String, Bitmap>();
+		mBaiduMap.setOnMarkerClickListener(this);
+		marks = new HashMap<String, Bitmap>();
 	}
 
-    public void removeMarkerOverlay(String markerId) {
-        try {
-			EBaiduMapMarkerOverlay  mapMarkerOverlay = (EBaiduMapMarkerOverlay ) mEbaiduMapOverlays.get(markerId);
-            if (mapMarkerOverlay == null) {
-                return;
-            }
-            mEbaiduMapOverlays.remove(markerId);
-            mapMarkerOverlay.clearOverlay();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public void removeMarkerOverlay(String markerId) {
+		try {
+			EBaiduMapMarkerOverlay mapMarkerOverlay = (EBaiduMapMarkerOverlay) mEbaiduMapOverlays.get(markerId);
+			if (mapMarkerOverlay == null) {
+				return;
+			}
+			mEbaiduMapOverlays.remove(markerId);
+			mapMarkerOverlay.clearOverlay();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-	
 	public void addMarkerOverlay(String markerInfo) {
 
 		try {
-			 final EBaiduMapMarkerOverlayOptions markerOverlayOptions = EBaiduMapUtils.getMarkerOverlayOpitonsWithJSON(markerInfo);
-		        if(markerOverlayOptions == null) {
-		        	return;
-		        }
-		        final String iconPath = markerOverlayOptions.getIconPath();
-		        if (iconPath != null) {
-		        	if(marks.containsKey(iconPath)) {
-		        		addMarkOp(markerOverlayOptions, marks.get(iconPath));
-		        	}else {
-		        		AsyncTask<String, Void, Bitmap> task = new AsyncTask<String, Void, Bitmap>() {
-		        			@Override
-		        			protected Bitmap doInBackground(String... params) {
-		        				return EBaiduMapUtils.getImage(mContext, params[0]);
-		        			}
-		        			
-		        			@Override
-		        			protected void onPostExecute(Bitmap bitmap) {
-		        				super.onPostExecute(bitmap);
-		        				if(bitmap == null) {
-		        					bitmap = EBaiduMapUtils.getDefaultMarkerBitMap(mContext);
-		        				}
-		        				marks.put(iconPath, bitmap);
-		        				addMarkOp(markerOverlayOptions, bitmap);
-		        			}
-		        		};
-		        		task.execute(iconPath);
-		        	}
+			final EBaiduMapMarkerOverlayOptions markerOverlayOptions = EBaiduMapUtils
+					.getMarkerOverlayOpitonsWithJSON(markerInfo);
+			if (markerOverlayOptions == null) {
+				return;
+			}
+			final String iconPath = markerOverlayOptions.getIconPath();
+			if (iconPath != null) {
+				if (marks.containsKey(iconPath)) {
+					addMarkOp(markerOverlayOptions, marks.get(iconPath));
+				} else {
+					AsyncTask<String, Void, Bitmap> task = new AsyncTask<String, Void, Bitmap>() {
+						@Override
+						protected Bitmap doInBackground(String... params) {
+							return EBaiduMapUtils.getImage(mContext, params[0]);
+						}
+
+						@Override
+						protected void onPostExecute(Bitmap bitmap) {
+							super.onPostExecute(bitmap);
+							if (bitmap == null) {
+								bitmap = EBaiduMapUtils.getDefaultMarkerBitMap(mContext);
+							}
+							marks.put(iconPath, bitmap);
+							addMarkOp(markerOverlayOptions, bitmap);
+						}
+					};
+					task.execute(iconPath);
+				}
 			} else {
 				Bitmap bitmap = EBaiduMapUtils.getDefaultMarkerBitMap(mContext);
 				addMarkOp(markerOverlayOptions, bitmap);
@@ -100,8 +101,9 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				return;
 			}
 			JSONObject makerJsonObject = new JSONObject(markerInfo);
-            String markerJsonInfo = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_MARKERINFO);
-			final EBaiduMapMarkerOverlayOptions markerOverlayOptions = EBaiduMapUtils.getMarkerOverlayOpitonsWithJSON(markerJsonInfo);
+			String markerJsonInfo = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_MARKERINFO);
+			final EBaiduMapMarkerOverlayOptions markerOverlayOptions = EBaiduMapUtils
+					.getMarkerOverlayOpitonsWithJSON(markerJsonInfo);
 
 			String iconPath = markerOverlayOptions.getIconPath();
 
@@ -115,11 +117,9 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 					@Override
 					public void onImageLoaded(ImageLoadTask task, Bitmap bitmap) {
 						if (bitmap == null) {
-							bitmap = EBaiduMapUtils
-									.getDefaultMarkerBitMap(mContext);
+							bitmap = EBaiduMapUtils.getDefaultMarkerBitMap(mContext);
 						}
-						BitmapDescriptor markerDescriptor = BitmapDescriptorFactory
-								.fromBitmap(bitmap);
+						BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
 						mapMarkerOverlay.getMarker().setIcon(markerDescriptor);
 						setMarkOp(mapMarkerOverlay, markerOverlayOptions);
 					}
@@ -136,98 +136,91 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public void showBubble(String markerId) {
-		
+
 		try {
-			
+
 			EBaiduMapMarkerOverlay mapMarkerOverlay = (EBaiduMapMarkerOverlay) mEbaiduMapOverlays.get(markerId);
-			
+
 			if (mapMarkerOverlay == null) {
-				
+
 				return;
 			}
-            if (mapMarkerOverlay.isShowBottomCard()) {
-                mapMarkerOverlay.setBottomCardShow(mMapView, true);
-            } else {
-                mapMarkerOverlay.setBubbleShow(true);
-            }
-			
+			if (mapMarkerOverlay.isShowBottomCard()) {
+				mapMarkerOverlay.setBottomCardShow(mMapView, true);
+			} else {
+				mapMarkerOverlay.setBubbleShow(true);
+			}
+
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
 
-    public void hideBubble() {
-        try {
-            mBaiduMap.hideInfoWindow();
-            for (String s : mEbaiduMapOverlays.keySet()) {
-                EBaiduMapMarkerOverlay mapMarkerOverlay = (EBaiduMapMarkerOverlay) mEbaiduMapOverlays.get(s);
-                if (mapMarkerOverlay.isShowBottomCard()) {
-                    mapMarkerOverlay.setBottomCardShow(mMapView, false);
-                }
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-    }
-		
-	
-	public void clearMapOverLayMgr() {
-
-        for (String s : mEbaiduMapOverlays.keySet()) {
-
-        	EBaiduMapOverlay eBaiduMapOverlay = mEbaiduMapOverlays.get(s);
-        	eBaiduMapOverlay.clearOverlay();
-        }
-        if(marks != null) {
-        	marks.clear();
-        }
+	public void hideBubble() {
+		try {
+			mBaiduMap.hideInfoWindow();
+			for (String s : mEbaiduMapOverlays.keySet()) {
+				EBaiduMapMarkerOverlay mapMarkerOverlay = (EBaiduMapMarkerOverlay) mEbaiduMapOverlays.get(s);
+				if (mapMarkerOverlay.isShowBottomCard()) {
+					mapMarkerOverlay.setBottomCardShow(mMapView, false);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
-    @Override
-    public boolean onMarkerClick(Marker arg0) {
-        // TODO Auto-generated method stub
+	public void clearMapOverLayMgr() {
 
-        EBaiduMapBaseActivity activity;
+		for (String s : mEbaiduMapOverlays.keySet()) {
 
-        activity = (EBaiduMapBaseActivity)mContext;
+			EBaiduMapOverlay eBaiduMapOverlay = mEbaiduMapOverlays.get(s);
+			eBaiduMapOverlay.clearOverlay();
+		}
+		if (marks != null) {
+			marks.clear();
+		}
+	}
 
-        if (activity != null) {
-            EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
-            Bundle b = arg0.getExtraInfo();
-            if (b != null){
-                String markerId =  (String)b.get(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID);
-                String js = EUExBaiduMap.SCRIPT_HEADER + "if(" +
-                        EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "){" +
-                        EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "('"
-                        + markerId
-                        + "');}";
-                uexBaiduMap.onCallback(js);
-                String json = EUExBaiduMap.SCRIPT_HEADER + "if(" +
-                        EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER + "){" +
-                        EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER + "('"
-                        + markerId
-                        + "');}";
-                uexBaiduMap.onCallback(json);
-            }
-            return true;
-        }
+	@Override
+	public boolean onMarkerClick(Marker arg0) {
+		// TODO Auto-generated method stub
 
-        return false;
-    }
-    
+		EBaiduMapBaseActivity activity;
+
+		activity = (EBaiduMapBaseActivity) mContext;
+
+		if (activity != null) {
+			EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
+			Bundle b = arg0.getExtraInfo();
+			if (b != null) {
+				String markerId = (String) b.get(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID);
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "){"
+						+ EBaiduMapUtils.MAP_FUN_ON_MAKER_CLICK_LISTNER + "('" + markerId + "');}";
+				uexBaiduMap.onCallback(js);
+				String json = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER
+						+ "){" + EBaiduMapUtils.MAP_FUN_ON_MARKER_CLICK_LISTENER + "('" + markerId + "');}";
+				uexBaiduMap.onCallback(json);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
 	public void addDotOverlay(String dotInfo) {
 		try {
 			EBaiduMapDotOptions info = EBaiduMapUtils.parseDotInfoJson(dotInfo);
-			if(info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+			if (info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
 				return;
 			}
 			int fillColor = BUtility.parseColor(info.getFillColor());
-			int radius = (int)Float.parseFloat(info.getRadius());
-			DotOptions  dotOptions = new DotOptions();
+			int radius = (int) Float.parseFloat(info.getRadius());
+			DotOptions dotOptions = new DotOptions();
 			dotOptions.center(info.getLatLng());
 			dotOptions.color(fillColor);
 			dotOptions.radius(radius);
@@ -235,10 +228,10 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				dotOptions.visible(Boolean.parseBoolean(info.getVisibleStr()));
 			}
 			if (info.getzIndexStr() != null) {
-				dotOptions.zIndex((int)Float.parseFloat(info.getzIndexStr()));
+				dotOptions.zIndex((int) Float.parseFloat(info.getzIndexStr()));
 			}
 			Dot dot = (Dot) mBaiduMap.addOverlay(dotOptions);
-			if (info.getExtraStr() !=  null) {
+			if (info.getExtraStr() != null) {
 				Bundle b = new Bundle();
 				b.putString(info.getIdStr(), info.getExtraStr());
 				dot.setExtraInfo(b);
@@ -252,6 +245,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	}
 
 	public void removeOverlay(String overlayInfo) {
+
+		Log.i("uexBaiduMap", "【removeOverlay】 removeOverlay start");
 		String[] names = overlayInfo.split(",");
 		for (int i = 0; i < names.length; i++) {
 			String name = names[i];
@@ -259,19 +254,22 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 			if (overlay != null) {
 				overlay.clearOverlay();
 				mEbaiduMapOverlays.remove(name);
+				Log.i("uexBaiduMap", "【removeOverlay】 removeOverlay name=" + name);
 			}
 		}
+		Log.i("uexBaiduMap", "【removeOverlay】 removeOverlay end");
 	}
 
 	public void addPolylineOverlay(String polylineInfo) {
 		try {
 			EBaiduMapPolylineOptions info = EBaiduMapUtils.parseLineInfoJson(polylineInfo);
-			if(info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+			if (info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
 				return;
 			}
 			int fillColor = BUtility.parseColor(info.getFillColor());
-			int lineWidth = (int)Float.parseFloat(info.getLineWidth());
-			PolylineOptions polylineOptions = new PolylineOptions().points(info.getList()).color(fillColor).width(lineWidth);
+			int lineWidth = (int) Float.parseFloat(info.getLineWidth());
+			PolylineOptions polylineOptions = new PolylineOptions().points(info.getList()).color(fillColor)
+					.width(lineWidth);
 			if (info.getVisibleStr() != null) {
 				polylineOptions.visible(Boolean.parseBoolean(info.getVisibleStr()));
 			}
@@ -284,7 +282,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 				b.putString(info.getIdStr(), info.getExtraStr());
 				polyline.setExtraInfo(b);
 			}
-			EBaiduMapPolylineOverlay eBaiduMapPolylineOverlay = new EBaiduMapPolylineOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapPolylineOverlay eBaiduMapPolylineOverlay = new EBaiduMapPolylineOverlay(info.getIdStr(), mContext,
+					mBaiduMap);
 			eBaiduMapPolylineOverlay.setPolyline(polyline);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapPolylineOverlay);
 		} catch (Exception e) {
@@ -295,12 +294,13 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	public void addArcOverlay(String arcInfo) {
 		try {
 			EBaiduMapArcOptions info = EBaiduMapUtils.parseArcInfoJson(arcInfo);
-			if(info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+			if (info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
 				return;
 			}
 			int strokeColor = BUtility.parseColor(info.getStrokeColor());
-			int lineWidth = (int)Float.parseFloat(info.getLineWidth());
-			ArcOptions arcOptions = new ArcOptions().points(info.getStart(), info.getCenter(), info.getEnd()).color(strokeColor).width(lineWidth);
+			int lineWidth = (int) Float.parseFloat(info.getLineWidth());
+			ArcOptions arcOptions = new ArcOptions().points(info.getStart(), info.getCenter(), info.getEnd())
+					.color(strokeColor).width(lineWidth);
 			if (info.getVisibleStr() != null) {
 				arcOptions.visible(Boolean.parseBoolean(info.getVisibleStr()));
 			}
@@ -321,34 +321,46 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 		}
 	}
 
+	// TODO
 	public void addCircleOverlay(String circleInfo) {
 		try {
+			Log.i("uexBaiduMap", "【addCircleOverlay】 start");
 			EBaiduMapCircleOptions info = EBaiduMapUtils.parseCircleInfoJson(circleInfo);
-			if(info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+			if (info == null) {
+				Log.e("uexBaiduMap", "【addCircleOverlay】 解析JSON发生错误,EBaiduMapCircleOptions info == null");
 				return;
 			}
-			int radius = (int)Float.parseFloat(info.getRadius());
+			if (mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+				Log.e("uexBaiduMap", "【addCircleOverlay】 已经包含相同id,mEbaiduMapOverlays.containsKey(info.getIdStr())");
+				return;
+			}
+			int radius = (int) Float.parseFloat(info.getRadius());
 			int strokeColor = BUtility.parseColor(info.getStrokeColor());
-			int lineWidth = (int)Float.parseFloat(info.getLineWidth());
+			int lineWidth = (int) Float.parseFloat(info.getLineWidth());
 			int fillColor = BUtility.parseColor(info.getFillColor());
 			Stroke stroke = new Stroke(lineWidth, strokeColor);
-			CircleOptions circleOptions = new CircleOptions().center(info.getCenterPoint()).fillColor(fillColor).radius(radius).stroke(stroke);
+			CircleOptions circleOptions = new CircleOptions().center(info.getCenterPoint()).fillColor(fillColor)
+					.radius(radius).stroke(stroke);
 			if (info.getVisibleStr() != null) {
 				circleOptions.visible(Boolean.parseBoolean(info.getVisibleStr()));
 			}
 			if (info.getzIndexStr() != null) {
 				circleOptions.zIndex((int) Float.parseFloat(info.getzIndexStr()));
 			}
+			Log.i("uexBaiduMap", "【addCircleOverlay】 开始画圆");
 			Circle circle = (Circle) mBaiduMap.addOverlay(circleOptions);
+			Log.i("uexBaiduMap", "【addCircleOverlay】 完成画圆");
 			if (info.getExtraStr() != null) {
 				Bundle b = new Bundle();
 				b.putString(info.getIdStr(), info.getExtraStr());
 				circle.setExtraInfo(b);
 			}
-			EBaiduMapCircleOverlay eBaiduMapCircleOverlay  = new EBaiduMapCircleOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapCircleOverlay eBaiduMapCircleOverlay = new EBaiduMapCircleOverlay(info.getIdStr(), mContext,
+					mBaiduMap);
 			eBaiduMapCircleOverlay.setCircle(circle);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapCircleOverlay);
 		} catch (Exception e) {
+			Log.e("uexBaiduMap", "【addCircleOverlay】 抛出异常，catch (Exception e)", e);
 			e.printStackTrace();
 		}
 	}
@@ -356,14 +368,15 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	public void addPolygonOverlay(String polygonInfo) {
 		try {
 			EBaiduMapPolygonOptions info = EBaiduMapUtils.parasePolygonInfoJson(polygonInfo);
-			if(info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+			if (info == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
 				return;
 			}
 			int fillColor = BUtility.parseColor(info.getFillColor());
 			int strokeColor = BUtility.parseColor(info.getStrokeColor());
-			int lineWidth = (int)Float.parseFloat(info.getLineWidth());
+			int lineWidth = (int) Float.parseFloat(info.getLineWidth());
 			Stroke stroke = new Stroke(lineWidth, strokeColor);
-			PolygonOptions polygonOptions = new PolygonOptions().points(info.getList()).fillColor(fillColor).stroke(stroke);
+			PolygonOptions polygonOptions = new PolygonOptions().points(info.getList()).fillColor(fillColor)
+					.stroke(stroke);
 			if (info.getVisibleStr() != null) {
 				polygonOptions.visible(Boolean.parseBoolean(info.getVisibleStr()));
 			}
@@ -373,10 +386,11 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 			Polygon polygon = (Polygon) mBaiduMap.addOverlay(polygonOptions);
 			if (info.getExtraStr() != null) {
 				Bundle b = new Bundle();
-				b.putString(info.getIdStr(),info.getExtraStr());
+				b.putString(info.getIdStr(), info.getExtraStr());
 				polygon.setExtraInfo(b);
 			}
-			EBaiduMapPolygonOverlay eBaiduMapPolygonOverlay = new EBaiduMapPolygonOverlay(info.getIdStr(), mContext, mBaiduMap);
+			EBaiduMapPolygonOverlay eBaiduMapPolygonOverlay = new EBaiduMapPolygonOverlay(info.getIdStr(), mContext,
+					mBaiduMap);
 			eBaiduMapPolygonOverlay.setPolygon(polygon);
 			mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapPolygonOverlay);
 		} catch (Exception e) {
@@ -387,7 +401,7 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	public void addGroundOverlay(String groundInfo) {
 		try {
 			final EBaiduMapGroundOptions info = EBaiduMapUtils.parseGroundInfoJson(groundInfo);
-			if(info == null) {
+			if (info == null) {
 				return;
 			}
 			manager.asyncLoad(new ImageLoadTask(info.getImageUrl()) {
@@ -403,19 +417,20 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 						return;
 					}
 					GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions();
-					if(info.getList().size() == 1) {
+					if (info.getList().size() == 1) {
 						LatLng lng = info.getList().get(0);
 						groundOverlayOptions.position(lng);
-						if(info.getGroundWidth() == null) {
+						if (info.getGroundWidth() == null) {
 							return;
 						}
-						if(info.getGroundHeight() != null) {
-							groundOverlayOptions.dimensions((int)Float.parseFloat(info.getGroundWidth()), (int)Float.parseFloat(info.getGroundHeight()));
-						}else {
-							groundOverlayOptions.dimensions((int)Float.parseFloat(info.getGroundWidth()));
+						if (info.getGroundHeight() != null) {
+							groundOverlayOptions.dimensions((int) Float.parseFloat(info.getGroundWidth()),
+									(int) Float.parseFloat(info.getGroundHeight()));
+						} else {
+							groundOverlayOptions.dimensions((int) Float.parseFloat(info.getGroundWidth()));
 						}
 					}
-					if(info.getList().size() == 2) {
+					if (info.getList().size() == 2) {
 						Builder builder = new LatLngBounds.Builder();
 						builder.include(info.getList().get(0));
 						builder.include(info.getList().get(1));
@@ -437,7 +452,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 						b.putString(info.getIdStr(), info.getExtraStr());
 						groundOverlay.setExtraInfo(b);
 					}
-					EBaiduMapGroundOverlay eBaiduMapGroundOverlay = new EBaiduMapGroundOverlay(info.getIdStr(), mContext, mBaiduMap);
+					EBaiduMapGroundOverlay eBaiduMapGroundOverlay = new EBaiduMapGroundOverlay(info.getIdStr(),
+							mContext, mBaiduMap);
 					eBaiduMapGroundOverlay.setGroundOverlay(groundOverlay);
 					mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapGroundOverlay);
 				}
@@ -450,7 +466,7 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 	public void addTextOverlay(String textInfo) {
 		try {
 			EBaiduMapTextOptions info = EBaiduMapUtils.paraseTextInfo(textInfo);
-			if(mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+			if (mEbaiduMapOverlays.containsKey(info.getIdStr())) {
 				return;
 			}
 			TextOptions textOptions = new TextOptions();
@@ -486,11 +502,8 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 		}
 	}
 
-	private void addMarkOp(
-			final EBaiduMapMarkerOverlayOptions markerOverlayOptions,
-			Bitmap bitmap) {
-		BitmapDescriptor markerDescriptor = BitmapDescriptorFactory
-				.fromBitmap(bitmap);
+	private void addMarkOp(final EBaiduMapMarkerOverlayOptions markerOverlayOptions, Bitmap bitmap) {
+		BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
 
 		String markerId = markerOverlayOptions.getIdStr();
 		if (mEbaiduMapOverlays.containsKey(markerId)) {
@@ -499,31 +512,28 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 		String lngStr = markerOverlayOptions.getLngStr();
 		String latStr = markerOverlayOptions.getLatStr();
 
-		LatLng llMarker = new LatLng(Double.parseDouble(latStr),
-				Double.parseDouble(lngStr));
+		LatLng llMarker = new LatLng(Double.parseDouble(latStr), Double.parseDouble(lngStr));
 
-		OverlayOptions ooM = new MarkerOptions().position(llMarker).icon(
-				markerDescriptor);
+		OverlayOptions ooM = new MarkerOptions().position(llMarker).icon(markerDescriptor);
 
 		Marker marker = (Marker) mBaiduMap.addOverlay(ooM);
 
-		EBaiduMapMarkerOverlay markerOverlay = new EBaiduMapMarkerOverlay(
-				markerId, mContext, mBaiduMap);
+		EBaiduMapMarkerOverlay markerOverlay = new EBaiduMapMarkerOverlay(markerId, mContext, mBaiduMap);
 
 		markerOverlay.setMarker(marker);
-        if (markerOverlayOptions.getBubbleTitle() != null) {
-            String bottomBubbleCard = markerOverlayOptions.getBottomBubbleCard();
-            String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
-            if (bottomBubbleCard != null && !bottomBubbleCard.isEmpty()) {
-                markerOverlay.setBottomBubbleCard(mMapView, bottomBubbleCard, bgImgPath);
-            } else {
-                boolean isUse = markerOverlayOptions.isiUseYOffset();
-                int yOffset = markerOverlayOptions.getyOffset();
-                String title = markerOverlayOptions.getBubbleTitle();
-                String subTitle = markerOverlayOptions.getBubbleSubTitle();
-                markerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
-            }
-        }
+		if (markerOverlayOptions.getBubbleTitle() != null) {
+			String bottomBubbleCard = markerOverlayOptions.getBottomBubbleCard();
+			String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
+			if (bottomBubbleCard != null && !bottomBubbleCard.isEmpty()) {
+				markerOverlay.setBottomBubbleCard(mMapView, bottomBubbleCard, bgImgPath);
+			} else {
+				boolean isUse = markerOverlayOptions.isiUseYOffset();
+				int yOffset = markerOverlayOptions.getyOffset();
+				String title = markerOverlayOptions.getBubbleTitle();
+				String subTitle = markerOverlayOptions.getBubbleSubTitle();
+				markerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
+			}
+		}
 		Bundle b = new Bundle();
 
 		b.putString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID, markerId);
@@ -538,25 +548,24 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener{
 		String latStr = markerOverlayOptions.getLatStr();
 		if (lngStr != null && latStr != null) {
 
-			LatLng llMarker = new LatLng(Double.parseDouble(latStr),
-					Double.parseDouble(lngStr));
+			LatLng llMarker = new LatLng(Double.parseDouble(latStr), Double.parseDouble(lngStr));
 			mapMarkerOverlay.getMarker().setPosition(llMarker);
 		}
 		if (markerOverlayOptions.getBubbleTitle() != null) {
-            String bottomBubbleCard = markerOverlayOptions.getBottomBubbleCard();
-            String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
-            if (bottomBubbleCard != null && !bottomBubbleCard.isEmpty()) {
-                mapMarkerOverlay.setBottomBubbleCard(mMapView, bottomBubbleCard, bgImgPath);
-            } else {
-                if (mapMarkerOverlay.isShowBottomCard()) {
-                    mapMarkerOverlay.setBottomCardShow(null, false);
-                }
-                boolean isUse = markerOverlayOptions.isiUseYOffset();
-                int yOffset = markerOverlayOptions.getyOffset();
-                String title = markerOverlayOptions.getBubbleTitle();
-                String subTitle = markerOverlayOptions.getBubbleSubTitle();
-                mapMarkerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
-            }
+			String bottomBubbleCard = markerOverlayOptions.getBottomBubbleCard();
+			String bgImgPath = markerOverlayOptions.getBubbleBgImgPath();
+			if (bottomBubbleCard != null && !bottomBubbleCard.isEmpty()) {
+				mapMarkerOverlay.setBottomBubbleCard(mMapView, bottomBubbleCard, bgImgPath);
+			} else {
+				if (mapMarkerOverlay.isShowBottomCard()) {
+					mapMarkerOverlay.setBottomCardShow(null, false);
+				}
+				boolean isUse = markerOverlayOptions.isiUseYOffset();
+				int yOffset = markerOverlayOptions.getyOffset();
+				String title = markerOverlayOptions.getBubbleTitle();
+				String subTitle = markerOverlayOptions.getBubbleSubTitle();
+				mapMarkerOverlay.setBubbleViewData(title, subTitle, bgImgPath, yOffset, isUse);
+			}
 		}
 	}
 

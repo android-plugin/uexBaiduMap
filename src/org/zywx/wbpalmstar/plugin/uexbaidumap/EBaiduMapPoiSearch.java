@@ -77,14 +77,16 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 	}
 
 	public void poiNearbySearch(double lng, double lat, int radius, String searchKey, int pageNum) {
-		Log.i(TAG, "poiNearbySearch");
 
+		Log.i(TAG, "poiNearbySearch");
+		Log.i("uexBaiduMap", "【poiNearbySearch】 eBaiduMapBaseActivity  start");
 		mLongitude = lng;
 		mLatitude = lat;
 
 		LatLng ll = new LatLng(lat, lng);
 		mPoiSearch.searchNearby(
 				(new PoiNearbySearchOption()).location(ll).radius(radius).keyword(searchKey).pageNum(pageNum));
+		Log.i("uexBaiduMap", "【poiNearbySearch】 eBaiduMapBaseActivity  end");
 	}
 
 	public void poiBoundSearch(double east, double north, double west, double south, String searchKey, int pageNum) {
@@ -226,6 +228,9 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 
 			String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){"
 					+ EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + jsonPoi.toString() + "');}";
+
+			Log.i("uexBaiduMap", "【jsonPoiResultCallback】 eBaiduMapBaseActivity" + jsonPoi.toString());
+
 			uexBaiduMap.onCallback(js);
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -496,6 +496,11 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			LocalActivityManager mgr) {
 		View decorView = eBaiduMapBaseActivity.getWindow().getDecorView();
 		if (decorView == null) {
+			Log.e("uexBaiduMap", "【handleCloseBaiduMap】 decorView == null");
+			return;
+		}
+		if (mBrwView == null) {
+			Log.e("uexBaiduMap", "【handleCloseBaiduMap】 mBrwView == null");
 			return;
 		}
 		mBrwView.removeViewFromCurrentWindow(decorView);
