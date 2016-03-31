@@ -78,8 +78,10 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 
 	public void poiNearbySearch(double lng, double lat, int radius, String searchKey, int pageNum) {
 
-		Log.i(TAG, "poiNearbySearch");
-		Log.i("uexBaiduMap", "【poiNearbySearch】 eBaiduMapBaseActivity  start");
+		Log.i(TAG, "【poiNearbySearch】 poiNearbySearch");
+		Log.i("uexBaiduMap", "【poiNearbySearch】   start");
+		Log.i("uexBaiduMap", "【poiNearbySearch】   lng+" + lng + " lat=" + lat + " radius=" + radius + " searchKey="
+				+ searchKey + " pageNum=" + pageNum);
 		mLongitude = lng;
 		mLatitude = lat;
 

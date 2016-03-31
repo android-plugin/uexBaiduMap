@@ -718,7 +718,9 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	private void handlePoiNearbySearch(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity) {
 		try {
+			Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】start");
 			if (params == null || params.length == 0) {
+				Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】params == null || params.length == 0");
 				return;
 			}
 			JSONObject json = new JSONObject(params[0]);
@@ -730,10 +732,13 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 			// change by waka
 			if (eBaiduMapBaseActivity != null) {
+				Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】eBaiduMapBaseActivity");
 				eBaiduMapBaseActivity.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat),
 						(int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
 			} else {
+				Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】mapBaseNoMapViewManager");
 				if (mapBaseNoMapViewManager == null) {
+					Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】mapBaseNoMapViewManager  == null");
 					mapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
 				}
 				mapBaseNoMapViewManager.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat),

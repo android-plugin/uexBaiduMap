@@ -66,22 +66,22 @@ input[type="button"] {
 		uexBaiduMap.onMarkerBubbleClickListener = function makerListner(id) {
 			alert("onMarkerBubbleClickListener: " + id);
 		}
-		
+
 		uexBaiduMap.cbPoiSearchResult = function makerListner(json) {
- 			alert("cbPoiSearchResult: "+json);
- 			
- 			var jssonstr = {
- 					id : "153",
- 					longitude : "116.404",
- 					latitude : "39.915",
- 					radius : "100",
- 					fillColor : "#4169E1",
- 					strokeColor : "#990033",
- 					lineWidth : "4"
- 				};
- 			var jssonstr = JSON.stringify(jssonstr);
- 			uexBaiduMap.addCircleOverlay(jssonstr);
- 		}
+			alert("cbPoiSearchResult: " + json);
+
+			var jssonstr = {
+				id : "153",
+				longitude : "116.404",
+				latitude : "39.915",
+				radius : "100",
+				fillColor : "#4169E1",
+				strokeColor : "#990033",
+				lineWidth : "4"
+			};
+			var jssonstr = JSON.stringify(jssonstr);
+			uexBaiduMap.addCircleOverlay(jssonstr);
+		}
 	}
 
 	function closeMap() {
@@ -301,12 +301,12 @@ input[type="button"] {
 	}
 
 	function addCircle() {
-		
+
 		uexBaiduMap.setCenter("116.404", "39.915");
-		
+
 		var jsonstr2 = '{"longitude":"116.309","latitude":"39.977","radius":"1000","searchKey":"电影院","pageNum":"0"}';
 		uexBaiduMap.poiNearbySearch(jsonstr2);
-		
+
 	}
 
 	function cbSearchResult(json) {
