@@ -80,14 +80,12 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 
 		Log.i(TAG, "【poiNearbySearch】 poiNearbySearch");
 		Log.i("uexBaiduMap", "【poiNearbySearch】   start");
-		Log.i("uexBaiduMap", "【poiNearbySearch】   lng+" + lng + " lat=" + lat + " radius=" + radius + " searchKey="
-				+ searchKey + " pageNum=" + pageNum);
+		Log.i("uexBaiduMap", "【poiNearbySearch】   lng+" + lng + " lat=" + lat + " radius=" + radius + " searchKey=" + searchKey + " pageNum=" + pageNum);
 		mLongitude = lng;
 		mLatitude = lat;
 
 		LatLng ll = new LatLng(lat, lng);
-		mPoiSearch.searchNearby(
-				(new PoiNearbySearchOption()).location(ll).radius(radius).keyword(searchKey).pageNum(pageNum));
+		mPoiSearch.searchNearby((new PoiNearbySearchOption()).location(ll).radius(radius).keyword(searchKey).pageNum(pageNum));
 		Log.i("uexBaiduMap", "【poiNearbySearch】 eBaiduMapBaseActivity  end");
 	}
 
@@ -143,6 +141,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private class MyPoiOverlay extends PoiOverlay {
 		public MyPoiOverlay(BaiduMap baiduMap) {
 			super(baiduMap);
@@ -164,7 +163,8 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 		if (result == null || result.getAllSuggestions() == null) {
 			return;
 		}
-		for (SuggestionResult.SuggestionInfo info : result.getAllSuggestions()) {
+		for (@SuppressWarnings("unused")
+		SuggestionResult.SuggestionInfo info : result.getAllSuggestions()) {
 			// TODO Auto-generated method stub
 		}
 	}
@@ -183,8 +183,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 				if (poi.location != null) {
 					jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, poi.location.longitude);
 					jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, poi.location.latitude);
-					jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_DISTANCE, MyDistanceUtils.getDistance(mLongitude,
-							mLatitude, poi.location.longitude, poi.location.latitude));
+					jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_DISTANCE, MyDistanceUtils.getDistance(mLongitude, mLatitude, poi.location.longitude, poi.location.latitude));
 				}
 				jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_NAME, poi.name);
 				jsonPoiInfo.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_UID, poi.uid);
@@ -228,8 +227,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 				return;
 			}
 
-			String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){"
-					+ EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + jsonPoi.toString() + "');}";
+			String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + jsonPoi.toString() + "');}";
 
 			Log.i("uexBaiduMap", "【jsonPoiResultCallback】 eBaiduMapBaseActivity" + jsonPoi.toString());
 
@@ -254,8 +252,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 			return;
 		}
 
-		String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){"
-				+ EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + null + "');}";
+		String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + null + "');}";
 		uexBaiduMap.onCallback(js);
 	}
 

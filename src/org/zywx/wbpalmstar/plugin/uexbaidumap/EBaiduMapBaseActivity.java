@@ -46,10 +46,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.bean.MapStatusChangeBean;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
-public class EBaiduMapBaseActivity extends Activity
-		implements OnMapClickListener, OnMapStatusChangeListener, OnMapLoadedCallback, OnMapDoubleClickListener,
-		OnMapLongClickListener, OnMyLocationClickListener, SnapshotReadyCallback, OnGetGeoCoderResultListener {
+public class EBaiduMapBaseActivity extends Activity implements OnMapClickListener, OnMapStatusChangeListener, OnMapLoadedCallback, OnMapDoubleClickListener, OnMapLongClickListener,
+		OnMyLocationClickListener, SnapshotReadyCallback, OnGetGeoCoderResultListener {
 
 	private static final String LTAG = EBaiduMapBaseActivity.class.getSimpleName();
 	private MapView mMapView = null;
@@ -92,8 +92,8 @@ public class EBaiduMapBaseActivity extends Activity
 			JSONObject jsonObject = new JSONObject();
 			try {
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ERRORINFO, errorInfo);
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "){"
-						+ EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "('" + jsonObject.toString() + "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "){" + EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "('" + jsonObject.toString()
+						+ "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -195,6 +195,13 @@ public class EBaiduMapBaseActivity extends Activity
 		mBaiduMap.setTrafficEnabled(enable);
 	}
 
+	/**
+	 * 设置中心点
+	 * 
+	 * @param lng
+	 * @param lat
+	 * @param isUseAnimate
+	 */
 	public void setCenter(double lng, double lat, boolean isUseAnimate) {
 		LatLng ll = new LatLng(lat, lng);
 		Log.i("uexBaiduMap", "【setCenter】 经度longitude=" + lng + " 纬度latitude=" + lat);
@@ -205,6 +212,24 @@ public class EBaiduMapBaseActivity extends Activity
 		} else {
 			mBaiduMap.setMapStatus(u);
 		}
+	}
+
+	// TODO
+	/**
+	 * getCenter得到中心点
+	 */
+	public void getCenter() {
+		MapStatus mapStatus = mBaiduMap.getMapStatus();
+		if (mapStatus == null) {
+			MLog.getIns().e("mapStatus == null");
+			return;
+		}
+		LatLng latLng = mapStatus.target;
+		if (latLng == null) {
+			MLog.getIns().e("latLng == null");
+			return;
+		}
+		jsonLatLngCallback(latLng, EBaiduMapUtils.MAP_FUN_CB_GETCENTER);
 	}
 
 	/**
@@ -449,6 +474,7 @@ public class EBaiduMapBaseActivity extends Activity
 			}
 		}
 
+		@SuppressWarnings("unused")
 		public void onReceivePoi(BDLocation poiLocation) {
 		}
 	}
@@ -460,8 +486,7 @@ public class EBaiduMapBaseActivity extends Activity
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(location.getLatitude()));
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(location.getLongitude()));
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TIMESTAMP, location.getTime());
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString()
-						+ "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + null + "');}";
@@ -476,8 +501,7 @@ public class EBaiduMapBaseActivity extends Activity
 			JSONObject jsonObject = new JSONObject();
 			try {
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString()
-						+ "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -493,8 +517,7 @@ public class EBaiduMapBaseActivity extends Activity
 					jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
 					jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
 				}
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString()
-						+ "');}";
+				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -561,8 +584,7 @@ public class EBaiduMapBaseActivity extends Activity
 	public void onMapStatusChangeFinish(MapStatus status) {
 		if (uexBaseObj != null && status.zoom != defaultLevel) {
 			defaultLevel = status.zoom;
-			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "){"
-					+ EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "(" + status.zoom + ", "
+			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "){" + EBaiduMapUtils.MAP_FUN_ON_ZOOM_LEVEL_CHANGE_LISTENER + "(" + status.zoom + ", "
 					+ status.target.latitude + ", " + status.target.longitude + ");}";
 			uexBaseObj.onCallback(js);
 		}
@@ -608,8 +630,7 @@ public class EBaiduMapBaseActivity extends Activity
 					southwestJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.bound.southwest.latitude);
 					json.put(MapStatusChangeBean.TAG_SOUTHWEST, southwestJson);
 				}
-				if ((changeBean.isSouthWestChanged() || changeBean.isNortheastChanged())
-						&& changeBean.isCenterChanged()) {
+				if ((changeBean.isSouthWestChanged() || changeBean.isNortheastChanged()) && changeBean.isCenterChanged()) {
 					JSONObject centerJson = new JSONObject();
 					centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, status.target.longitude);
 					centerJson.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, status.target.latitude);
@@ -619,8 +640,8 @@ public class EBaiduMapBaseActivity extends Activity
 				e.printStackTrace();
 			}
 			if (json.keys().hasNext()) {
-				String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "){"
-						+ EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "('" + json.toString() + "');}";
+				String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "){" + EBaiduMapUtils.MAP_FUN_ON_MAP_STATUS_CHANGE_LISTENER + "('" + json.toString()
+						+ "');}";
 				uexBaseObj.onCallback(js);
 			}
 			changeBean = null;
@@ -643,8 +664,7 @@ public class EBaiduMapBaseActivity extends Activity
 				// 构造定位数据
 				MyLocationData locData = new MyLocationData.Builder().accuracy(locationData.accuracy)
 						// 此处设置开发者获取到的方向信息，顺时针0-360
-						.direction(mXDirection).latitude(locationData.latitude).longitude(locationData.longitude)
-						.build();
+						.direction(mXDirection).latitude(locationData.latitude).longitude(locationData.longitude).build();
 				// 设置定位数据
 				mBaiduMap.setMyLocationData(locData);
 			}
@@ -656,8 +676,7 @@ public class EBaiduMapBaseActivity extends Activity
 	 */
 	public void onMapLoaded() {
 		if (uexBaseObj != null) {
-			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "){"
-					+ EBaiduMapUtils.MAP_FUN_CB_OPEN + "();}";
+			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "){" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "();}";
 			uexBaseObj.onCallback(js);
 		}
 	}

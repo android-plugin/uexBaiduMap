@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
 
-   <plugin
+    <plugin
         className="org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap"
-        uexName="uexBaiduMap">
+        uexName="uexBaiduMap" >
         <method name="open" />
         <method name="close" />
         <method name="setMapType" />
         <method name="setTrafficEnabled" />
         <method name="setCenter" />
+        <method name="getCenter" />
         <method name="setZoomLevel" />
         <method name="zoomIn" />
         <method name="zoomOut" />
@@ -24,14 +25,14 @@
         <method name="showBubble" />
         <method name="hideBubble" />
         <method name="removeMakersOverlay" />
-        <method name="removeOverlay"/>
-        <method name="addDotOverlay"/>
-        <method name="addPolylineOverlay"/>
-        <method name="addArcOverlay"/>
-        <method name="addCircleOverlay"/>
-        <method name="addPolygonOverlay"/>
-        <method name="addGroundOverlay"/>
-        <method name="addTextOverlay"/>
+        <method name="removeOverlay" />
+        <method name="addDotOverlay" />
+        <method name="addPolylineOverlay" />
+        <method name="addArcOverlay" />
+        <method name="addCircleOverlay" />
+        <method name="addPolygonOverlay" />
+        <method name="addGroundOverlay" />
+        <method name="addTextOverlay" />
         <method name="poiSearchInCity" />
         <method name="poiNearbySearch" />
         <method name="poiBoundSearch" />
@@ -50,8 +51,9 @@
         <method name="stopLocation" />
         <method name="setMyLocationEnable" />
         <method name="setUserTrackingMode" />
-        <method name="hideMap"/>
-        <method name="showMap"/>
-        <method name="zoomControlsEnabled"/>
+        <method name="hideMap" />
+        <method name="showMap" />
+        <method name="zoomControlsEnabled" />
     </plugin>
+
 </uexplugins>

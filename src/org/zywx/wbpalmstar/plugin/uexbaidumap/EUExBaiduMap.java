@@ -6,6 +6,7 @@ import org.zywx.wbpalmstar.engine.EBrowserActivity;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
 import android.app.Activity;
 import android.app.ActivityGroup;
@@ -30,6 +31,7 @@ import com.baidu.mapapi.map.BaiduMap;
 
 import java.util.Arrays;
 
+@SuppressWarnings("deprecation")
 public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	private static boolean isBaiduSdkInit = false;
@@ -71,6 +73,11 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	public void setCenter(String[] params) {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_SETCENTER, params);
+	}
+
+	// TODO
+	public void getCenter(String[] params) {
+		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETCENTER, params);
 	}
 
 	public void setZoomLevel(String[] params) {
@@ -288,6 +295,10 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 		case EBaiduMapUtils.MAP_MSG_CODE_SETCENTER:
 			handleSetCenter(params, eBaiduMapBaseActivity);
 			break;
+		// TODO
+		case EBaiduMapUtils.MAP_MSG_CODE_GETCENTER:
+			handleGetCenter(params, eBaiduMapBaseActivity);
+			break;
 		case EBaiduMapUtils.MAP_MSG_CODE_ZOOMTO:
 			handleZoomTo(params, eBaiduMapBaseActivity);
 			break;
@@ -431,7 +442,6 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	@Override
 	public void onHandleMessage(Message msg) {
-		// TODO Auto-generated method stub
 		// super.onHandleMessage(msg);
 		if (msg.what == EBaiduMapUtils.MAP_MSG_CODE_OPEN) {
 			handleOpen(msg);
@@ -492,8 +502,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 		}
 	}
 
-	private void handleCloseBaiduMap(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity,
-			LocalActivityManager mgr) {
+	private void handleCloseBaiduMap(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity, LocalActivityManager mgr) {
 		View decorView = eBaiduMapBaseActivity.getWindow().getDecorView();
 		if (decorView == null) {
 			Log.e("uexBaiduMap", "【handleCloseBaiduMap】 decorView == null");
@@ -544,6 +553,16 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			}
 			eBaiduMapBaseActivity.setCenter(lng, lat, isUseAnimate);
 		} catch (Exception e) {
+		}
+	}
+
+	// TODO
+	private void handleGetCenter(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity) {
+		try {
+			eBaiduMapBaseActivity.getCenter();
+		} catch (Exception e) {
+			e.printStackTrace();
+			MLog.getIns().e(e);
 		}
 	}
 
@@ -733,16 +752,14 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			// change by waka
 			if (eBaiduMapBaseActivity != null) {
 				Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】eBaiduMapBaseActivity");
-				eBaiduMapBaseActivity.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat),
-						(int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
+				eBaiduMapBaseActivity.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat), (int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
 			} else {
 				Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】mapBaseNoMapViewManager");
 				if (mapBaseNoMapViewManager == null) {
 					Log.i("uexBaiduMap", "【EUExBaiduMap】【handlePoiNearbySearch】mapBaseNoMapViewManager  == null");
 					mapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
 				}
-				mapBaseNoMapViewManager.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat),
-						(int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
+				mapBaseNoMapViewManager.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat), (int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
 			}
 		} catch (Exception e) {
 		}
@@ -769,14 +786,13 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 			// change by waka
 			if (eBaiduMapBaseActivity != null) {
-				eBaiduMapBaseActivity.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE),
-						Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey, Integer.parseInt(pageNum));
+				eBaiduMapBaseActivity.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE), Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey, Integer.parseInt(pageNum));
 			} else {
 				if (mapBaseNoMapViewManager == null) {
 					mapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
 				}
-				mapBaseNoMapViewManager.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE),
-						Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey, Integer.parseInt(pageNum));
+				mapBaseNoMapViewManager.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE), Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey,
+						Integer.parseInt(pageNum));
 			}
 		} catch (
 
@@ -855,8 +871,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 		try {
 			if (params != null && params.length > 0) {
 				JSONObject jsonObject = new JSONObject(params[0]);
-				if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY)
-						&& jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)) {
+				if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY) && jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)) {
 					String cityStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
 					String addrStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS);
 					eBaiduMapBaseActivity.geocode(cityStr, addrStr);
@@ -964,8 +979,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 				rightMargin = diffWid + rightMargin;
 			}
 		}
-		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		lp.gravity = Gravity.BOTTOM;
 		lp.bottomMargin = bottomMargin;
 		lp.leftMargin = mParmsLeft + leftMargin;
@@ -975,13 +989,11 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		// TODO Auto-generated method stub
 	}
 
 	private void handleAddTextOverlay(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity) {
@@ -1080,8 +1092,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			double distance = -1;
 
 			// 判断，如果是小距离
-			if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
-					&& (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
+			if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG) && (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
 				distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2, lat2);
 			}
 			// 大距离

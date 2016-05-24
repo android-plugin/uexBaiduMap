@@ -67,6 +67,9 @@
 				uexBaiduMap.onMapStatusChangeListener = function(json){
 				    alert(json);
 				}
+				uexBaiduMap.cbGetCenter = function(json){
+				    alert("-------cbGetCenter-------\n"+json);
+				}
     	 	}
     
     		function closeMap(){
@@ -120,6 +123,7 @@
 		<input type="button" value="开启实时交通图" onclick="openTrafficEnabled();">
 		<input type="button" value="关闭实时交通图" onclick="closeTrafficEnabled();">
 		<input type="button" value="设置中心点" onclick="setCenter();">
+		<input type="button" value="得到中心点" onclick="uexBaiduMap.getCenter();">
 		<input type="button" value="关闭" onclick="closeMap();">
 		<p></p><br> 
                 
