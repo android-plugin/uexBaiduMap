@@ -76,28 +76,18 @@
     		}
 
             function removeOverLayer() {
-                uexBaiduMap.removeMakersOverlay('["10001"]');
+                uexBaiduMap.removeMakersOverlay('["10002"]');
             }
     		
     		function addMakersOverLayer() {
-    			var makerId = '10001';
     			var makerInfo = [
-    			    {
+    			    /* {
     			        id:"10001",
     			        longitude:"116.400244",
     			        latitude:"39.963175",
     			        icon:"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png",
     			        bubble:{
     			            title:"title1",
-    			            bgImage:"res://btn.png"
-    			        }
-    			    },
-    			    {
-    			        id:"10002",
-    			        longitude:"116.369199",
-    			        latitude:"39.942821",
-    			        bubble:{
-    			            title:"title2",
     			            bgImage:"res://btn.png"
     			        }
     			    },
@@ -110,47 +100,28 @@
     			            title:"title3",
     			            bgImage:"res://btn.png"
     			        }
+    			    }, */
+    			    {
+    			        id:"10002",
+    			        longitude:"116.369199",
+    			        latitude:"39.942821",
+    			        bubble:{
+    			            title:"title2",
+    			            bgImage:"../css/icons/dw.png"
+    			        }
     			    }
     			];
-
-    			currentId = makerId;
     			var makerInfo = JSON.stringify(makerInfo);
     			uexBaiduMap.addMarkersOverlay(makerInfo);
-    			
-    			/*markerObj1.id = "10001";
-    			markerObj1.isShow = 1;
-    			makerInfo = {
-    			    makerInfo:{
-    			        bubble:{
-    			            title:"afdafdadfadf"
-    			        }
-    			    }
-    			};
-    			var makerInfo = JSON.stringify(makerInfo);
-    			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);
-    			uexBaiduMap.showBubble(makerId);
-    			
-    			markerObj2.id = "10002";
-    			markerObj2.isShow = 0;
-    			makerId = '10002';
-    			makerInfo = {
-    			    makerInfo:{
-    			        bubble:{
-    			            title:"aaaaaaaa"
-    			        }
-    			    }
-    			};
-    			var makerInfo = JSON.stringify(makerInfo);
-    			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);*/
     		}
     		
     		function setMakerOverLayer() {
     			var makerId = '10002';
     			var makerInfo = {
     			    makerInfo:{
-    			        longitude:"116.232323",
-    			        latitude:"39.021514",
-    			        icon:"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png",
+    			        longitude:"116.369199",
+    			        latitude:"39.942821",
+    			        //icon:"http://www.iconpng.com/png/mapmarkers/marker_inside_azure.png",
     			        bubble:{
     			            title:"change-title",
     			            bgImage:"res://btn.png"
@@ -158,9 +129,27 @@
     			    }
     			};
     			var makerInfo = JSON.stringify(makerInfo);
-    			uexBaiduMap.setCenter(116.232323, 39.021514);
+    			uexBaiduMap.setCenter(116.369199, 39.942821);
     			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);
-    			uexBaiduMap.setBubbleShow(makerId, isShow);
+    			//uexBaiduMap.setBubbleShow(makerId, isShow);
+    		}
+    		
+    		function setMakerOverLayer2() {
+    			var makerId = '10002';
+    			var makerInfo = {
+    			    makerInfo:{
+    			        longitude:"116.368110",
+    			        latitude:"39.941000",
+    			        bubble:{
+    			            title:"change-title",
+    			            bgImage:"res://btn.png"
+    			        }
+    			    }
+    			};
+    			var makerInfo = JSON.stringify(makerInfo);
+    			uexBaiduMap.setCenter(116.369199, 39.942821);
+    			uexBaiduMap.setMarkerOverlay(makerId, makerInfo);
+    			//uexBaiduMap.setBubbleShow(makerId, isShow);
     		}
     		                   
     		function addLineOverLayer(){
@@ -383,6 +372,7 @@
 		
 		<input type="button" value="添加标注" onclick="addMakersOverLayer();">
 		<input type="button" value="修改标注" onclick="setMakerOverLayer();">
+		<input type="button" value="修改标注2" onclick="setMakerOverLayer2();">
         <input type="button" value="删除标注" onclick="removeOverLayer();">
 		
 			<!--<input type="button" value="添加线型覆盖物" onclick="addLineOverLayer();">-->

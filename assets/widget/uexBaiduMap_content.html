@@ -43,6 +43,11 @@
     		alert("---------cbGetDistance---------\n"+data);
 		}
     	
+    	//onSDKReceiverError
+    	uexBaiduMap.onSDKReceiverError = function(opCode,dataType,data){
+    		alert("---------onSDKReceiverError---------\n"+data);
+		}
+    	
  	}
 	
 	function openTest(name){

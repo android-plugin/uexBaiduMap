@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest>
 
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="$uexBaiduMap_APIKey$" />
-         <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" >
-        </service>
+    <meta-data
+        android:name="com.baidu.lbsapi.API_KEY"
+        android:value="$uexBaiduMap_APIKey$" />
+
+    <service
+        android:name="com.baidu.location.f"
+        android:enabled="true"
+        android:process=":remote" >
+    </service>
 
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <!-- 解决uexBaiduMap和uexLocation共存时，缺少权限的问题-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- 解决uexBaiduMap和uexLocation共存时，缺少权限的问题 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>
