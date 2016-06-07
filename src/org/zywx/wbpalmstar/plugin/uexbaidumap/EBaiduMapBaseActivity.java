@@ -80,8 +80,11 @@ public class EBaiduMapBaseActivity extends Activity implements OnMapClickListene
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (action.equals(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
+				// TODO
+				MLog.getIns().i("permission check error");
 				jsonSDKReceiverErrorCallback(action);
 			} else if (action.equals(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
+				MLog.getIns().i("network error");
 				jsonSDKReceiverErrorCallback(action);
 			}
 		}
@@ -91,6 +94,7 @@ public class EBaiduMapBaseActivity extends Activity implements OnMapClickListene
 		if (uexBaseObj != null) {
 			JSONObject jsonObject = new JSONObject();
 			try {
+				Log.i(EUExBaiduMap.TAG, "【jsonSDKReceiverErrorCallback】" + errorInfo);
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ERRORINFO, errorInfo);
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "){" + EBaiduMapUtils.MAP_FUN_ON_SDK_RECEIVER_ERROR + "('" + jsonObject.toString()
 						+ "');}";
@@ -127,8 +131,7 @@ public class EBaiduMapBaseActivity extends Activity implements OnMapClickListene
 		eBaiduMapRoutePlanSearch = new EBaiduMapRoutePlanSearch(this, mBaiduMap, mMapView);
 
 		IntentFilter iFilter = new IntentFilter();
-		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
-		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
+		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK);
 		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
 		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
 		mSDKReceiver = new SDKReceiver();
@@ -195,13 +198,6 @@ public class EBaiduMapBaseActivity extends Activity implements OnMapClickListene
 		mBaiduMap.setTrafficEnabled(enable);
 	}
 
-	/**
-	 * 设置中心点
-	 * 
-	 * @param lng
-	 * @param lat
-	 * @param isUseAnimate
-	 */
 	public void setCenter(double lng, double lat, boolean isUseAnimate) {
 		LatLng ll = new LatLng(lat, lng);
 		Log.i("uexBaiduMap", "【setCenter】 经度longitude=" + lng + " 纬度latitude=" + lat);
@@ -214,7 +210,6 @@ public class EBaiduMapBaseActivity extends Activity implements OnMapClickListene
 		}
 	}
 
-	// TODO
 	/**
 	 * getCenter得到中心点
 	 */

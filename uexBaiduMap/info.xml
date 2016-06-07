@@ -1,8 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
-    <plugin
-        uexName="uexBaiduMap" version="3.1.36" build="36">
-        <info>36:增加getCenter接口，获取地图中心点</info>
+    <plugin 
+        uexName="uexBaiduMap" version="3.1.41" build="41">
+        <info>41:更新SDK</info>
+        <build>40:增加getCenter得到地图中心点方法</build>
+        <build>39:优化了getDistance的算法，使用新版本SDK自带工具类DistanceUtil进行计算，使计算值更为精准</build>
+        <build>38:更新SDK后appkey验证广播机制改变，由于onSDKReceiverError回调只为前端开发者所提供，所以使用Toast替代</build>
+        <build>37:修复了getCurrentLocation必须open才能使用的问题
+              37.1:修复了地理编码、反地理编码必须open才能使用的问题</build>
+        <build>36.1:增加版本号
+               36.2:更新SDK版本,将百度地图所有库导入
+               36.3:发现新版SDK，Demo里可以监听到key配置错误广播，但是插件里不可以，问题未知</build>
         <build>35:在handleCloseBaiduMap中添加空指针判断，避免一些极端情况下程序崩溃
               35.1:在handleCloseBaiduMap中再次添加空指针判断，捕捉mBrwView的空指针，并输出log
               35.2:在poi搜索里增加一些log</build>

@@ -92,7 +92,7 @@ public class EBaiduMapUtils {
 	public static final int MAP_MSG_CODE_SHOWMAP = 47;
 	public static final int MAP_MSG_CODE_ZOOMCONTROLSENABLED = 48;
 	public static final int MAP_MSG_CODE_GETDISTANCE = 49;
-	public static final int MAP_MSG_CODE_GETCENTER = 50;// getCenter得到地图中心点_change_by_waka_2016/05/24
+	public static final int MAP_MSG_CODE_GETCENTER = 50;
 	// 3
 	public final static String MAP_EXTRA_LAN = "org.zywx.wbpalmstar.plugin.uexbaidumap.MAP_EXTRA_LAN";
 	public final static String MAP_EXTRA_LNG = "org.zywx.wbpalmstar.plugin.uexbaidumap.MAP_EXTRA_LNG";
@@ -186,8 +186,6 @@ public class EBaiduMapUtils {
 	public final static String MAP_FUN_CB_POISEARCH_RESULT = "uexBaiduMap.cbPoiSearchResult";
 	public final static String MAP_FUN_CB_BUSLINE_SEARCH_RESULT = "uexBaiduMap.cbBusLineSearchResult";
 	public final static String MAP_FUN_CB_OPEN = "uexBaiduMap.cbOpen";
-
-	// TODO
 	public final static String MAP_FUN_CB_GETCENTER = "uexBaiduMap.cbGetCenter";
 
 	public final static String MAP_FUN_CB_GET_DISTANCE = "uexBaiduMap.cbGetDistance";// 计算两点之间的距离by_waka
@@ -203,10 +201,11 @@ public class EBaiduMapUtils {
 		return bitmap;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static StateListDrawable bgColorDrawableSelector(Bitmap nomal, Bitmap focus) {
 
+		@SuppressWarnings("deprecation")
 		BitmapDrawable nomalBitmap = new BitmapDrawable(nomal);
+		@SuppressWarnings("deprecation")
 		BitmapDrawable focusBitmap = new BitmapDrawable(focus);
 		StateListDrawable selector = new StateListDrawable();
 		selector.addState(new int[] { android.R.attr.state_pressed }, focusBitmap);

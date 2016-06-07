@@ -6,6 +6,9 @@ import org.zywx.wbpalmstar.engine.EBrowserActivity;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.function.GeoCoderFunction;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.function.LocationFunction;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.receiver.SDKReceiver;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
 import android.app.Activity;
@@ -13,6 +16,7 @@ import android.app.ActivityGroup;
 import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Parcel;
@@ -28,13 +32,26 @@ import android.widget.RelativeLayout;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
 
 import java.util.Arrays;
 
 @SuppressWarnings("deprecation")
 public class EUExBaiduMap extends EUExBase implements Parcelable {
 
+	public static final String TAG = "uexBaiduMap";
+
+	/**
+	 * 百度地图是否初始化
+	 */
 	private static boolean isBaiduSdkInit = false;
+
+	/**
+	 * SDK广播接收器，主要为了监听appKey是否配置正确
+	 */
+	private SDKReceiver mSDKReceiver;
+
 	private static LocalActivityManager mgr;
 	private RelativeLayout.LayoutParams mParms;
 	private EBaiduMapBaseNoMapViewManager mapBaseNoMapViewManager;// 百度地图一些不需要打开地图的功能管理器
@@ -47,6 +64,14 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			SDKInitializer.initialize(context.getApplicationContext());
 			isBaiduSdkInit = true;
 		}
+
+		// 注册 SDK 广播接收器
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK);
+		intentFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
+		intentFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
+		mSDKReceiver = new SDKReceiver();
+		mContext.registerReceiver(mSDKReceiver, intentFilter);
 	}
 
 	public EBrowserView getEBrowserView() {
@@ -75,7 +100,6 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_SETCENTER, params);
 	}
 
-	// TODO
 	public void getCenter(String[] params) {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETCENTER, params);
 	}
@@ -218,6 +242,7 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 	public void geocode(String[] params) {
 		Log.i("djf", "geocode->" + Arrays.toString(params));
+		MLog.getIns().i("geocode = " + Arrays.toString(params));
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GEOCODE, params);
 	}
 
@@ -226,7 +251,9 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 	}
 
 	public void getCurrentLocation(String[] params) {
+		MLog.getIns().i("start");
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETCURRENTLOCATION, params);
+		MLog.getIns().i("end");
 	}
 
 	public void startLocation(String[] params) {
@@ -295,7 +322,6 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 		case EBaiduMapUtils.MAP_MSG_CODE_SETCENTER:
 			handleSetCenter(params, eBaiduMapBaseActivity);
 			break;
-		// TODO
 		case EBaiduMapUtils.MAP_MSG_CODE_GETCENTER:
 			handleGetCenter(params, eBaiduMapBaseActivity);
 			break;
@@ -556,13 +582,10 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 		}
 	}
 
-	// TODO
 	private void handleGetCenter(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity) {
 		try {
 			eBaiduMapBaseActivity.getCenter();
 		} catch (Exception e) {
-			e.printStackTrace();
-			MLog.getIns().e(e);
 		}
 	}
 
@@ -874,10 +897,17 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 				if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY) && jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)) {
 					String cityStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
 					String addrStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS);
-					eBaiduMapBaseActivity.geocode(cityStr, addrStr);
+					// eBaiduMapBaseActivity.geocode(cityStr, addrStr);
+
+					// 不打开地图也能用地理编码
+					GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this);
+					geoCoderFunction.geocode(cityStr, addrStr);
+
 				}
 			}
 		} catch (Exception e) {
+			e.getStackTrace();
+			MLog.getIns().e(e);
 		}
 	}
 
@@ -886,16 +916,29 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 			JSONObject json = new JSONObject(params[0]);
 			double lng = Double.parseDouble(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG));
 			double lat = Double.parseDouble(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT));
-			eBaiduMapBaseActivity.reverseGeoCode(lng, lat);
+			// eBaiduMapBaseActivity.reverseGeoCode(lng, lat);
+
+			// 不打开地图也能用反地理编码
+			GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this);
+			geoCoderFunction.reverseGeoCode(lng, lat);
+
 		} catch (Exception e) {
+			MLog.getIns().e(e);
 		}
 	}
 
 	private void handleGetCurrentLocation(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity) {
+		MLog.getIns().i("start");
 		try {
-			eBaiduMapBaseActivity.getCurrentLocation();
+			// eBaiduMapBaseActivity.getCurrentLocation();
+
+			LocationFunction function = new LocationFunction(mContext, this);
+			function.start();
+
 		} catch (Exception e) {
+			MLog.getIns().e(e);
 		}
+		MLog.getIns().i("end");
 	}
 
 	private void handleStartLocation(String[] params, EBaiduMapBaseActivity eBaiduMapBaseActivity) {
@@ -1091,14 +1134,22 @@ public class EUExBaiduMap extends EUExBase implements Parcelable {
 
 			double distance = -1;
 
-			// 判断，如果是小距离
-			if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG) && (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
-				distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2, lat2);
-			}
-			// 大距离
-			else {
-				distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2, lat2);
-			}
+			LatLng p1 = new LatLng(lat1, lon1);
+			LatLng p2 = new LatLng(lat2, lon2);
+			distance = DistanceUtil.getDistance(p1, p2);
+
+			// // 判断，如果是小距离
+			// if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
+			// && (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG))
+			// {
+			// distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2,
+			// lat2);
+			// }
+			// // 大距离
+			// else {
+			// distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2,
+			// lat2);
+			// }
 
 			jsCallback(EBaiduMapUtils.MAP_FUN_CB_GET_DISTANCE, 0, EUExCallback.F_C_TEXT, "" + distance);
 

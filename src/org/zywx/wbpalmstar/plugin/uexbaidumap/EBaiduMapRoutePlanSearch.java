@@ -19,6 +19,7 @@ import com.baidu.mapapi.overlayutil.TransitRouteOverlay;
 import com.baidu.mapapi.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
 import com.baidu.mapapi.search.route.DrivingRouteResult;
@@ -79,7 +80,8 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 			mRoutePlanSearch.walkingSearch((new WalkingRoutePlanOption()).from(stNode).to(enNode));
 			break;
 		case EBaiduMapRoutePlanOptions.PLAN_TYPE_TRANS:
-			mRoutePlanSearch.transitSearch((new TransitRoutePlanOption()).from(stNode).to(enNode).city(routePlanOptions.getStartCity()));
+			mRoutePlanSearch.transitSearch(
+					(new TransitRoutePlanOption()).from(stNode).to(enNode).city(routePlanOptions.getStartCity()));
 			break;
 		default:
 			break;
@@ -302,8 +304,15 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 				break;
 			}
 			EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
-			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "){" + EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "(" + resultId + ");}";
+			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "){"
+					+ EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "(" + resultId + ");}";
 			uexBaiduMap.onCallback(js);
 		}
+	}
+
+	@Override
+	public void onGetBikingRouteResult(BikingRouteResult arg0) {
+		// TODO Auto-generated method stub
+
 	}
 }
