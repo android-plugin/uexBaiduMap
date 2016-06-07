@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 
 public class EBaiduMapUtils {
+
 	// 1
 	public static final String MAP_FUN_PARAMS_KEY = "mapFunParamsKey";
 	public static final String MAP_ACTIVITY_ID = "mapActivityID";
@@ -53,7 +54,6 @@ public class EBaiduMapUtils {
 	public static final int MAP_MSG_CODE_SHOWBUBBLE = 17;
 	public static final int MAP_MSG_CODE_HIDEBUBBLE = 18;
 	public static final int MAP_MSG_CODE_REMOVEMAKERSOVER = 19;
-
 	public static final int MAP_MSG_CODE_REMOVEOVERLAY = 20;
 	public static final int MAP_MSG_CODE_ADDDOTOVERLAY = 21;
 	public static final int MAP_MSG_CODE_ADDPOLYLINEOVERLAY = 22;
@@ -84,6 +84,7 @@ public class EBaiduMapUtils {
 	public static final int MAP_MSG_CODE_SHOWMAP = 47;
 	public static final int MAP_MSG_CODE_ZOOMCONTROLSENABLED = 48;
 	public static final int MAP_MSG_CODE_GETDISTANCE = 49;
+	public static final int MAP_MSG_CODE_GETCENTER = 50;
 	// 3
 	public final static String MAP_EXTRA_LAN = "org.zywx.wbpalmstar.plugin.uexbaidumap.MAP_EXTRA_LAN";
 	public final static String MAP_EXTRA_LNG = "org.zywx.wbpalmstar.plugin.uexbaidumap.MAP_EXTRA_LNG";
@@ -94,9 +95,7 @@ public class EBaiduMapUtils {
 	public final static String MAP_PARAMS_JSON_KEY_ID = "id";
 	public final static String MAP_PARAMS_JSON_KEY_LNG = "longitude";
 	public final static String MAP_PARAMS_JSON_KEY_LAT = "latitude";
-	public final static String MAP_PARAMS_JSON_KEY_DISTANCE = "distance";// by
-																			// waka
-																			// 新增字段distance
+	public final static String MAP_PARAMS_JSON_KEY_DISTANCE = "distance";// by_waka_新增字段distance
 	public final static String MAP_PARAMS_JSON_KEY_ICON = "icon";
 	public final static String MAP_PARAMS_JSON_KEY_BUBBLE = "bubble";
 	public final static String MAP_PARAMS_JSON_KEY_TITLE = "title";
@@ -154,6 +153,7 @@ public class EBaiduMapUtils {
 	public static final String MAP_PARAMS_JSON_KEY_BGCOLOR = "bgColor";
 	public static final String MAP_PARAMS_JSON_KEY_NORTHEAST = "northeast";
 	public static final String MAP_PARAMS_JSON_KEY_SOUTHWEST = "southwest";
+
 	// 5
 	public final static String MAP_FUN_ON_MAKER_CLICK_LISTNER = "uexBaiduMap.onMakerClickListner";
 	public final static String MAP_FUN_ON_MAKER_BUBBLE_CLICK_LISTNER = "uexBaiduMap.onMakerBubbleClickListner";
@@ -174,6 +174,7 @@ public class EBaiduMapUtils {
 	public final static String MAP_FUN_CB_POISEARCH_RESULT = "uexBaiduMap.cbPoiSearchResult";
 	public final static String MAP_FUN_CB_BUSLINE_SEARCH_RESULT = "uexBaiduMap.cbBusLineSearchResult";
 	public final static String MAP_FUN_CB_OPEN = "uexBaiduMap.cbOpen";
+	public final static String MAP_FUN_CB_GETCENTER = "uexBaiduMap.cbGetCenter";
 
 	public final static String MAP_FUN_CB_GET_DISTANCE = "uexBaiduMap.cbGetDistance";// 计算两点之间的距离by_waka
 
@@ -190,7 +191,9 @@ public class EBaiduMapUtils {
 
 	public static StateListDrawable bgColorDrawableSelector(Bitmap nomal, Bitmap focus) {
 
+		@SuppressWarnings("deprecation")
 		BitmapDrawable nomalBitmap = new BitmapDrawable(nomal);
+		@SuppressWarnings("deprecation")
 		BitmapDrawable focusBitmap = new BitmapDrawable(focus);
 		StateListDrawable selector = new StateListDrawable();
 		selector.addState(new int[] { android.R.attr.state_pressed }, focusBitmap);
@@ -622,12 +625,9 @@ public class EBaiduMapUtils {
 			arcInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
 			arcInfo.setStrokeColor(json.getString(MAP_PARAMS_JSON_KEY_STROKECOLOR));
 			arcInfo.setLineWidth(json.getString(MAP_PARAMS_JSON_KEY_LINEWIDTH));
-			arcInfo.setStart(json.getDouble(MAP_PARAMS_JSON_KEY_START_LATITUDE),
-					json.getDouble(MAP_PARAMS_JSON_KEY_START_LONGITUDE));
-			arcInfo.setCenter(json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LATITUDE),
-					json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LONGITUDE));
-			arcInfo.setEnd(json.getDouble(MAP_PARAMS_JSON_KEY_END_LATITUDE),
-					json.getDouble(MAP_PARAMS_JSON_KEY_END_LONGITUDE));
+			arcInfo.setStart(json.getDouble(MAP_PARAMS_JSON_KEY_START_LATITUDE), json.getDouble(MAP_PARAMS_JSON_KEY_START_LONGITUDE));
+			arcInfo.setCenter(json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LATITUDE), json.getDouble(MAP_PARAMS_JSON_KEY_CENTER_LONGITUDE));
+			arcInfo.setEnd(json.getDouble(MAP_PARAMS_JSON_KEY_END_LATITUDE), json.getDouble(MAP_PARAMS_JSON_KEY_END_LONGITUDE));
 			if (json.has(MAP_PARAMS_JSON_KEY_EXTRAINFO)) {
 				arcInfo.setExtraStr(json.getString(MAP_PARAMS_JSON_KEY_EXTRAINFO));
 			}

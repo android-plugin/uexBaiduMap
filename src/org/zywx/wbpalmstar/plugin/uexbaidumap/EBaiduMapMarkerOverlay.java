@@ -1,6 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +38,7 @@ public class EBaiduMapMarkerOverlay extends EBaiduMapOverlay implements OnInfoWi
 		return mMarker;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void setBubbleViewData(String title, String subTitlte, String imgPath, int yOffset, boolean isUseYOffset) {
 		
 		Button bubbleBtn;
@@ -122,7 +122,6 @@ public class EBaiduMapMarkerOverlay extends EBaiduMapOverlay implements OnInfoWi
 
 	@Override
 	public void onInfoWindowClick() {
-		// TODO Auto-generated method stub
 		
 		EBaiduMapBaseFragment activity = mBaseFragment;
 		

@@ -1,7 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import android.content.Context;
-
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.GroundOverlay;
 

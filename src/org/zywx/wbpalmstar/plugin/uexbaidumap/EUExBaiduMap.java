@@ -5,9 +5,14 @@ import org.json.JSONObject;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.function.GeoCoderFunction;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.function.LocationFunction;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.receiver.SDKReceiver;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
@@ -17,30 +22,76 @@ import android.widget.RelativeLayout;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
 
 public class EUExBaiduMap extends EUExBase {
 
+	/**
+	 * 百度地图是否初始化
+	 */
 	private static boolean isBaiduSdkInit = false;
-	private EBaiduMapBaseFragment mapBaseFragment;
-	private EBaiduMapBaseNoMapViewManager mapBaseNoMapViewManager;// 百度地图一些不需要打开地图的功能管理器
 
-	/* 回调 */
-	private static final String FUNC_GET_DISTANCE_CALLBACK = "uexBaiduMap.cbGetDistance";// 得到两点之间距离回调
+	/**
+	 * SDK广播接收器，主要为了监听appKey是否配置正确
+	 */
+	private SDKReceiver mSDKReceiver;
 
+	/**
+	 * 必需要打开地图的功能使用Fragment
+	 */
+	private EBaiduMapBaseFragment mMapBaseFragment;
+
+	/**
+	 * 百度地图一些不需要打开地图的功能管理器
+	 */
+	private EBaiduMapBaseNoMapViewManager mMapBaseNoMapViewManager;
+
+	/**
+	 * 构造方法
+	 * 
+	 * @param context
+	 * @param inParent
+	 */
 	public EUExBaiduMap(Context context, EBrowserView inParent) {
 		super(context, inParent);
+
 		if (!isBaiduSdkInit) {
-			// 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
-			SDKInitializer.initialize(context.getApplicationContext());
+			SDKInitializer.initialize(context.getApplicationContext());// 在使用SDK各组间之前初始化context信息，传入ApplicationContext
 			isBaiduSdkInit = true;
 		}
+
+		// 注册 SDK 广播接收器
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK);
+		intentFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
+		intentFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
+		mSDKReceiver = new SDKReceiver();
+		mContext.registerReceiver(mSDKReceiver, intentFilter);
+
 	}
 
+	/**
+	 * clean
+	 */
+	@Override
+	protected boolean clean() {
+		close(null);
+		return false;
+	}
+
+	/**
+	 * 拦截Activity的onCreate方法
+	 * 
+	 * @param context
+	 */
 	public static void onActivityCreate(Context context) {
 		((Activity) context).getWindow().setFormat(PixelFormat.TRANSLUCENT);
 	}
 
-	// uexBaiduMap.open(x, y, width, height, longitude, latitude)
+	// TODO
+	/*
+	 * 前端接口
+	 */
 	public void open(String[] params) {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_OPEN, params);
 	}
@@ -59,6 +110,10 @@ public class EUExBaiduMap extends EUExBase {
 
 	public void setCenter(String[] params) {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_SETCENTER, params);
+	}
+
+	public void getCenter(String[] params) {
+		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETCENTER, params);
 	}
 
 	public void setZoomLevel(String[] params) {
@@ -241,16 +296,41 @@ public class EUExBaiduMap extends EUExBase {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETDISTANCE, params);
 	}
 
-	@Override
-	protected boolean clean() {
-		close(null);
-		return false;
+	private void sendMessageWithType(int msgType, String[] params) {
+		if (mHandler == null) {
+			MLog.getIns().i("mHandler == null");
+			return;
+		}
+		Message msg = new Message();
+		msg.what = msgType;
+		msg.obj = this;
+		Bundle b = new Bundle();
+		b.putStringArray(EBaiduMapUtils.MAP_FUN_PARAMS_KEY, params);
+		msg.setData(b);
+		mHandler.sendMessage(msg);
 	}
 
+	/**
+	 * onHandleMessage
+	 */
+	@Override
+	public void onHandleMessage(Message msg) {
+		if (msg.what == EBaiduMapUtils.MAP_MSG_CODE_OPEN) {
+			handleOpen(msg);
+		} else {
+			handleMessageInMap(msg);
+		}
+	}
+
+	/**
+	 * handleMessageInMap
+	 * 
+	 * @param msg
+	 */
 	private void handleMessageInMap(Message msg) {
-		if (mapBaseFragment != null) {
+		if (mMapBaseFragment != null) {
 			String[] params = msg.getData().getStringArray(EBaiduMapUtils.MAP_FUN_PARAMS_KEY);
-			EBaiduMapBaseFragment eBaiduMapBaseFragment = mapBaseFragment;
+			EBaiduMapBaseFragment eBaiduMapBaseFragment = mMapBaseFragment;
 
 			switch (msg.what) {
 			case EBaiduMapUtils.MAP_MSG_CODE_CLOSE:
@@ -264,6 +344,9 @@ public class EUExBaiduMap extends EUExBase {
 				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_SETCENTER:
 				handleSetCenter(params, eBaiduMapBaseFragment);
+				break;
+			case EBaiduMapUtils.MAP_MSG_CODE_GETCENTER:
+				handleGetCenter(params, eBaiduMapBaseFragment);
 				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_ZOOMTO:
 				handleZoomTo(params, eBaiduMapBaseFragment);
@@ -405,6 +488,7 @@ public class EUExBaiduMap extends EUExBase {
 				break;
 			}
 		}
+
 		// 一些功能不需要打开地图 by waka
 		else {
 			String[] params = msg.getData().getStringArray(EBaiduMapUtils.MAP_FUN_PARAMS_KEY);
@@ -430,22 +514,34 @@ public class EUExBaiduMap extends EUExBase {
 				handleGetDistance(params);
 				break;
 
+			// 获得当前位置
+			case EBaiduMapUtils.MAP_MSG_CODE_GETCURRENTLOCATION:
+				handleGetCurrentLocation(params, null);
+				break;
+
+			// 地理编码
+			case EBaiduMapUtils.MAP_MSG_CODE_GEOCODE:
+				handleGeocode(params, null);
+				break;
+
+			// 反地理编码
+			case EBaiduMapUtils.MAP_MSG_CODE_REVERSEGEOCODE:
+				handleReverseGeocode(params, null);
+				break;
+
 			default:
 				break;
 			}
 		}
 	}
 
-	@Override
-	public void onHandleMessage(Message msg) {
-		if (msg.what == EBaiduMapUtils.MAP_MSG_CODE_OPEN) {
-			handleOpen(msg);
-		} else {
-			handleMessageInMap(msg);
-		}
-	}
-
+	// TODO
+	/*
+	 * 真正的实现方法
+	 */
 	private void handleOpen(Message msg) {
+
+		MLog.getIns().d("start");
 
 		String[] params = msg.getData().getStringArray(EBaiduMapUtils.MAP_FUN_PARAMS_KEY);
 		if (params == null || (params.length != 4 && params.length != 6)) {
@@ -468,45 +564,41 @@ public class EUExBaiduMap extends EUExBase {
 				lat = Double.parseDouble(params[5]);
 				isUseLngLat = true;
 			}
-			if (mapBaseFragment != null) {
+			if (mMapBaseFragment != null) {
+				MLog.getIns().e("mMapBaseFragment != null");
 				return;
 			}
-			mapBaseFragment = new EBaiduMapBaseFragment();
-			mapBaseFragment.setBaseObj(this);
+			mMapBaseFragment = new EBaiduMapBaseFragment();
+			mMapBaseFragment.setBaseObj(this);
 			if (isUseLngLat) {
 				LatLng center = new LatLng(lat, lng);
-				mapBaseFragment.setStartCenter(center);
+				mMapBaseFragment.setStartCenter(center);
 			}
 
 			String activityId = EBaiduMapUtils.MAP_ACTIVITY_ID + EUExBaiduMap.this.hashCode();
 			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
 			lp.leftMargin = x;
 			lp.topMargin = y;
+			addFragmentToCurrentWindow(mMapBaseFragment, lp, activityId);
 
-			// android.widget.AbsoluteLayout.LayoutParams lp = new
-			// android.widget.AbsoluteLayout.LayoutParams(
-			// w,
-			// h,
-			// x,
-			// y);
-			// addFragmentToWebView(mapBaseFragment, lp, activityId);
-			addFragmentToCurrentWindow(mapBaseFragment, lp, activityId);
 		} catch (Exception e) {
 			e.printStackTrace();
+			MLog.getIns().e(e);
 		}
 	}
 
 	private void handleCloseBaiduMap() {
-		if (mapBaseFragment != null) {
+		if (mMapBaseFragment != null) {
+			@SuppressWarnings("unused")
 			String activityId = EBaiduMapUtils.MAP_ACTIVITY_ID + EUExBaiduMap.this.hashCode();
 			// removeFragmentFromWebView(activityId);
 			// mapBaseFragment = null;
-			mapBaseFragment.readyToDestroy();
+			mMapBaseFragment.readyToDestroy();
 			mHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					removeFragmentFromWindow(mapBaseFragment);
-					mapBaseFragment = null;
+					removeFragmentFromWindow(mMapBaseFragment);
+					mMapBaseFragment = null;
 				}
 			}, 10);
 		}
@@ -553,6 +645,13 @@ public class EUExBaiduMap extends EUExBase {
 				isUseAnimate = (v == 1);
 			}
 			eBaiduMapBaseFragment.setCenter(lng, lat, isUseAnimate);
+		} catch (Exception e) {
+		}
+	}
+
+	private void handleGetCenter(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
+		try {
+			eBaiduMapBaseFragment.getCenter();
 		} catch (Exception e) {
 		}
 	}
@@ -661,12 +760,15 @@ public class EUExBaiduMap extends EUExBase {
 	}
 
 	private void handleSetMarkerOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
+		MLog.getIns().i("");
 		if (params.length != 2) {
 			return;
 		}
 		try {
 			String markerId = params[0];
 			String markerInfo = params[1];
+			MLog.getIns().i("markerId = " + markerId);
+			MLog.getIns().i("markerInfo = " + markerInfo);
 			eBaiduMapBaseFragment.setMarkerOverlay(markerId, markerInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -717,10 +819,10 @@ public class EUExBaiduMap extends EUExBase {
 			if (eBaiduMapBaseFragment != null) {
 				eBaiduMapBaseFragment.poiSearchInCity(city, searchKey, pageNum);
 			} else {
-				if (mapBaseNoMapViewManager == null) {
-					mapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
+				if (mMapBaseNoMapViewManager == null) {
+					mMapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
 				}
-				mapBaseNoMapViewManager.poiSearchInCity(city, searchKey, pageNum);
+				mMapBaseNoMapViewManager.poiSearchInCity(city, searchKey, pageNum);
 			}
 
 		} catch (Exception e) {
@@ -742,14 +844,12 @@ public class EUExBaiduMap extends EUExBase {
 
 			// change by waka
 			if (eBaiduMapBaseFragment != null) {
-				eBaiduMapBaseFragment.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat),
-						(int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
+				eBaiduMapBaseFragment.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat), (int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
 			} else {
-				if (mapBaseNoMapViewManager == null) {
-					mapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
+				if (mMapBaseNoMapViewManager == null) {
+					mMapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
 				}
-				mapBaseNoMapViewManager.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat),
-						(int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
+				mMapBaseNoMapViewManager.poiNearbySearch(Double.parseDouble(lng), Double.parseDouble(lat), (int) Float.parseFloat(radius), searchKey, Integer.parseInt(pageNum));
 			}
 
 		} catch (Exception e) {
@@ -777,14 +877,13 @@ public class EUExBaiduMap extends EUExBase {
 
 			// change by waka
 			if (eBaiduMapBaseFragment != null) {
-				eBaiduMapBaseFragment.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE),
-						Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey, Integer.parseInt(pageNum));
+				eBaiduMapBaseFragment.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE), Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey, Integer.parseInt(pageNum));
 			} else {
-				if (mapBaseNoMapViewManager == null) {
-					mapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
+				if (mMapBaseNoMapViewManager == null) {
+					mMapBaseNoMapViewManager = new EBaiduMapBaseNoMapViewManager(mContext, this);
 				}
-				mapBaseNoMapViewManager.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE),
-						Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey, Integer.parseInt(pageNum));
+				mMapBaseNoMapViewManager.poiBoundSearch(Double.parseDouble(lngNE), Double.parseDouble(latNE), Double.parseDouble(lngSW), Double.parseDouble(latSW), searchKey,
+						Integer.parseInt(pageNum));
 			}
 
 		} catch (Exception e) {
@@ -859,11 +958,14 @@ public class EUExBaiduMap extends EUExBase {
 		try {
 			if (params != null && params.length > 0) {
 				JSONObject jsonObject = new JSONObject(params[0]);
-				if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY)
-						&& jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)) {
+				if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY) && jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)) {
 					String cityStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
 					String addrStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS);
-					eBaiduMapBaseFragment.geocode(cityStr, addrStr);
+					// eBaiduMapBaseFragment.geocode(cityStr, addrStr);
+
+					// 不打开地图也能用地理编码
+					GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this);
+					geoCoderFunction.geocode(cityStr, addrStr);
 				}
 			}
 		} catch (Exception e) {
@@ -875,16 +977,30 @@ public class EUExBaiduMap extends EUExBase {
 			JSONObject json = new JSONObject(params[0]);
 			double lng = Double.parseDouble(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG));
 			double lat = Double.parseDouble(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT));
-			eBaiduMapBaseFragment.reverseGeoCode(lng, lat);
+			// eBaiduMapBaseFragment.reverseGeoCode(lng, lat);
+
+			// 不打开地图也能用反地理编码
+			GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this);
+			geoCoderFunction.reverseGeoCode(lng, lat);
+
 		} catch (Exception e) {
+			MLog.getIns().e(e);
 		}
 	}
 
 	private void handleGetCurrentLocation(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
+		MLog.getIns().i("start");
 		try {
-			eBaiduMapBaseFragment.getCurrentLocation();
+
+			// eBaiduMapBaseFragment.getCurrentLocation();
+
+			LocationFunction function = new LocationFunction(mContext, this);
+			function.start();
+
 		} catch (Exception e) {
+			MLog.getIns().e(e);
 		}
+		MLog.getIns().i("end");
 	}
 
 	private void handleStartLocation(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
@@ -916,19 +1032,6 @@ public class EUExBaiduMap extends EUExBase {
 			eBaiduMapBaseFragment.setUserTrackingMode(trackingMode);
 		} catch (Exception e) {
 		}
-	}
-
-	private void sendMessageWithType(int msgType, String[] params) {
-		if (mHandler == null) {
-			return;
-		}
-		Message msg = new Message();
-		msg.what = msgType;
-		msg.obj = this;
-		Bundle b = new Bundle();
-		b.putStringArray(EBaiduMapUtils.MAP_FUN_PARAMS_KEY, params);
-		msg.setData(b);
-		mHandler.sendMessage(msg);
 	}
 
 	private void handleAddTextOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
@@ -1026,15 +1129,22 @@ public class EUExBaiduMap extends EUExBase {
 
 			double distance = -1;
 
-			// 判断，如果是小距离
-			if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
-					&& (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)) {
-				distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2, lat2);
-			}
-			// 大距离
-			else {
-				distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2, lat2);
-			}
+			LatLng p1 = new LatLng(lat1, lon1);
+			LatLng p2 = new LatLng(lat2, lon2);
+			distance = DistanceUtil.getDistance(p1, p2);
+
+			// // 判断，如果是小距离
+			// if ((Math.abs(lat1 - lat2) < MyDistanceUtils.SMALL_DISTANCE_FLAG)
+			// && (Math.abs(lon1 - lon2) < MyDistanceUtils.SMALL_DISTANCE_FLAG))
+			// {
+			// distance = MyDistanceUtils.getShortDistance(lon1, lat1, lon2,
+			// lat2);
+			// }
+			// // 大距离
+			// else {
+			// distance = MyDistanceUtils.getLongDistance(lon1, lat1, lon2,
+			// lat2);
+			// }
 
 			jsCallback(EBaiduMapUtils.MAP_FUN_CB_GET_DISTANCE, 0, EUExCallback.F_C_TEXT, "" + distance);
 
