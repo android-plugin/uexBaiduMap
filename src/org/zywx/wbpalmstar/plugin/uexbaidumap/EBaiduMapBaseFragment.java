@@ -123,15 +123,15 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		FrameLayout bg = new FrameLayout(this.getActivity());
+        FrameLayout bg = new FrameLayout(getActivity());
 
 		if (mCenter != null) {
-			mMapView = new MapView(this.getActivity(), new BaiduMapOptions().mapStatus(new MapStatus.Builder().target(mCenter).build()));
+			mMapView = new MapView(getActivity(), new BaiduMapOptions().mapStatus(new MapStatus.Builder().target(mCenter).build()));
 		} else {
-			mMapView = new MapView(this.getActivity(), new BaiduMapOptions());
+			mMapView = new MapView(getActivity(), new BaiduMapOptions());
 		}
 		bg.addView(mMapView);
-		overlayView = new View(this.getActivity());
+		overlayView = new View(getActivity());
 		FrameLayout.LayoutParams fl = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		overlayView.setBackgroundColor(Color.WHITE);
 		overlayView.setLayoutParams(fl);
@@ -150,10 +150,10 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 		iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
 		iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
 		mSDKReceiver = new SDKReceiver();
-		this.getActivity().registerReceiver(mSDKReceiver, iFilter);
+        getActivity().registerReceiver(mSDKReceiver, iFilter);
 		initOritationListener();
 		// 定位初始化
-		mLocClient = new LocationClient(this.getActivity().getApplicationContext());
+		mLocClient = new LocationClient(getActivity().getApplicationContext());
 		mLocClient.registerLocationListener(myListener);
 		LocationClientOption option = new LocationClientOption();
 		option.setOpenGps(true);// 打开gps
@@ -199,7 +199,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		this.getActivity().unregisterReceiver(mSDKReceiver);
+        getActivity().unregisterReceiver(mSDKReceiver);
 		eBaiduMapOverlayMgr.clearMapOverLayMgr();
 		eBaiduMapPoiSearch.destroy();
 		eBaiduMapBusLineSearch.destroy();
@@ -236,18 +236,18 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 	/**
 	 * getCenter得到中心点
 	 */
-	public void getCenter() {
+	public LatLng getCenter() {
 		MapStatus mapStatus = mBaiduMap.getMapStatus();
 		if (mapStatus == null) {
 			MLog.getIns().e("mapStatus == null");
-			return;
+			return null;
 		}
 		LatLng latLng = mapStatus.target;
 		if (latLng == null) {
 			MLog.getIns().e("latLng == null");
-			return;
 		}
 		jsonLatLngCallback(latLng, EBaiduMapUtils.MAP_FUN_CB_GETCENTER);
+        return latLng;
 	}
 
 	/**
@@ -504,9 +504,15 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TIMESTAMP, location.getTime());
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
+                if (null != uexBaseObj.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.getCurrentLocationFuncId), false, jsonObject);
+                }
 			} catch (JSONException e) {
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + null + "');}";
 				uexBaseObj.onCallback(js);
+                if (null != uexBaseObj.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.getCurrentLocationFuncId), false);
+                }
 				e.printStackTrace();
 			}
 		}
@@ -519,6 +525,9 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
+                if (null != uexBaseObj.reverseGeocodeFuncId) {
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.reverseGeocodeFuncId), false, jsonObject);
+                }
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -535,6 +544,9 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 				}
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				uexBaseObj.onCallback(js);
+                if (null != uexBaseObj.geocodeFuncId) {
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.geocodeFuncId), false, jsonObject);
+                }
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -543,7 +555,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	/**
 	 * 地图单击事件回调函数
-	 * 
+	 *
 	 * @param point
 	 *            点击的地理坐标
 	 */
@@ -553,7 +565,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	/**
 	 * 地图内 Poi 单击事件回调函数
-	 * 
+	 *
 	 * @param poi
 	 *            点击的 poi 信息
 	 */
@@ -563,7 +575,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	/**
 	 * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
-	 * 
+	 *
 	 * @param status
 	 *            地图状态改变开始时的地图状态
 	 */
@@ -584,7 +596,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	/**
 	 * 地图状态变化中
-	 * 
+	 *
 	 * @param status
 	 *            当前地图状态
 	 */
@@ -593,7 +605,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	/**
 	 * 地图状态改变结束
-	 * 
+	 *
 	 * @param status
 	 *            地图状态改变结束后的地图状态
 	 */
@@ -668,7 +680,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 	 * 初始化方向传感器
 	 */
 	private void initOritationListener() {
-		myOrientationListener = new MyOrientationListener(this.getActivity().getApplicationContext());
+		myOrientationListener = new MyOrientationListener(getActivity().getApplicationContext());
 		myOrientationListener.setOnOrientationListener(new MyOrientationListener.OnOrientationListener() {
 			@Override
 			public void onOrientationChanged(float x) {
@@ -694,12 +706,15 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 		if (uexBaseObj != null) {
 			String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "){" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "();}";
 			uexBaseObj.onCallback(js);
+            if (null != uexBaseObj.openFuncId) {
+                uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.openFuncId), false);
+            }
 		}
 	}
 
 	/**
 	 * 地图双击事件监听回调函数
-	 * 
+	 *
 	 * @param point
 	 *            双击的地理坐标
 	 */
@@ -709,7 +724,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	/**
 	 * 地图长按事件监听回调函数
-	 * 
+	 *
 	 * @param point
 	 *            长按的地理坐标
 	 */
@@ -726,7 +741,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	/**
 	 * 地图截屏回调接口
-	 * 
+	 *
 	 * @param snapshot
 	 *            截屏返回的 bitmap 数据
 	 */

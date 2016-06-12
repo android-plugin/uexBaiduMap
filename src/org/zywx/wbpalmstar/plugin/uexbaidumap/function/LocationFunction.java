@@ -1,10 +1,6 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap.function;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapUtils;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
+import android.content.Context;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -12,11 +8,15 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.LocationClientOption.LocationMode;
 
-import android.content.Context;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapUtils;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
 /**
  * 定位功能
- * 
+ *
  * @author waka
  * @version createTime:2016年4月26日 下午2:54:19
  */
@@ -30,7 +30,7 @@ public class LocationFunction implements BDLocationListener {
 
 	/**
 	 * 构造方法
-	 * 
+	 *
 	 * @param context:需要时全进程有效的context,推荐用getApplicationConext获取全进程有效的context
 	 */
 	public LocationFunction(Context context, EUExBaiduMap uexBaiduMap) {
@@ -96,7 +96,7 @@ public class LocationFunction implements BDLocationListener {
 
 	/**
 	 * 把数据返回给前端
-	 * 
+	 *
 	 * @param location
 	 * @param header
 	 */
@@ -111,9 +111,15 @@ public class LocationFunction implements BDLocationListener {
 				MLog.getIns().i("jsonObject = " + jsonObject.toString());
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				mEUExBaiduMap.onCallback(js);
+                if (null != mEUExBaiduMap.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.getCurrentLocationFuncId), false, jsonObject);
+                }
 			} catch (JSONException e) {
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + null + "');}";
 				mEUExBaiduMap.onCallback(js);
+                if (null != mEUExBaiduMap.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.getCurrentLocationFuncId), false);
+                }
 				e.printStackTrace();
 			}
 		}

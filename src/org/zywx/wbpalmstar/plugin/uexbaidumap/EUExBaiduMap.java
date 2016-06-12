@@ -1,15 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.engine.EBrowserView;
-import org.zywx.wbpalmstar.engine.universalex.EUExBase;
-import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.function.GeoCoderFunction;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.function.LocationFunction;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.receiver.SDKReceiver;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -23,6 +13,16 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.EBrowserView;
+import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.function.GeoCoderFunction;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.function.LocationFunction;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.receiver.SDKReceiver;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
 public class EUExBaiduMap extends EUExBase {
 
@@ -46,9 +46,17 @@ public class EUExBaiduMap extends EUExBase {
 	 */
 	private EBaiduMapBaseNoMapViewManager mMapBaseNoMapViewManager;
 
-	/**
+    //回调函数id
+    public String openFuncId;
+    public String getCurrentLocationFuncId;
+    public String geocodeFuncId;
+    public String reverseGeocodeFuncId;
+    public String poiSearchFuncId; //poiSearchInCity, poiNearbySearch, poiBoundSearch相对应
+    public String busLineSearchFuncId;
+
+    /**
 	 * 构造方法
-	 * 
+	 *
 	 * @param context
 	 * @param inParent
 	 */
@@ -81,7 +89,7 @@ public class EUExBaiduMap extends EUExBase {
 
 	/**
 	 * 拦截Activity的onCreate方法
-	 * 
+	 *
 	 * @param context
 	 */
 	public static void onActivityCreate(Context context) {
@@ -112,8 +120,22 @@ public class EUExBaiduMap extends EUExBase {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_SETCENTER, params);
 	}
 
-	public void getCenter(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETCENTER, params);
+	public JSONObject getCenter(String[] params) {
+        if (mMapBaseFragment != null) {
+            EBaiduMapBaseFragment eBaiduMapBaseFragment = mMapBaseFragment;
+            try {
+                LatLng latlng = eBaiduMapBaseFragment.getCenter();
+                JSONObject jsonObject = new JSONObject();
+                if (latlng != null) {
+                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(latlng.longitude));
+                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(latlng.latitude));
+                }
+                return jsonObject;
+            } catch (Exception e) {
+                MLog.getIns().i(e);
+            }
+        }
+        return null;
 	}
 
 	public void setZoomLevel(String[] params) {
@@ -292,8 +314,29 @@ public class EUExBaiduMap extends EUExBase {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ZOOMCONTROLSENABLED, params);
 	}
 
-	public void getDistance(String[] params) {// 计算两点之间的距离 by waka
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_GETDISTANCE, params);
+	public double getDistance(String[] params) {// 计算两点之间的距离 by waka
+        if (params.length < 4) {
+            return 0;
+        }
+        double distance = -1;
+
+        try {
+            double lat1 = Double.valueOf(params[0]);
+            double lon1 = Double.valueOf(params[1]);
+            double lat2 = Double.valueOf(params[2]);
+            double lon2 = Double.valueOf(params[3]);
+
+            LatLng p1 = new LatLng(lat1, lon1);
+            LatLng p2 = new LatLng(lat2, lon2);
+            distance = DistanceUtil.getDistance(p1, p2);
+
+            jsCallback(EBaiduMapUtils.MAP_FUN_CB_GET_DISTANCE, 0, EUExCallback.F_C_TEXT, "" + distance);
+            return distance;
+
+        } catch (NumberFormatException e) {
+            e.getStackTrace();
+        }
+        return distance;
 	}
 
 	private void sendMessageWithType(int msgType, String[] params) {
@@ -324,7 +367,7 @@ public class EUExBaiduMap extends EUExBase {
 
 	/**
 	 * handleMessageInMap
-	 * 
+	 *
 	 * @param msg
 	 */
 	private void handleMessageInMap(Message msg) {
@@ -403,7 +446,7 @@ public class EUExBaiduMap extends EUExBase {
 				handlePoiBoundSearch(params, eBaiduMapBaseFragment);
 				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_BUSLINESEARCH:
-				handleBusLineSearch(params, eBaiduMapBaseFragment);
+                handleBusLineSearch(params, eBaiduMapBaseFragment);
 				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_REMOVEBUSLINE:
 				handleRemoveBusLine(params, eBaiduMapBaseFragment);
@@ -480,10 +523,6 @@ public class EUExBaiduMap extends EUExBase {
 			case EBaiduMapUtils.MAP_MSG_CODE_ZOOMCONTROLSENABLED:
 				handleZoomControlsEnabled(params, eBaiduMapBaseFragment);
 				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_GETDISTANCE:// 计算两点之间的距离 by waka
-				handleGetDistance(params);
-				break;
-
 			default:
 				break;
 			}
@@ -507,11 +546,6 @@ public class EUExBaiduMap extends EUExBase {
 			// 区域检索
 			case EBaiduMapUtils.MAP_MSG_CODE_POIBOUNDSEARCH:
 				handlePoiBoundSearch(params, null);
-				break;
-
-			// 计算两点之间的距离 by waka
-			case EBaiduMapUtils.MAP_MSG_CODE_GETDISTANCE:
-				handleGetDistance(params);
 				break;
 
 			// 获得当前位置
@@ -544,7 +578,7 @@ public class EUExBaiduMap extends EUExBase {
 		MLog.getIns().d("start");
 
 		String[] params = msg.getData().getStringArray(EBaiduMapUtils.MAP_FUN_PARAMS_KEY);
-		if (params == null || (params.length != 4 && params.length != 6)) {
+		if (params == null || (params.length < 4)) {
 			return;
 		}
 
@@ -564,6 +598,9 @@ public class EUExBaiduMap extends EUExBase {
 				lat = Double.parseDouble(params[5]);
 				isUseLngLat = true;
 			}
+            if (params.length == 7) {
+                openFuncId = params[6];
+            }
 			if (mMapBaseFragment != null) {
 				MLog.getIns().e("mMapBaseFragment != null");
 				return;
@@ -809,8 +846,16 @@ public class EUExBaiduMap extends EUExBase {
 	}
 
 	private void handlePoiSearchInCity(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
+        if (params == null || params.length == 0) {
+            return;
+        }
 		try {
 			JSONObject json = new JSONObject(params[0]);
+            if (params.length == 2) {
+                poiSearchFuncId = params[1];
+            } else {
+                poiSearchFuncId = null;
+            }
 			String city = json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
 			String searchKey = json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_SEARCHKEY);
 			int pageNum = Integer.parseInt(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_PAGENUM));
@@ -836,6 +881,11 @@ public class EUExBaiduMap extends EUExBase {
 				return;
 			}
 			JSONObject json = new JSONObject(params[0]);
+            if (params.length == 2) {
+                poiSearchFuncId = params[1];
+            } else {
+                poiSearchFuncId = null;
+            }
 			String lng = json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG);
 			String lat = json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT);
 			String radius = json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_RADIUS);
@@ -860,6 +910,11 @@ public class EUExBaiduMap extends EUExBase {
 		try {
 			// 1
 			JSONObject jsonObject = new JSONObject(params[0]);
+            if (params.length == 2) {
+                poiSearchFuncId = params[1];
+            } else {
+                poiSearchFuncId = null;
+            }
 			String northeastStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_NORTHEAST);
 			// 2
 			JSONObject jsonNortheastObj = new JSONObject(northeastStr);
@@ -891,8 +946,16 @@ public class EUExBaiduMap extends EUExBase {
 	}
 
 	private void handleBusLineSearch(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
+        System.out.println("-------------> handleBusLineSearch");
+
+        if (params == null || params.length == 0) {
+            return;
+        }
 		try {
 			JSONObject jsonObject = new JSONObject(params[0]);
+            if (params.length == 2) {
+                busLineSearchFuncId = params[1];
+            }
 			String cityStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
 			String busStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_BUSLINENAME);
 			eBaiduMapBaseFragment.busLineSearch(cityStr, busStr);
@@ -958,6 +1021,9 @@ public class EUExBaiduMap extends EUExBase {
 		try {
 			if (params != null && params.length > 0) {
 				JSONObject jsonObject = new JSONObject(params[0]);
+                if (params.length == 2) {
+                    geocodeFuncId = params[1];
+                }
 				if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY) && jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)) {
 					String cityStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY);
 					String addrStr = jsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS);
@@ -968,6 +1034,7 @@ public class EUExBaiduMap extends EUExBase {
 					geoCoderFunction.geocode(cityStr, addrStr);
 				}
 			}
+
 		} catch (Exception e) {
 		}
 	}
@@ -975,6 +1042,9 @@ public class EUExBaiduMap extends EUExBase {
 	private void handleReverseGeocode(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
 		try {
 			JSONObject json = new JSONObject(params[0]);
+            if (null != params && params.length == 2) {
+                reverseGeocodeFuncId = params[1];
+            }
 			double lng = Double.parseDouble(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG));
 			double lat = Double.parseDouble(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT));
 			// eBaiduMapBaseFragment.reverseGeoCode(lng, lat);
@@ -990,10 +1060,12 @@ public class EUExBaiduMap extends EUExBase {
 
 	private void handleGetCurrentLocation(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
 		MLog.getIns().i("start");
+        if (null != params && params.length == 1) {
+            getCurrentLocationFuncId = params[0];
+        }
 		try {
 
 			// eBaiduMapBaseFragment.getCurrentLocation();
-
 			LocationFunction function = new LocationFunction(mContext, this);
 			function.start();
 
@@ -1120,6 +1192,7 @@ public class EUExBaiduMap extends EUExBase {
 		if (params.length < 4) {
 			return;
 		}
+
 		try {
 
 			double lat1 = Double.valueOf(params[0]);

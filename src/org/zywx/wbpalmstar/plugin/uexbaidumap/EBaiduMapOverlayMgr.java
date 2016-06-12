@@ -4,20 +4,49 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import com.baidu.mapapi.map.*;
+import android.view.View;
+
+import com.ace.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.ace.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.ace.universalimageloader.core.ImageLoader;
+import com.ace.universalimageloader.core.ImageLoaderConfiguration;
+import com.ace.universalimageloader.core.assist.FailReason;
+import com.ace.universalimageloader.core.assist.QueueProcessingType;
+import com.ace.universalimageloader.core.listener.ImageLoadingListener;
+import com.baidu.mapapi.map.Arc;
+import com.baidu.mapapi.map.ArcOptions;
+import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.Circle;
+import com.baidu.mapapi.map.CircleOptions;
+import com.baidu.mapapi.map.Dot;
+import com.baidu.mapapi.map.DotOptions;
+import com.baidu.mapapi.map.GroundOverlay;
+import com.baidu.mapapi.map.GroundOverlayOptions;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polygon;
+import com.baidu.mapapi.map.PolygonOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.Stroke;
+import com.baidu.mapapi.map.Text;
+import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.model.LatLngBounds.Builder;
+
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
-import org.zywx.wbpalmstar.base.cache.ImageLoadTask;
-import org.zywx.wbpalmstar.base.cache.ImageLoadTask$ImageLoadTaskCallback;
-import org.zywx.wbpalmstar.base.cache.ImageLoaderManager;
+
 import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class EBaiduMapOverlayMgr implements OnMarkerClickListener {
 
@@ -26,7 +55,6 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener {
 	private Context mContext;
 	protected BaiduMap mBaiduMap;
 	protected MapView mMapView;
-	private ImageLoaderManager manager;
 	private Map<String, Bitmap> marks;
 
 	public EBaiduMapOverlayMgr(EBaiduMapBaseFragment context, BaiduMap baiduMap, MapView mapView) {
@@ -35,10 +63,20 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener {
 		mBaiduMap = baiduMap;
 		mMapView = mapView;
 		mEbaiduMapOverlays = new HashMap<String, EBaiduMapOverlay>();
-		manager = ImageLoaderManager.initImageLoaderManager(mContext);
+        initImageLoader(mContext);
 		mBaiduMap.setOnMarkerClickListener(this);
 		marks = new HashMap<String, Bitmap>();
 	}
+    private void initImageLoader(Context context) {
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .threadPriority(Thread.MAX_PRIORITY).denyCacheImageMultipleSizesInMemory()
+                .diskCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO)
+                .memoryCache(new LruMemoryCache(2 * 1024 * 1024)) //可以通过自己的内存缓存实现
+                .memoryCacheSize(2 * 1024 * 1024)  // 内存缓存的最大值
+                .memoryCacheSizePercentage(13) // default
+                .build();
+        ImageLoader.getInstance().init(config);
+    }
 
 	public void removeMarkerOverlay(String markerId) {
 		try {
@@ -107,22 +145,32 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener {
 			String iconPath = markerOverlayOptions.getIconPath();
 
 			if (iconPath != null) {
-				manager.asyncLoad(new ImageLoadTask(iconPath) {
-					@Override
-					protected Bitmap doInBackground() {
-						return EBaiduMapUtils.getImage(mContext, filePath);
-					}
-				}.addCallback(new ImageLoadTask$ImageLoadTaskCallback() {
-					@Override
-					public void onImageLoaded(ImageLoadTask task, Bitmap bitmap) {
-						if (bitmap == null) {
-							bitmap = EBaiduMapUtils.getDefaultMarkerBitMap(mContext);
-						}
-						BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
-						mapMarkerOverlay.getMarker().setIcon(markerDescriptor);
-						setMarkOp(mapMarkerOverlay, markerOverlayOptions);
-					}
-				}));
+                ImageLoader.getInstance().loadImage(iconPath, new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String s, View view) {
+
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                        if (bitmap == null) {
+                            bitmap = EBaiduMapUtils.getDefaultMarkerBitMap(mContext);
+                        }
+                        BitmapDescriptor markerDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
+                        mapMarkerOverlay.getMarker().setIcon(markerDescriptor);
+                        setMarkOp(mapMarkerOverlay, markerOverlayOptions);
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String s, View view) {
+
+                    }
+                });
 			} else {
 				if (mapMarkerOverlay.getMarker().getIcon() == null) {
 					Bitmap bitmap = EBaiduMapUtils.getDefaultMarkerBitMap(mContext);
@@ -375,58 +423,67 @@ public class EBaiduMapOverlayMgr implements OnMarkerClickListener {
 			if (info == null) {
 				return;
 			}
-			manager.asyncLoad(new ImageLoadTask(info.getImageUrl()) {
+            ImageLoader.getInstance().loadImage(info.getImageUrl(), new ImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String s, View view) {
 
-				@Override
-				protected Bitmap doInBackground() {
-					return EBaiduMapUtils.getImage(mContext, filePath);
-				}
-			}.addCallback(new ImageLoadTask$ImageLoadTaskCallback() {
-				@Override
-				public void onImageLoaded(ImageLoadTask task, Bitmap bitmap) {
-					if (bitmap == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
-						return;
-					}
-					GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions();
-					if (info.getList().size() == 1) {
-						LatLng lng = info.getList().get(0);
-						groundOverlayOptions.position(lng);
-						if (info.getGroundWidth() == null) {
-							return;
-						}
-						if (info.getGroundHeight() != null) {
-							groundOverlayOptions.dimensions((int) Float.parseFloat(info.getGroundWidth()), (int) Float.parseFloat(info.getGroundHeight()));
-						} else {
-							groundOverlayOptions.dimensions((int) Float.parseFloat(info.getGroundWidth()));
-						}
-					}
-					if (info.getList().size() == 2) {
-						Builder builder = new LatLngBounds.Builder();
-						builder.include(info.getList().get(0));
-						builder.include(info.getList().get(1));
-						LatLngBounds bounds = builder.build();
-						groundOverlayOptions.positionFromBounds(bounds);
-					}
-					groundOverlayOptions.image(BitmapDescriptorFactory.fromBitmap(bitmap));
-					bitmap.recycle();
-					groundOverlayOptions.transparency(Float.parseFloat(info.getTransparency()));
-					if (info.getVisibleStr() != null) {
-						groundOverlayOptions.visible(Boolean.parseBoolean(info.getVisibleStr()));
-					}
-					if (info.getzIndexStr() != null) {
-						groundOverlayOptions.zIndex((int) Float.parseFloat(info.getzIndexStr()));
-					}
-					GroundOverlay groundOverlay = (GroundOverlay) mBaiduMap.addOverlay(groundOverlayOptions);
-					if (info.getExtraStr() != null) {
-						Bundle b = new Bundle();
-						b.putString(info.getIdStr(), info.getExtraStr());
-						groundOverlay.setExtraInfo(b);
-					}
-					EBaiduMapGroundOverlay eBaiduMapGroundOverlay = new EBaiduMapGroundOverlay(info.getIdStr(), baseFragment, mBaiduMap);
-					eBaiduMapGroundOverlay.setGroundOverlay(groundOverlay);
-					mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapGroundOverlay);
-				}
-			}));
+                }
+
+                @Override
+                public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                }
+
+                @Override
+                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                    if (bitmap == null || mEbaiduMapOverlays.containsKey(info.getIdStr())) {
+                        return;
+                    }
+                    GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions();
+                    if (info.getList().size() == 1) {
+                        LatLng lng = info.getList().get(0);
+                        groundOverlayOptions.position(lng);
+                        if (info.getGroundWidth() == null) {
+                            return;
+                        }
+                        if (info.getGroundHeight() != null) {
+                            groundOverlayOptions.dimensions((int) Float.parseFloat(info.getGroundWidth()), (int) Float.parseFloat(info.getGroundHeight()));
+                        } else {
+                            groundOverlayOptions.dimensions((int) Float.parseFloat(info.getGroundWidth()));
+                        }
+                    }
+                    if (info.getList().size() == 2) {
+                        Builder builder = new LatLngBounds.Builder();
+                        builder.include(info.getList().get(0));
+                        builder.include(info.getList().get(1));
+                        LatLngBounds bounds = builder.build();
+                        groundOverlayOptions.positionFromBounds(bounds);
+                    }
+                    groundOverlayOptions.image(BitmapDescriptorFactory.fromBitmap(bitmap));
+                    bitmap.recycle();
+                    groundOverlayOptions.transparency(Float.parseFloat(info.getTransparency()));
+                    if (info.getVisibleStr() != null) {
+                        groundOverlayOptions.visible(Boolean.parseBoolean(info.getVisibleStr()));
+                    }
+                    if (info.getzIndexStr() != null) {
+                        groundOverlayOptions.zIndex((int) Float.parseFloat(info.getzIndexStr()));
+                    }
+                    GroundOverlay groundOverlay = (GroundOverlay) mBaiduMap.addOverlay(groundOverlayOptions);
+                    if (info.getExtraStr() != null) {
+                        Bundle b = new Bundle();
+                        b.putString(info.getIdStr(), info.getExtraStr());
+                        groundOverlay.setExtraInfo(b);
+                    }
+                    EBaiduMapGroundOverlay eBaiduMapGroundOverlay = new EBaiduMapGroundOverlay(info.getIdStr(), baseFragment, mBaiduMap);
+                    eBaiduMapGroundOverlay.setGroundOverlay(groundOverlay);
+                    mEbaiduMapOverlays.put(info.getIdStr(), eBaiduMapGroundOverlay);
+                }
+
+                @Override
+                public void onLoadingCancelled(String s, View view) {
+
+                }
+            });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

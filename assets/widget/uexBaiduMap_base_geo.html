@@ -33,7 +33,7 @@
     <script src="js/zy_click.js">
     </script>
     <script type="text/javascript">
-	
+
 
     	var isSetLoc = 0;
     	 	window.uexOnload = function() {
@@ -50,11 +50,11 @@
     	 			alert("cbReverseGeoCodeResult: "+json);
     	 		}
     	 	}
-    
+
     		function closeMap(){
         		uexBaiduMap.close();
     		}
-    		
+
     		function openmap(){
     			var divTop = document.getElementById("topDiv").offsetTop + document.getElementById("topDiv").offsetHeight + 60;
         		var w = screen.availWidth-20;
@@ -62,18 +62,22 @@
         		isSetLoc = 0;
 	    		uexBaiduMap.open(10,divTop,w,h,'116.401','39.925');
     		}
-    		
+
+    		var commonCallback = function(data) {
+    		    alert("commonCallback:" + JSON.stringify(data));
+    		}
+
     		function geocode(){
     		    //var jsonstr = '{"city":"北京","address":"东长安街33号"}';
     		    var jsonstr = '{"city":"河北省","address":"唐山市迁安市五重安乡更新庄村"}';
-        		uexBaiduMap.geocode(jsonstr);
+        		uexBaiduMap.geocode(jsonstr, commonCallback);
 
     		}
-    		
+
     		function reverseGeocode(){
     		    var jsonstr = '{"longitude":"116.307827","latitude":"40.056957"}';
-        		uexBaiduMap.reverseGeocode(jsonstr);
-    		}                                                                     
+        		uexBaiduMap.reverseGeocode(jsonstr, commonCallback);
+    		}
 	</script>
 </head>
 <body class="um-vp " ontouchstart>
@@ -90,28 +94,28 @@
      </div>
      <!--header结束--><!--content开始-->
      <div id="content" class="ub-f1 tx-l t-bla" style="">
-            
+
      <div class="conbor">
 		<div class="consj">
-		
+
 		<input type="button" value="打开" onclick="openmap();">
 		<input type="button" value="关闭" onclick="closeMap();">
-		<p></p><br> 
-		
-		
-                
+		<p></p><br>
+
+
+
         </div>
       </div>
-      
-		<div class="consj" id="topDiv">  
-		
+
+		<div class="consj" id="topDiv">
+
 			 <input type = "button" value="地理编码" onclick = "geocode();">
         	<input type = "button" value="反地理编码" onclick = "reverseGeocode();">
-        <p></p><br>          
+        <p></p><br>
         </div>
-      
-        
-		 
+
+
+
 	</div>
 </body>
 <script>

@@ -1,14 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
-
 import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
@@ -32,6 +23,15 @@ import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 		OnGetBusLineSearchResultListener {
@@ -129,7 +129,7 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 		public MyBusLineOverlay(BaiduMap baiduMap) {
 			super(baiduMap);
 		}
-		
+
 		@Override
 		public boolean onBusStationClick(int index) {
 			mBaiduMap.hideInfoWindow();
@@ -191,12 +191,15 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 						+ EBaiduMapUtils.MAP_FUN_CB_BUSLINE_SEARCH_RESULT
 						+ "('" + jsonBusLine.toString() + "');}";
 				uexBaiduMap.onCallback(js);
+                if (null != uexBaiduMap.busLineSearchFuncId) {
+                    uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.busLineSearchFuncId), false, jsonBusLine);
+                }
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	private void jsonNoResultCallback() {
 		EBaiduMapBaseFragment activity;
 		activity = baseFragment;
@@ -207,9 +210,12 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 					+ EBaiduMapUtils.MAP_FUN_CB_BUSLINE_SEARCH_RESULT + "('" + null
 					+ "');}";
 			uexBaiduMap.onCallback(js);
+            if (null != uexBaiduMap.busLineSearchFuncId) {
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.busLineSearchFuncId), false);
+            }
 		}
 	}
-	
+
 	/**
 	 * 公交线路的上一个节点
 	 */
@@ -258,7 +264,7 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
 		popupText.setText(title);
 		mBaiduMap.showInfoWindow(new InfoWindow(popupText, location, 0));
 	}
-	
+
 	public void removeBusLine() {
 		if (mMyBusLineOverlay != null) {
 			mBaiduMap.hideInfoWindow();

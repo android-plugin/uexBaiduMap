@@ -33,7 +33,7 @@
     <script src="js/zy_click.js">
     </script>
     <script type="text/javascript">
-	
+
 
     	var isSetLoc = 0;
     	 	window.uexOnload = function() {
@@ -49,11 +49,14 @@
 				uexBaiduMap.cbBusLineSearchResult = function makerListner(json) {
     	 		}
     	 	}
-    
+
     		function closeMap(){
         		uexBaiduMap.close();
     		}
-    		
+    	    var commonCallback = function (data) {
+    	        alert("commonCallback:" + JSON.stringify(data));
+    	    }
+
     		function openmap(){
     			var divTop = document.getElementById("topDiv").offsetTop + document.getElementById("topDiv").offsetHeight + 60;
         		var w = screen.availWidth-20;
@@ -61,40 +64,40 @@
         		isSetLoc = 0;
 	    		uexBaiduMap.open(10,divTop,w,h,"116.309","39.977");
     		}
-    		                   
+
     		function suggestionSearch(){
         		uexBaiduMap.suggestionSearch("酒店");
     		}
-    		
+
     		function poiSearchInCity(){
         		//var jsonstr = '{"city":"北京","searchKey":"电影院","pageNum":"0"}';
         		var jsonstr = '{"city":"北京","searchKey":"114","pageNum":"0"}';
-        		uexBaiduMap.poiSearchInCity(jsonstr);
+        		uexBaiduMap.poiSearchInCity(jsonstr, commonCallback);
     		}
-    		
+
     		function poiNearbySearch(){
         		var jsonstr = '{"longitude":"116.309","latitude":"39.977","radius":"1000","searchKey":"美食|洗浴|酒店","pageNum":"0"}';
-        		uexBaiduMap.poiNearbySearch(jsonstr);
+        		uexBaiduMap.poiNearbySearch(jsonstr, commonCallback);
     		}
-    		
+
     		function poiBoundSearch(){
     		    var jsonstr = '{"searchKey": "电影院","pageNum": "0","northeast": {"longitude": "116.326664","latitude": "39.991418"},"southwest": {"longitude": "116.312705","latitude": "39.981730"}}';
-        		uexBaiduMap.poiBoundSearch(jsonstr);
+        		uexBaiduMap.poiBoundSearch(jsonstr, commonCallback);
     		}
-    		
+
     		function busLineSearch(){
-        		var jsonstr = '{"city":"北京","busLineName":"114"}';
-        		uexBaiduMap.busLineSearch(jsonstr);
+        		var jsonstr = '{"city":"北京","busLineName":"717"}';
+        		uexBaiduMap.busLineSearch(jsonstr, commonCallback);
     		}
-    		
+
     		function removeBusLine(){
         		uexBaiduMap.removeBusLine();
     		}
-    		
+
     		function preBusLineNode(){
         		uexBaiduMap.preBusLineNode();
     		}
-    		
+
     		function nextBusLineNode(){
         		uexBaiduMap.nextBusLineNode();
     		}
@@ -115,18 +118,18 @@
      </div>
      <!--header结束--><!--content开始-->
      <div id="content" class="ub-f1 tx-l t-bla" style="">
-            
+
      <div class="conbor">
 		<div class="consj">
-		
+
 		<input type="button" value="打开" onclick="openmap();">
 		<input type="button" value="关闭" onclick="closeMap();">
         </div>
       </div>
-		<div class="consj" id="topDiv">  
+		<div class="consj" id="topDiv">
         <input type = "button" value="城市检索" onclick = "poiSearchInCity();">
         <input type = "button" value="周边检索" onclick = "poiNearbySearch();">
-        <input type = "button" value="区域检索" onclick = "poiBoundSearch();"><br> 
+        <input type = "button" value="区域检索" onclick = "poiBoundSearch();"><br>
         <input type = "button" value="公交检索" onclick = "busLineSearch();">
         <input type = "button" value="清除公交" onclick = "removeBusLine();">
 		<input type="button" value="上个站点" onclick="preBusLineNode();">
@@ -136,15 +139,15 @@
         <input type = "button" value="指定范围内（圆心、半径）搜索兴趣点（多）" onclick = "poiMultiSearchNearBy();">
         <input type = "button" value="指定范围（经纬度）搜索单兴趣点" onclick = "poiSearchInBounds();">
         <input type = "button" value="指定范围（经纬度）搜索多兴趣点" onclick = "poiMultiSearchInBounds();">
-            
+
         <input type = "button" value="指定范围内（圆心、半径）搜索兴趣点（多）IOS" onclick = "poiMultiSearchNearByIOS();">
         <input type = "button" value="指定范围（经纬度）搜索单兴趣点IOS" onclick = "poiSearchInBoundsIOS();">
         <input type = "button" value="指定范围（经纬度）搜索多兴趣点IOS" onclick = "poiMultiSearchInBoundsIOS();">-->
-        <p></p><br>         
+        <p></p><br>
         </div>
-      
-        
-		 
+
+
+
 	</div>
 </body>
 <script>

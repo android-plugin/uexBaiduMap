@@ -1,7 +1,10 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(include: '*.jar', dir: 'libs')
+    compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/aceimageloader.jar')
+    compile files('libs/AppCanEngine-system-4.0.0.jar')
 }
 
 android {
@@ -11,10 +14,10 @@ android {
     }
     signingConfigs {
         config {
-            keyAlias 'appcandevelop'
-            keyPassword '3g2win.com'
-            storeFile file('AppcanDevelop.keystore')
-            storePassword '3g2win.com'
+            keyAlias 'android.keystore'
+            keyPassword '123456'
+            storeFile file('android.keystore')
+            storePassword '123456'
         }
     }
     compileSdkVersion 22

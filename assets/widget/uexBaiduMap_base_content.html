@@ -38,20 +38,20 @@
         		var t=document.getElementById("type").value;
         		uexBaiduMap.setMapType(t);
    		 	}
-    		
+
     		function openTrafficEnabled() {
     			uexBaiduMap.setTrafficEnabled(1);
     		}
-    		
+
     		function closeTrafficEnabled() {
     			uexBaiduMap.setTrafficEnabled(0);
     		}
-    		
+
     		function setCenter() {
     			//上海(121.481, 31.227);经纬度
     			uexBaiduMap.setCenter(121.481, 31.227);
     		}
-    
+
     	 	window.uexOnload = function() {
     	 		uexWidgetOne.cbError = function(opid,type,data){
     	 			alert(data);
@@ -71,29 +71,35 @@
 				    alert("------cbGetCenter------\n"+json);
 				}
     	 	}
-    
+
     		function closeMap(){
         		uexBaiduMap.close();
     		}
-    		
+
     		function openmap(){
     			var divTop = document.getElementById("topDiv").offsetTop + document.getElementById("topDiv").offsetHeight + 60;
         		var w = screen.availWidth-20;
         		var h = screen.availHeight/2;
-	    		uexBaiduMap.open(10, divTop, w, h,'114.402815','30.475798');
+	    		uexBaiduMap.open(10, divTop, w, h,'114.402815','30.475798', function() {
+	    		    console.log('----->open success');
+	    		});
     		}
-    
+
     		function hideMap(){
         		uexBaiduMap.hide();
     		}
-    		
+
     		function showMap(){
         		uexBaiduMap.show();
     		}
-    		
+
     		function closeWin() {
     			//uexBaiduMap.close();
     			uexWindow.close(-1);
+    		}
+    		function getCenter() {
+    		    var result = uexBaiduMap.getCenter();
+    		    alert("data:" + JSON.stringify(result));
     		}
 	</script>
 </head>
@@ -111,7 +117,7 @@
      </div>
      <!--header结束--><!--content开始-->
      <div id="content" class="ub-f1 tx-l t-bla" style="">
-            
+
      <div class="conbor">
 		<div class="consj" id="topDiv">
 		type 为1（标准地图）,2（卫星地图）
@@ -123,10 +129,10 @@
 		<input type="button" value="开启实时交通图" onclick="openTrafficEnabled();">
 		<input type="button" value="关闭实时交通图" onclick="closeTrafficEnabled();">
 		<input type="button" value="设置中心点" onclick="setCenter();">
-		<input type="button" value="得到中心点" onclick="uexBaiduMap.getCenter();">
+		<input type="button" value="得到中心点" onclick="getCenter();">
 		<input type="button" value="关闭" onclick="closeMap();">
-		<p></p><br> 
-                
+		<p></p><br>
+
         </div>
       </div>
 

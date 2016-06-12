@@ -62,7 +62,7 @@
         <!-- uexBaiduMap -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="fcXf7iW4xbDfTMwixsnkcmFO" />
+            android:value="Mjkuai5jIoGi1hkL3YqMTPhxuogWn5rE" />
 
         <service
             android:name="com.baidu.location.f"

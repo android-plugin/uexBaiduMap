@@ -1,10 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
-
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,6 +25,11 @@ import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+
 public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSuggestionResultListener {
 	private String TAG = "EBaiduMapPoiSearch";
 	protected Context mContext;
@@ -48,7 +48,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 
 	/**
 	 * 不开启MapView的构造方法
-	 * 
+	 *
 	 * @param mapBaseNoMapViewManager
 	 */
 	public EBaiduMapPoiSearch(EBaiduMapBaseNoMapViewManager mapBaseNoMapViewManager) {
@@ -232,6 +232,9 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 			String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){"
 					+ EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + jsonPoi.toString() + "');}";
 			uexBaiduMap.onCallback(js);
+            if(null != uexBaiduMap.poiSearchFuncId) {
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false, jsonPoi);
+            }
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -243,6 +246,9 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 			String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){"
 					+ EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + null + "');}";
 			uexBaiduMap.onCallback(js);
+            if(null != uexBaiduMap.poiSearchFuncId) {
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false);
+            }
 		}
 		// change by waka
 		else if (mEBaiduMapBaseNoMapViewManager != null) {
@@ -250,6 +256,9 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 			String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "){"
 					+ EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + null + "');}";
 			uexBaiduMap.onCallback(js);
+            if(null != uexBaiduMap.poiSearchFuncId) {
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false);
+            }
 		}
 	}
 

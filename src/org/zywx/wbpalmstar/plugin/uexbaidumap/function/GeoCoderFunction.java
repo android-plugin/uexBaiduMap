@@ -1,11 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap.function;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapUtils;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap;
-import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
-
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.GeoCodeOption;
@@ -15,9 +9,15 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapUtils;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
+
 /**
  * 地理编码功能
- * 
+ *
  * @author waka
  * @version createTime:2016年4月27日 上午10:49:29
  */
@@ -29,7 +29,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
 	/**
 	 * 构造方法
-	 * 
+	 *
 	 * @param uexBaiduMap
 	 */
 	public GeoCoderFunction(EUExBaiduMap uexBaiduMap) {
@@ -80,7 +80,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
 	/**
 	 * 发起地理编码检索
-	 * 
+	 *
 	 * @param city
 	 * @param address
 	 */
@@ -94,7 +94,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
 	/**
 	 * 发起反地理编码检索
-	 * 
+	 *
 	 * @param longitude
 	 * @param latitude
 	 */
@@ -109,7 +109,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
 	/**
 	 * 地理编码给前端回调
-	 * 
+	 *
 	 * @param point
 	 * @param header
 	 */
@@ -123,6 +123,9 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 				}
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				mEUExBaiduMap.onCallback(js);
+                if (null != mEUExBaiduMap.geocodeFuncId) {
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.geocodeFuncId), false, jsonObject);
+                }
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -131,7 +134,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
 	/**
 	 * 反地理编码给前端回调
-	 * 
+	 *
 	 * @param address
 	 * @param header
 	 */
@@ -142,6 +145,9 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
 				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
 				mEUExBaiduMap.onCallback(js);
+                if (null != mEUExBaiduMap.reverseGeocodeFuncId) {
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.reverseGeocodeFuncId), false, jsonObject);
+                }
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
