@@ -1,10 +1,5 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
-
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,6 +24,11 @@ import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 
 public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSuggestionResultListener {
 	private String TAG = "EBaiduMapPoiSearch";
@@ -177,7 +177,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
 			jsonPoi.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TOTALPOINUM, result.getTotalPoiNum());
 			jsonPoi.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TOTALPAGENUM, result.getTotalPageNum());
 			jsonPoi.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CURRENTPAGENUM, result.getCurrentPageNum());
-			jsonPoi.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_TOTALPOINUM, result.getCurrentPageCapacity());
+			jsonPoi.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CURRENTPAGECAPACITY, result.getCurrentPageCapacity());
 
 			JSONArray jsonPoiInfoArray = new JSONArray();
 			for (PoiInfo poi : result.getAllPoi()) {
