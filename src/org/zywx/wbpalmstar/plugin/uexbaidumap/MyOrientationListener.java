@@ -23,6 +23,7 @@ public class MyOrientationListener implements SensorEventListener
 	}
 
 	// 开始
+	@SuppressWarnings("deprecation")
 	public void start()
 	{
 		// 获得传感器管理器
@@ -56,6 +57,7 @@ public class MyOrientationListener implements SensorEventListener
 		
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onSensorChanged(SensorEvent event)
 	{

@@ -20,6 +20,7 @@ import com.baidu.mapapi.overlayutil.TransitRouteOverlay;
 import com.baidu.mapapi.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
 import com.baidu.mapapi.search.route.DrivingRouteResult;
@@ -41,7 +42,8 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 	private HashMap<String, OverlayManager> mRoutePlanOverlays;
 	private EBaiduMapRoutePlanOptions mRoutePlanOptions;
 	private RoutePlanSearch mRoutePlanSearch = null;
-    private RouteLine mRouteLine = null; //保存路径数据的变量，供浏览节点时使用
+    @SuppressWarnings("rawtypes")
+	private RouteLine mRouteLine = null; //保存路径数据的变量，供浏览节点时使用
 	private int routeNodeIndex = -1; //路径节点索引,供浏览节点时使用
     private EBaiduMapBaseFragment baseFragment;
 
@@ -321,5 +323,10 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 					+ resultId + ");}";
 			uexBaiduMap.onCallback(js);
 		}
+	}
+
+	@Override
+	public void onGetBikingRouteResult(BikingRouteResult arg0) {
+		
 	}
 }

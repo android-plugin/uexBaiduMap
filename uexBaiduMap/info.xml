@@ -1,8 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.2.30" build="30">
-        <info>30:修复了前端调用open方法时传入小数时抛出NumberFormatException的问题</info>
+        uexName="uexBaiduMap" version="3.2.38" build="38">
+        <info>38:解决搜索结果总数被覆盖的问题</info>
+        <build>37:更新SDK,增加getCenter得到地图中心点方法</build>
+        <build>36:优化了getDistance的算法，使用新版本SDK自带工具类DistanceUtil进行计算，使计算值更为精准</build>
+        <build>35:更新SDK后appkey验证广播机制改变，由于onSDKReceiverError回调只为前端开发者所提供，所以使用Toast替代</build>
+        <build>34:修复了getCurrentLocation必须open才能使用的问题
+              34.1:修复了地理编码、反地理编码必须open才能使用的问题</build>
+        <build>33:更新SDK版本,将百度地图所有库导入</build>
+        <build>32.1:增加了getDistance得到两点间直线距离方法
+                 2:在回调方法cbPoiSearchResult中增加distance字段，返回距离
+                 3：规范代码，与之前使用同一种风格</build>
+        <build>31:增加了，当不打开地图View时，也可以调用poi搜索功能（目前支持城市检索，周边检索，区域检索）
+              31.1:修复了打开地图再关闭地图，搜索poi无效的问题</build>
+        <build>30:修复了前端调用open方法时传入小数时抛出NumberFormatException的问题</build>
         <build>29:修复了持续定位时cbCurrentLocation回调不生效的问题</build>
         <build>28:修复open接口传入的中心点不生效的问题</build>
         <build>27:修改插件，使其支持config配置APIKey</build>

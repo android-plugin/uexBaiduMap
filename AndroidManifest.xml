@@ -10,10 +10,6 @@
         android:allowClearUserData="false"
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="8bbQaCMsOcexlFTd3L9meGrK" />
-
         <activity
             android:name="org.zywx.wbpalmstar.engine.EBrowserActivity"
             android:alwaysRetainTaskState="true"
@@ -63,6 +59,11 @@
             </intent-filter>
         </receiver>
 
+        <!-- uexBaiduMap -->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="fcXf7iW4xbDfTMwixsnkcmFO" />
+
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
@@ -70,7 +71,7 @@
         </service>
     </application>
 
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="9" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

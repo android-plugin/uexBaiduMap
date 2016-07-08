@@ -9,6 +9,7 @@
         <method name="setMapType" />
         <method name="setTrafficEnabled" />
         <method name="setCenter" />
+        <method name="getCenter" />
         <method name="setZoomLevel" />
         <method name="zoomIn" />
         <method name="zoomOut" />
@@ -50,8 +51,9 @@
         <method name="stopLocation" />
         <method name="setMyLocationEnable" />
         <method name="setUserTrackingMode" />
-	<method name="hideMap"/>
+        <method name="hideMap"/>
         <method name="showMap"/>
         <method name="zoomControlsEnabled"/>
+        <method name="getDistance"/>
     </plugin>
 </uexplugins>
