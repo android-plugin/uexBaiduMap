@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RelativeLayout;
 
@@ -23,6 +24,9 @@ import org.zywx.wbpalmstar.plugin.uexbaidumap.function.GeoCoderFunction;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.function.LocationFunction;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.receiver.SDKReceiver;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EUExBaiduMap extends EUExBase {
 
@@ -178,8 +182,26 @@ public class EUExBaiduMap extends EUExBase {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_OVERLOOKENABLE, params);
 	}
 
-	public void addMarkersOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDMARKERSOVERLAY, params);
+	public List<String> addMarkersOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        List<String> list = new ArrayList<String>();
+        try {
+            JSONArray jsonArray = new JSONArray(params[0]);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String markerId = mMapBaseFragment.addMarkerOverlay(jsonArray.getString(i));
+                if (!TextUtils.isEmpty(markerId)) {
+                    list.add(markerId);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (list.size() > 0) {
+            return list;
+        }
+        return null;
 	}
 
 	public void setMarkerOverlay(String[] params) {
@@ -202,32 +224,53 @@ public class EUExBaiduMap extends EUExBase {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_REMOVEOVERLAY, params);
 	}
 
-	public void addDotOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDDOTOVERLAY, params);
+	public String addDotOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        return mMapBaseFragment.addDotOverlay(params[0]);
 	}
 
-	public void addPolylineOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDPOLYLINEOVERLAY, params);
+	public String addPolylineOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        return mMapBaseFragment.addPolylineOverlay(params[0]);
 	}
 
-	public void addArcOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDARCOVERLAY, params);
+	public String addArcOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        return mMapBaseFragment.addArcOverlay(params[0]);
 	}
 
-	public void addCircleOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDCIRCLEOVERLAY, params);
+	public String addCircleOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        return mMapBaseFragment.addCircleOverlay(params[0]);
 	}
 
-	public void addPolygonOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDPOLYGONOVERLAY, params);
+	public String addPolygonOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        return mMapBaseFragment.addPolygonOverlay(params[0]);
 	}
 
-	public void addGroundOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDGROUNDOVERLAY, params);
+	public String addGroundOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        return mMapBaseFragment.addGroundOverlay(params[0]);
 	}
 
-	public void addTextOverlay(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_ADDTEXTOVERLAY, params);
+	public String addTextOverlay(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+        return mMapBaseFragment.addTextOverlay(params[0]);
 	}
 
 	public void poiSearchInCity(String[] params) {
@@ -258,8 +301,20 @@ public class EUExBaiduMap extends EUExBase {
 		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_NEXTBUSLINENODE, params);
 	}
 
-	public void searchRoutePlan(String[] params) {
-		sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_SEARCHROUTEPLAN, params);
+	public String searchRoutePlan(String[] params) {
+        if (mMapBaseFragment == null || params.length != 1) {
+            return null;
+        }
+
+        try {
+            final EBaiduMapRoutePlanOptions routePlanOptions = EBaiduMapUtils.paraseRoutePlanOptions(params[0]);
+            if (routePlanOptions == null) {
+                return null;
+            }
+            return mMapBaseFragment.searchRoutePlan(routePlanOptions);
+        } catch (Exception e) {
+        }
+        return null;
 	}
 
 	public void removeRoutePlan(String[] params) {
@@ -421,9 +476,6 @@ public class EUExBaiduMap extends EUExBase {
 			case EBaiduMapUtils.MAP_MSG_CODE_OVERLOOKENABLE:
 				handleOverlookEnable(params, eBaiduMapBaseFragment);
 				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDMARKERSOVERLAY:
-				handleAddMarkersOverlay(params, eBaiduMapBaseFragment);
-				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_SETMARKERSOVERLAY:
 				handleSetMarkerOverlay(params, eBaiduMapBaseFragment);
 				break;
@@ -457,9 +509,6 @@ public class EUExBaiduMap extends EUExBase {
 			case EBaiduMapUtils.MAP_MSG_CODE_NEXTBUSLINENODE:
 				handleNextBusLineNode(params, eBaiduMapBaseFragment);
 				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_SEARCHROUTEPLAN:
-				handleSearchRoutePlan(params, eBaiduMapBaseFragment);
-				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_REMOVEROUTEPLAN:
 				handleRemoveRoutePlan(params, eBaiduMapBaseFragment);
 				break;
@@ -492,27 +541,6 @@ public class EUExBaiduMap extends EUExBase {
 				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_REMOVEOVERLAY:
 				handleRemoveOverlay(params, eBaiduMapBaseFragment);
-				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDDOTOVERLAY:
-				handleAddDotOverlay(params, eBaiduMapBaseFragment);
-				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDPOLYLINEOVERLAY:
-				handleAddPolylineOverlay(params, eBaiduMapBaseFragment);
-				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDARCOVERLAY:
-				handleAddArcOverlay(params, eBaiduMapBaseFragment);
-				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDCIRCLEOVERLAY:
-				handleAddCircleOverlay(params, eBaiduMapBaseFragment);
-				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDPOLYGONOVERLAY:
-				handleAddPolygonOverlay(params, eBaiduMapBaseFragment);
-				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDGROUNDOVERLAY:
-				handleAddGroundOverlay(params, eBaiduMapBaseFragment);
-				break;
-			case EBaiduMapUtils.MAP_MSG_CODE_ADDTEXTOVERLAY:
-				handleAddTextOverlay(params, eBaiduMapBaseFragment);
 				break;
 			case EBaiduMapUtils.MAP_MSG_CODE_HIDEMAP:
 				handleHideMap(params, eBaiduMapBaseFragment);
@@ -782,20 +810,6 @@ public class EUExBaiduMap extends EUExBase {
 		}
 	}
 
-	private void handleAddMarkersOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		try {
-			JSONArray jsonArray = new JSONArray(params[0]);
-			for (int i = 0; i < jsonArray.length(); i++) {
-				eBaiduMapBaseFragment.addMarkerOverlay(jsonArray.getString(i));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void handleSetMarkerOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
 		MLog.getIns().i("");
 		if (params.length != 2) {
@@ -981,17 +995,6 @@ public class EUExBaiduMap extends EUExBase {
 		}
 	}
 
-	private void handleSearchRoutePlan(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		try {
-			final EBaiduMapRoutePlanOptions routePlanOptions = EBaiduMapUtils.paraseRoutePlanOptions(params[0]);
-			if (routePlanOptions == null) {
-				return;
-			}
-			eBaiduMapBaseFragment.searchRoutePlan(routePlanOptions);
-		} catch (Exception e) {
-		}
-	}
-
 	private void handleRemoveRoutePlan(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
 		try {
 			if (params.length != 1) {
@@ -1104,55 +1107,6 @@ public class EUExBaiduMap extends EUExBase {
 			eBaiduMapBaseFragment.setUserTrackingMode(trackingMode);
 		} catch (Exception e) {
 		}
-	}
-
-	private void handleAddTextOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		eBaiduMapBaseFragment.addTextOverlay(params[0]);
-	}
-
-	private void handleAddGroundOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		eBaiduMapBaseFragment.addGroundOverlay(params[0]);
-	}
-
-	private void handleAddPolygonOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		eBaiduMapBaseFragment.addPolygonOverlay(params[0]);
-	}
-
-	private void handleAddCircleOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		eBaiduMapBaseFragment.addCircleOverlay(params[0]);
-	}
-
-	private void handleAddArcOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		eBaiduMapBaseFragment.addArcOverlay(params[0]);
-	}
-
-	private void handleAddPolylineOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		eBaiduMapBaseFragment.addPolylineOverlay(params[0]);
-	}
-
-	private void handleAddDotOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
-		if (params.length != 1) {
-			return;
-		}
-		eBaiduMapBaseFragment.addDotOverlay(params[0]);
 	}
 
 	private void handleRemoveOverlay(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {

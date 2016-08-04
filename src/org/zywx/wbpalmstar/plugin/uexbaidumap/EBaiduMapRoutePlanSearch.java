@@ -58,12 +58,12 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 		mRoutePlanSearch = RoutePlanSearch.newInstance();
 		mRoutePlanSearch.setOnGetRoutePlanResultListener(this);
 	}
-	
+
     /**
      * 发起路线规划搜索
      * @param routePlanOptions
      */
-	public void searchRoutePlan(EBaiduMapRoutePlanOptions routePlanOptions) {
+	public String searchRoutePlan(EBaiduMapRoutePlanOptions routePlanOptions) {
 		Log.i(TAG, "searchRoutePlan");
         //重置浏览节点的路线数据
         mRouteLine = null;
@@ -91,8 +91,9 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
     		default:
     			break;
 		}
+        return routePlanOptions.getId();
     }
-	
+
 	@Override
 	public void onGetDrivingRouteResult(DrivingRouteResult result) {
 		if (result == null) {
@@ -183,7 +184,7 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 					walkingRouteOverlay);
         }
 	}
-	
+
 	private class MyWalkingRouteOverlay extends WalkingRouteOverlay {
 		public MyWalkingRouteOverlay(BaiduMap baiduMap) {
 			super(baiduMap);
@@ -197,7 +198,7 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 			return false;
 		}
 	}
-	
+
     /**
      * 得到线路的上一个节点
      */
@@ -213,13 +214,13 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
         	return;
         }
     }
-    
+
     /**
      * 得到线路的下一个节点
      */
     public void nextRouteNode() {
         //设置节点索引
-        if (mRouteLine != null 
+        if (mRouteLine != null
         		&& routeNodeIndex < mRouteLine.getAllStep().size() - 1) {
         	routeNodeIndex++;
         	showRouteNode();
@@ -227,7 +228,7 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
         	return;
         }
     }
-	
+
     /**
      * 路径节点显示
      */
@@ -266,10 +267,10 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 		popupText.setText(title);
 		mBaiduMap.showInfoWindow(new InfoWindow(popupText, location, 0));
 	}
-	
+
 	/**
 	 * 清除路线
-	 * 
+	 *
 	 * @param routePlanOptions
 	 */
 	public void removeRoutePlan(String routePlanId) {
@@ -285,7 +286,7 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 	public void destroy() {
 		mRoutePlanSearch.destroy();
 	}
-	
+
 	private void jsonRouteResultCallback(SearchResult result) {
 		EBaiduMapBaseFragment activity;
 		activity = baseFragment;
@@ -327,6 +328,6 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 
 	@Override
 	public void onGetBikingRouteResult(BikingRouteResult arg0) {
-		
+
 	}
 }

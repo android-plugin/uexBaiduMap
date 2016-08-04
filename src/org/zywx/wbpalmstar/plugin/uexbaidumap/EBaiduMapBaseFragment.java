@@ -300,8 +300,8 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 		mUiSettings.setOverlookingGesturesEnabled(enable);
 	}
 
-	public void addMarkerOverlay(String markerInfo) {
-		eBaiduMapOverlayMgr.addMarkerOverlay(markerInfo);
+	public String addMarkerOverlay(String markerInfo) {
+		return eBaiduMapOverlayMgr.addMarkerOverlay(markerInfo);
 	}
 
 	public void removeMarkerOverlay(String markerId) {
@@ -356,8 +356,8 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 		eBaiduMapBusLineSearch.nextBusLineNode();
 	}
 
-	public void searchRoutePlan(EBaiduMapRoutePlanOptions routePlanOptions) {
-		eBaiduMapRoutePlanSearch.searchRoutePlan(routePlanOptions);
+	public String searchRoutePlan(EBaiduMapRoutePlanOptions routePlanOptions) {
+		return eBaiduMapRoutePlanSearch.searchRoutePlan(routePlanOptions);
 	}
 
 	public void removeRoutePlan(String routePlanId) {
@@ -753,32 +753,32 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
 
 	}
 
-	public void addDotOverlay(String dotInfo) {
-		eBaiduMapOverlayMgr.addDotOverlay(dotInfo);
+	public String addDotOverlay(String dotInfo) {
+		return eBaiduMapOverlayMgr.addDotOverlay(dotInfo);
 	}
 
-	public void addPolylineOverlay(String polylineInfo) {
-		eBaiduMapOverlayMgr.addPolylineOverlay(polylineInfo);
+	public String addPolylineOverlay(String polylineInfo) {
+		return eBaiduMapOverlayMgr.addPolylineOverlay(polylineInfo);
 	}
 
-	public void addArcOverlay(String arcInfo) {
-		eBaiduMapOverlayMgr.addArcOverlay(arcInfo);
+	public String addArcOverlay(String arcInfo) {
+		return eBaiduMapOverlayMgr.addArcOverlay(arcInfo);
 	}
 
-	public void addCircleOverlay(String circleInfo) {
-		eBaiduMapOverlayMgr.addCircleOverlay(circleInfo);
+	public String addCircleOverlay(String circleInfo) {
+		return eBaiduMapOverlayMgr.addCircleOverlay(circleInfo);
 	}
 
-	public void addPolygonOverlay(String polygonInfo) {
-		eBaiduMapOverlayMgr.addPolygonOverlay(polygonInfo);
+	public String addPolygonOverlay(String polygonInfo) {
+        return eBaiduMapOverlayMgr.addPolygonOverlay(polygonInfo);
 	}
 
-	public void addGroundOverlay(String groundInfo) {
-		eBaiduMapOverlayMgr.addGroundOverlay(groundInfo);
+	public String addGroundOverlay(String groundInfo) {
+        return eBaiduMapOverlayMgr.addGroundOverlay(groundInfo);
 	}
 
-	public void addTextOverlay(String textInfo) {
-		eBaiduMapOverlayMgr.addTextOverlay(textInfo);
+	public String addTextOverlay(String textInfo) {
+		return eBaiduMapOverlayMgr.addTextOverlay(textInfo);
 	}
 
 	public void hideMap() {

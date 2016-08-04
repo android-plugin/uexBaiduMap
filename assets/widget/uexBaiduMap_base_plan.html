@@ -33,7 +33,7 @@
     <script src="js/zy_click.js">
     </script>
     <script type="text/javascript">
-	
+
 
     	var isSetLoc = 0;
     	 	window.uexOnload = function() {
@@ -46,11 +46,11 @@
 				uexBaiduMap.onSearchRoutePlan = function(resultId) {
     	 		}
     	 	}
-    
+
     		function closeMap(){
         		uexBaiduMap.close();
     		}
-    		
+
     		function openmap(){
     			var divTop = document.getElementById("topDiv").offsetTop + document.getElementById("topDiv").offsetHeight + 60;
         		var w = screen.availWidth-20;
@@ -58,21 +58,21 @@
         		isSetLoc = 0;
 	    		uexBaiduMap.open(10,divTop,w,h,'116.401','39.925');
     		}
-    		                   
+
     		function searchRoutePlan(){
     			var type=document.getElementById("routetype").value;
-        		var jsonstr = '{"id":"rp345","type":"'+type+'","start":{"city":"北京","name":"天安门"},"end":{"city":"北京","name":"百度大厦","longitude":"116.307827","latitude":"40.056957"}}';
+        		var jsonstr = '{"type":"'+type+'","start":{"city":"北京","name":"天安门"},"end":{"city":"北京","name":"百度大厦","longitude":"116.307827","latitude":"40.056957"}}';
         		uexBaiduMap.searchRoutePlan(jsonstr);
     		}
-    		
+
     		function preRouteNode(){
         		uexBaiduMap.preRouteNode();
     		}
-    		
+
     		function nextRouteNode(){
         		uexBaiduMap.nextRouteNode();
     		}
-    		
+
     		function removeRoutePlan(){
         		uexBaiduMap.removeRoutePlan("rp345");
     		}
@@ -93,14 +93,14 @@
      </div>
      <!--header结束--><!--content开始-->
      <div id="content" class="ub-f1 tx-l t-bla" style="">
-            
+
      <div class="conbor">
 		<div class="consj">
 		<input type="button" value="打开" onclick="openmap();">
 		<input type="button" value="关闭" onclick="closeMap();">
         </div>
       </div>
-		<div class="consj" id="topDiv">  
+		<div class="consj" id="topDiv">
 		<input type="text" value="2" id="routetype">0驾车，1公交，2步行
         <input type = "button" value="显示路线" onclick = "searchRoutePlan();">
         <input type = "button" value="清除路线" onclick = "removeRoutePlan();">
@@ -108,11 +108,11 @@
 		<input type="button" value="下个节点" onclick="nextRouteNode();">
         <!--<input type = "button" value="显示公交路线" onclick = "showBusLineSearch();">
         <input type = "button" value="显示公交路线IOS" onclick = "showBusLineSearchIOS();">-->
-        <p></p><br>         
+        <p></p><br>
         </div>
-      
-        
-		 
+
+
+
 	</div>
 </body>
 <script>

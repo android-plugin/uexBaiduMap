@@ -68,7 +68,6 @@ public class EBaiduMapUtils {
 	public static final int MAP_MSG_CODE_BUSLINESEARCH = 31;
 	public static final int MAP_MSG_CODE_PREBUSLINENODE = 32;
 	public static final int MAP_MSG_CODE_NEXTBUSLINENODE = 33;
-	public static final int MAP_MSG_CODE_SEARCHROUTEPLAN = 34;
 	public static final int MAP_MSG_CODE_PREROUTENODE = 35;
 	public static final int MAP_MSG_CODE_NEXTROUTENODE = 36;
 	public static final int MAP_MSG_CODE_GEOCODE = 37;
@@ -260,7 +259,9 @@ public class EBaiduMapUtils {
 
 			if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID)) {
 				markerId = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ID);
-			}
+			} else {
+                markerId = String.valueOf(getRandomId());
+            }
 
 			if (makerJsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG)) {
 				lngStr = makerJsonObject.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG);
@@ -337,7 +338,7 @@ public class EBaiduMapUtils {
 		try {
 			JSONObject json = new JSONObject(msg);
 			routePlanOptions = new EBaiduMapRoutePlanOptions();
-			routePlanOptions.setId(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			routePlanOptions.setId(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(getRandomId())));
 			routePlanOptions.setType(json.getInt(MAP_PARAMS_JSON_KEY_TYPE));
 
 			JSONObject startJson = json.getJSONObject(MAP_PARAMS_JSON_KEY_START);
@@ -486,7 +487,7 @@ public class EBaiduMapUtils {
 		try {
 			lineInfo = new EBaiduMapPolylineOptions();
 			JSONObject json = new JSONObject(msg);
-			lineInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			lineInfo.setIdStr(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(getRandomId())));
 			lineInfo.setFillColor(json.getString(MAP_PARAMS_JSON_KEY_FILLCOLOR));
 			lineInfo.setLineWidth(json.getString(MAP_PARAMS_JSON_KEY_LINEWIDTH));
 			JSONArray property = json.getJSONArray(MAP_PARAMS_JSON_KEY_PROPERTY);
@@ -522,7 +523,7 @@ public class EBaiduMapUtils {
 		try {
 			circleInfo = new EBaiduMapCircleOptions();
 			JSONObject json = new JSONObject(msg);
-			circleInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			circleInfo.setIdStr(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(getRandomId())));
 			circleInfo.setFillColor(json.getString(MAP_PARAMS_JSON_KEY_FILLCOLOR));
 			circleInfo.setStrokeColor(json.getString(MAP_PARAMS_JSON_KEY_STROKECOLOR));
 			circleInfo.setLineWidth(json.getString(MAP_PARAMS_JSON_KEY_LINEWIDTH));
@@ -555,7 +556,7 @@ public class EBaiduMapUtils {
 		try {
 			dotInfo = new EBaiduMapDotOptions();
 			JSONObject json = new JSONObject(msg);
-			dotInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			dotInfo.setIdStr(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(EBaiduMapUtils.getRandomId())));
 			dotInfo.setFillColor(json.getString(MAP_PARAMS_JSON_KEY_FILLCOLOR));
 			dotInfo.setRadius(json.getString(MAP_PARAMS_JSON_KEY_RADIUS));
 			Double latitude = json.getDouble(MAP_PARAMS_JSON_KEY_LAT);
@@ -585,7 +586,7 @@ public class EBaiduMapUtils {
 		try {
 			polygonInfo = new EBaiduMapPolygonOptions();
 			JSONObject json = new JSONObject(msg);
-			polygonInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			polygonInfo.setIdStr(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(getRandomId())));
 			polygonInfo.setFillColor(json.getString(MAP_PARAMS_JSON_KEY_FILLCOLOR));
 			polygonInfo.setStrokeColor(json.getString(MAP_PARAMS_JSON_KEY_STROKECOLOR));
 			polygonInfo.setLineWidth(json.getString(MAP_PARAMS_JSON_KEY_LINEWIDTH));
@@ -622,7 +623,7 @@ public class EBaiduMapUtils {
 		try {
 			arcInfo = new EBaiduMapArcOptions();
 			JSONObject json = new JSONObject(msg);
-			arcInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			arcInfo.setIdStr(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(getRandomId())));
 			arcInfo.setStrokeColor(json.getString(MAP_PARAMS_JSON_KEY_STROKECOLOR));
 			arcInfo.setLineWidth(json.getString(MAP_PARAMS_JSON_KEY_LINEWIDTH));
 			arcInfo.setStart(json.getDouble(MAP_PARAMS_JSON_KEY_START_LATITUDE), json.getDouble(MAP_PARAMS_JSON_KEY_START_LONGITUDE));
@@ -653,7 +654,7 @@ public class EBaiduMapUtils {
 		try {
 			groundInfo = new EBaiduMapGroundOptions();
 			JSONObject json = new JSONObject(msg);
-			groundInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			groundInfo.setIdStr(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(getRandomId())));
 			groundInfo.setImageUrl(json.getString(MAP_PARAMS_JSON_KEY_IMAGEURL));
 			groundInfo.setTransparency(json.getString(MAP_PARAMS_JSON_KEY_TRANSPARENCY));
 			JSONArray property = json.getJSONArray(MAP_PARAMS_JSON_KEY_PROPERTY);
@@ -698,7 +699,7 @@ public class EBaiduMapUtils {
 		try {
 			textInfo = new EBaiduMapTextOptions();
 			JSONObject json = new JSONObject(msg);
-			textInfo.setIdStr(json.getString(MAP_PARAMS_JSON_KEY_ID));
+			textInfo.setIdStr(json.optString(MAP_PARAMS_JSON_KEY_ID, String.valueOf(getRandomId())));
 			textInfo.setFontSize(json.getString(MAP_PARAMS_JSON_KEY_FONTSIZE));
 			textInfo.setText(json.getString(MAP_PARAMS_JSON_KEY_TEXT));
 			textInfo.setLatLng(json.getDouble(MAP_PARAMS_JSON_KEY_LAT), json.getDouble(MAP_PARAMS_JSON_KEY_LNG));
@@ -752,5 +753,9 @@ public class EBaiduMapUtils {
 	// return imgPath;
 	// }
 	//
+
+    public static int getRandomId() {
+        return (int)(Math.random() * 100000);
+    }
 
 }
