@@ -10,6 +10,11 @@ import org.zywx.wbpalmstar.plugin.uexbaidumap.function.LocationFunction;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.receiver.SDKReceiver;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -18,11 +23,6 @@ import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 import android.widget.RelativeLayout;
-
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.DistanceUtil;
 
 public class EUExBaiduMap extends EUExBase {
 
@@ -597,8 +597,10 @@ public class EUExBaiduMap extends EUExBase {
 			mHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					removeFragmentFromWindow(mMapBaseFragment);
-					mMapBaseFragment = null;
+                    if (mMapBaseFragment != null) {
+                        removeFragmentFromWindow(mMapBaseFragment);
+                        mMapBaseFragment = null;
+                    }
 				}
 			}, 10);
 		}
