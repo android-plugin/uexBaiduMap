@@ -5,21 +5,21 @@ import com.baidu.mapapi.map.Polygon;
 
 public class EBaiduMapPolygonOverlay extends EBaiduMapOverlay {
 
-	private Polygon polygon = null;
-	
-	public EBaiduMapPolygonOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
-		super(id, context, baiduMap);
-	}
-	
-	public void setPolygon(Polygon polygon) {
-		this.polygon = polygon;
-	}
+    private Polygon polygon = null;
 
-	@Override
-	public void clearOverlay() {
-		if(polygon != null) {
-			polygon.remove();
-		}
-	}
+    public EBaiduMapPolygonOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
+        super(id, context, baiduMap);
+    }
+
+    public void setPolygon(Polygon polygon) {
+        this.polygon = polygon;
+    }
+
+    @Override
+    public void clearOverlay() {
+        if (polygon != null) {
+            polygon.remove();
+        }
+    }
 
 }

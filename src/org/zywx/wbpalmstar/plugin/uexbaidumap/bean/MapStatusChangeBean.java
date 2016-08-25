@@ -176,29 +176,29 @@ public class MapStatusChangeBean {
         this.newRotate = newRotate;
     }
 
-    public boolean isZoomChanged(){
+    public boolean isZoomChanged() {
         return this.newZoom != this.oldZoom;
     }
 
-    public boolean isOverlookChanged(){
+    public boolean isOverlookChanged() {
         return this.oldOverlook != this.newOverlook;
     }
 
-    public boolean isRotateChanged(){
+    public boolean isRotateChanged() {
         return this.oldRotate != this.newRotate;
     }
 
-    public boolean isCenterChanged(){
+    public boolean isCenterChanged() {
         return this.oldCenterLatitude != this.newCenterLatitude ||
                 this.oldCenterLongitude != this.newCenterLongitude;
     }
 
-    public boolean isNortheastChanged(){
+    public boolean isNortheastChanged() {
         return this.oldNortheastLatitude != this.newNortheastLatitude ||
                 this.oldNortheastLongitude != this.newNortheastLongitude;
     }
 
-    public boolean isSouthWestChanged(){
+    public boolean isSouthWestChanged() {
         return this.oldSouthwestLatitude != this.newSouthwestLatitude ||
                 this.oldNortheastLongitude != this.newNortheastLongitude;
     }

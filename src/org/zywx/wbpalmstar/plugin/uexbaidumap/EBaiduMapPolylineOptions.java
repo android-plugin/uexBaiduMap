@@ -1,53 +1,52 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
+import com.baidu.mapapi.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.baidu.mapapi.model.LatLng;
-
 public class EBaiduMapPolylineOptions extends EBaiduMapOverlayOptions {
 
-	
-	
-	private List<LatLng> list;
-	private String fillColor;
-	private String strokeColor;
-	private String lineWidth;
 
-	public EBaiduMapPolylineOptions() {
-		list = new ArrayList<LatLng>();
-	}
+    private List<LatLng> list;
+    private String fillColor;
+    private String strokeColor;
+    private String lineWidth;
 
-	public List<LatLng> getList() {
-		return list;
-	}
+    public EBaiduMapPolylineOptions() {
+        list = new ArrayList<LatLng>();
+    }
 
-	public void addList(LatLng latLng) {
-		list.add(latLng);
-	}
+    public List<LatLng> getList() {
+        return list;
+    }
 
-	public String getFillColor() {
-		return fillColor;
-	}
+    public void addList(LatLng latLng) {
+        list.add(latLng);
+    }
 
-	public void setFillColor(String fillColor) {
-		this.fillColor = fillColor;
-	}
+    public String getFillColor() {
+        return fillColor;
+    }
 
-	public String getStrokeColor() {
-		return strokeColor;
-	}
+    public void setFillColor(String fillColor) {
+        this.fillColor = fillColor;
+    }
 
-	public void setStrokeColor(String strokeColor) {
-		this.strokeColor = strokeColor;
-	}
+    public String getStrokeColor() {
+        return strokeColor;
+    }
 
-	public String getLineWidth() {
-		return lineWidth;
-	}
+    public void setStrokeColor(String strokeColor) {
+        this.strokeColor = strokeColor;
+    }
 
-	public void setLineWidth(String lineWidth) {
-		this.lineWidth = lineWidth;
-	}
+    public String getLineWidth() {
+        return lineWidth;
+    }
+
+    public void setLineWidth(String lineWidth) {
+        this.lineWidth = lineWidth;
+    }
 
 }
