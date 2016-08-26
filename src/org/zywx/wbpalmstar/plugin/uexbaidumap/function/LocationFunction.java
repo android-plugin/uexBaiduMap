@@ -110,13 +110,13 @@ public class LocationFunction implements BDLocationListener {
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 mEUExBaiduMap.onCallback(js);
                 if (null != mEUExBaiduMap.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
-                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.getCurrentLocationFuncId), false, jsonObject);
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.getCurrentLocationFuncId), false,0, jsonObject);
                 }
             } catch (JSONException e) {
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + null + "');}";
                 mEUExBaiduMap.onCallback(js);
                 if (null != mEUExBaiduMap.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
-                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.getCurrentLocationFuncId), false);
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.getCurrentLocationFuncId), false,1);
                 }
                 e.printStackTrace();
             }

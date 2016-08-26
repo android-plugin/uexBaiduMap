@@ -119,7 +119,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 mEUExBaiduMap.onCallback(js);
                 if (null != mEUExBaiduMap.geocodeFuncId) {
-                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.geocodeFuncId), false, jsonObject);
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.geocodeFuncId), false, 0,jsonObject);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -141,7 +141,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 mEUExBaiduMap.onCallback(js);
                 if (null != mEUExBaiduMap.reverseGeocodeFuncId) {
-                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.reverseGeocodeFuncId), false, jsonObject);
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.reverseGeocodeFuncId), false,0, jsonObject);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -187,7 +187,7 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
                         + "('" + jsonBusLine.toString() + "');}";
                 uexBaiduMap.onCallback(js);
                 if (null != uexBaiduMap.busLineSearchFuncId) {
-                    uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.busLineSearchFuncId), false, jsonBusLine);
+                    uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.busLineSearchFuncId), false, 0,jsonBusLine);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -206,7 +206,7 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
                     + "');}";
             uexBaiduMap.onCallback(js);
             if (null != uexBaiduMap.busLineSearchFuncId) {
-                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.busLineSearchFuncId), false);
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.busLineSearchFuncId), false,1);
             }
         }
     }

@@ -483,13 +483,13 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 uexBaseObj.onCallback(js);
                 if (null != uexBaseObj.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
-                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.getCurrentLocationFuncId), false, jsonObject);
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.getCurrentLocationFuncId), false,0, jsonObject);
                 }
             } catch (JSONException e) {
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + null + "');}";
                 uexBaseObj.onCallback(js);
                 if (null != uexBaseObj.getCurrentLocationFuncId && EBaiduMapUtils.MAP_FUN_CB_CURRENT_LOCATION.equals(header)) {
-                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.getCurrentLocationFuncId), false);
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.getCurrentLocationFuncId), false,1);
                 }
                 e.printStackTrace();
             }
@@ -504,7 +504,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 uexBaseObj.onCallback(js);
                 if (null != uexBaseObj.reverseGeocodeFuncId) {
-                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.reverseGeocodeFuncId), false, jsonObject);
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.reverseGeocodeFuncId), false,0, jsonObject);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -523,7 +523,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 uexBaseObj.onCallback(js);
                 if (null != uexBaseObj.geocodeFuncId) {
-                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.geocodeFuncId), false, jsonObject);
+                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.geocodeFuncId), false, 0,jsonObject);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -680,7 +680,7 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
             String js = EUExBase.SCRIPT_HEADER + "if(" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "){" + EBaiduMapUtils.MAP_FUN_CB_OPEN + "();}";
             uexBaseObj.onCallback(js);
             if (null != uexBaseObj.openFuncId) {
-                uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.openFuncId), false);
+                uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.openFuncId), false,0);
             }
         }
     }

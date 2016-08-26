@@ -224,7 +224,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
                     + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + jsonPoi.toString() + "');}";
             uexBaiduMap.onCallback(js);
             if (null != uexBaiduMap.poiSearchFuncId) {
-                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false, jsonPoi);
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false, 0,jsonPoi);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -238,7 +238,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
                     + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + null + "');}";
             uexBaiduMap.onCallback(js);
             if (null != uexBaiduMap.poiSearchFuncId) {
-                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false);
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false,1);
             }
         }
         // change by waka
@@ -248,7 +248,7 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
                     + EBaiduMapUtils.MAP_FUN_CB_POISEARCH_RESULT + "('" + null + "');}";
             uexBaiduMap.onCallback(js);
             if (null != uexBaiduMap.poiSearchFuncId) {
-                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false);
+                uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.poiSearchFuncId), false,1);
             }
         }
     }
