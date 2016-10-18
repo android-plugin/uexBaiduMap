@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="3.2.39" build="2016071301">
-        <info>39:修复关闭地图时崩溃的问题。</info>
+        uexName="uexBaiduMap" version="3.2.40" build="40">
+        <info>40:修复移动网络不能定位的问题。</info>
+        <build>39:修复关闭地图时崩溃的问题。</build>
         <build>38:解决搜索结果总数被覆盖的问题</build>
         <build>37:更新SDK,增加getCenter得到地图中心点方法</build>
         <build>36:优化了getDistance的算法，使用新版本SDK自带工具类DistanceUtil进行计算，使计算值更为精准</build>

@@ -62,7 +62,7 @@
         <!-- uexBaiduMap -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="fcXf7iW4xbDfTMwixsnkcmFO" />
+            android:value="D1631d6ea70b3533deed5949ced0681a" />
 
         <service
             android:name="com.baidu.location.f"
@@ -87,6 +87,14 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+
+    <!-- 这个权限用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 这个权限用于访问GPS定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- SD卡读取权限，用户写入离线定位数据-->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
