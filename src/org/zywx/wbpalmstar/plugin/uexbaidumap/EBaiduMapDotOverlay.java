@@ -5,20 +5,21 @@ import com.baidu.mapapi.map.Dot;
 
 public class EBaiduMapDotOverlay extends EBaiduMapOverlay {
 
-	private Dot dot = null;
-	public EBaiduMapDotOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
-		super(id, context, baiduMap);
-	}
+    private Dot dot = null;
 
-	public void setDot(Dot dot) {
-		this.dot = dot;
-	}
+    public EBaiduMapDotOverlay(String id, EBaiduMapBaseFragment context, BaiduMap baiduMap) {
+        super(id, context, baiduMap);
+    }
 
-	@Override
-	public void clearOverlay() {
-		if(dot != null) {
-			dot.remove();
-		}
-	}
+    public void setDot(Dot dot) {
+        this.dot = dot;
+    }
+
+    @Override
+    public void clearOverlay() {
+        if (dot != null) {
+            dot.remove();
+        }
+    }
 
 }

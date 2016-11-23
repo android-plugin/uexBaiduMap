@@ -5,21 +5,22 @@ import com.baidu.mapapi.map.Polyline;
 
 public class EBaiduMapPolylineOverlay extends EBaiduMapOverlay {
 
-	private Polyline polyline = null;
-	public EBaiduMapPolylineOverlay(String id, EBaiduMapBaseFragment context,
-			BaiduMap baiduMap) {
-		super(id, context, baiduMap);
-	}
-	
-	public void setPolyline(Polyline polyline) {
-		this.polyline = polyline;
-	}
+    private Polyline polyline = null;
 
-	@Override
-	public void clearOverlay() {
-		if(polyline != null) {
-			polyline.remove();
-		}
-	}
+    public EBaiduMapPolylineOverlay(String id, EBaiduMapBaseFragment context,
+                                    BaiduMap baiduMap) {
+        super(id, context, baiduMap);
+    }
+
+    public void setPolyline(Polyline polyline) {
+        this.polyline = polyline;
+    }
+
+    @Override
+    public void clearOverlay() {
+        if (polyline != null) {
+            polyline.remove();
+        }
+    }
 
 }

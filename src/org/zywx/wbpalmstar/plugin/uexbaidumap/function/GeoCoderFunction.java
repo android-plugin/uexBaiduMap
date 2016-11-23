@@ -1,164 +1,165 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap.function;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapUtils;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeOption;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
-
 /**
  * 地理编码功能
- * 
+ *
  * @author waka
  * @version createTime:2016年4月27日 上午10:49:29
  */
 public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
-	private EUExBaiduMap mEUExBaiduMap;
+    private EUExBaiduMap mEUExBaiduMap;
 
-	private GeoCoder mGeoCoder;
+    private GeoCoder mGeoCoder;
 
-	/**
-	 * 构造方法
-	 * 
-	 * @param uexBaiduMap
-	 */
-	public GeoCoderFunction(EUExBaiduMap uexBaiduMap) {
+    /**
+     * 构造方法
+     *
+     * @param uexBaiduMap
+     */
+    public GeoCoderFunction(EUExBaiduMap uexBaiduMap) {
 
-		mEUExBaiduMap = uexBaiduMap;
+        mEUExBaiduMap = uexBaiduMap;
 
-		// 第一步，创建地理编码检索实例
-		mGeoCoder = GeoCoder.newInstance();
+        // 第一步，创建地理编码检索实例
+        mGeoCoder = GeoCoder.newInstance();
 
-		// 第三步，设置地理编码检索监听者
-		mGeoCoder.setOnGetGeoCodeResultListener(this);
-	}
+        // 第三步，设置地理编码检索监听者
+        mGeoCoder.setOnGetGeoCodeResultListener(this);
+    }
 
-	// 第二步，创建地理编码检索监听者
-	/**
-	 * 地理编码
-	 */
-	@Override
-	public void onGetGeoCodeResult(GeoCodeResult result) {
+    // 第二步，创建地理编码检索监听者
 
-		if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-			// 没有检索到结果
-			jsonLatLngCallback(null, EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
-			return;
-		}
-		// 获取地理编码结果
-		jsonLatLngCallback(result.getLocation(), EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
+    /**
+     * 地理编码
+     */
+    @Override
+    public void onGetGeoCodeResult(GeoCodeResult result) {
 
-		destory();
-	}
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            // 没有检索到结果
+            jsonLatLngCallback(null, EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
+            return;
+        }
+        // 获取地理编码结果
+        jsonLatLngCallback(result.getLocation(), EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
 
-	/**
-	 * 反向地理编码
-	 */
-	@Override
-	public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+        destory();
+    }
 
-		if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-			// 没有找到检索结果
-			jsonAddressCallback(null, EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
-			return;
-		}
-		// 获取反向地理编码结果
-		jsonAddressCallback(result.getAddress(), EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
+    /**
+     * 反向地理编码
+     */
+    @Override
+    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
 
-		destory();
-	}
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            // 没有找到检索结果
+            jsonAddressCallback(null, EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
+            return;
+        }
+        // 获取反向地理编码结果
+        jsonAddressCallback(result.getAddress(), EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
 
-	/**
-	 * 发起地理编码检索
-	 * 
-	 * @param city
-	 * @param address
-	 */
-	public void geocode(String city, String address) {
+        destory();
+    }
 
-		MLog.getIns().i("city = " + city);
-		MLog.getIns().i("address = " + address);
+    /**
+     * 发起地理编码检索
+     *
+     * @param city
+     * @param address
+     */
+    public void geocode(String city, String address) {
 
-		mGeoCoder.geocode(new GeoCodeOption().city(city).address(address));
-	}
+        MLog.getIns().i("city = " + city);
+        MLog.getIns().i("address = " + address);
 
-	/**
-	 * 发起反地理编码检索
-	 * 
-	 * @param longitude
-	 * @param latitude
-	 */
-	public void reverseGeoCode(double longitude, double latitude) {
+        mGeoCoder.geocode(new GeoCodeOption().city(city).address(address));
+    }
 
-		MLog.getIns().i("longitude = " + longitude);
-		MLog.getIns().i("latitude = " + latitude);
+    /**
+     * 发起反地理编码检索
+     *
+     * @param longitude
+     * @param latitude
+     */
+    public void reverseGeoCode(double longitude, double latitude) {
 
-		LatLng latLng = new LatLng(latitude, longitude);
-		mGeoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(latLng));
-	}
+        MLog.getIns().i("longitude = " + longitude);
+        MLog.getIns().i("latitude = " + latitude);
 
-	/**
-	 * 地理编码给前端回调
-	 * 
-	 * @param point
-	 * @param header
-	 */
-	private void jsonLatLngCallback(LatLng point, String header) {
-		if (mEUExBaiduMap != null) {
-			JSONObject jsonObject = new JSONObject();
-			try {
-				if (point != null) {
-					jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
-					jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
-				}
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
-				mEUExBaiduMap.onCallback(js);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        LatLng latLng = new LatLng(latitude, longitude);
+        mGeoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(latLng));
+    }
 
-	/**
-	 * 反地理编码给前端回调
-	 * 
-	 * @param address
-	 * @param header
-	 */
-	private void jsonAddressCallback(String address, String header) {
-		if (mEUExBaiduMap != null) {
-			JSONObject jsonObject = new JSONObject();
-			try {
-				jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
-				String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
-				mEUExBaiduMap.onCallback(js);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    /**
+     * 地理编码给前端回调
+     *
+     * @param point
+     * @param header
+     */
+    private void jsonLatLngCallback(LatLng point, String header) {
+        if (mEUExBaiduMap != null) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                if (point != null) {
+                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
+                    jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
+                }
+                String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
+                mEUExBaiduMap.onCallback(js);
+                if (null != mEUExBaiduMap.geocodeFuncId) {
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.geocodeFuncId), false, 0,jsonObject);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	/**
-	 * destory
-	 */
-	private void destory() {
+    /**
+     * 反地理编码给前端回调
+     *
+     * @param address
+     * @param header
+     */
+    private void jsonAddressCallback(String address, String header) {
+        if (mEUExBaiduMap != null) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
+                String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
+                mEUExBaiduMap.onCallback(js);
+                if (null != mEUExBaiduMap.reverseGeocodeFuncId) {
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.reverseGeocodeFuncId), false,0, jsonObject);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-		if (mGeoCoder != null) {
+    /**
+     * destory
+     */
+    private void destory() {
 
-			// 第五步，释放地理编码检索实例
-			mGeoCoder.destroy();
-			mGeoCoder = null;
-			mEUExBaiduMap = null;
-		}
-	}
+        if (mGeoCoder != null) {
+
+            // 第五步，释放地理编码检索实例
+            mGeoCoder.destroy();
+            mGeoCoder = null;
+            mEUExBaiduMap = null;
+        }
+    }
 }

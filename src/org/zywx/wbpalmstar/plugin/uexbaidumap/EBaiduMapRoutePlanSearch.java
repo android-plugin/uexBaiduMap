@@ -1,14 +1,8 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
-import java.util.HashMap;
-
-import org.zywx.wbpalmstar.engine.universalex.EUExBase;
-import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
-
 import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
-
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
@@ -20,51 +14,44 @@ import com.baidu.mapapi.overlayutil.TransitRouteOverlay;
 import com.baidu.mapapi.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.route.BikingRouteResult;
-import com.baidu.mapapi.search.route.DrivingRouteLine;
-import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
-import com.baidu.mapapi.search.route.DrivingRouteResult;
-import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
-import com.baidu.mapapi.search.route.PlanNode;
-import com.baidu.mapapi.search.route.RoutePlanSearch;
-import com.baidu.mapapi.search.route.TransitRouteLine;
-import com.baidu.mapapi.search.route.TransitRoutePlanOption;
-import com.baidu.mapapi.search.route.TransitRouteResult;
-import com.baidu.mapapi.search.route.WalkingRouteLine;
-import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
-import com.baidu.mapapi.search.route.WalkingRouteResult;
+import com.baidu.mapapi.search.route.*;
+import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+
+import java.util.HashMap;
 
 public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
-	private String TAG = "EBaiduMapRoutePlanSearch";
-	protected Context mContext;
-	protected BaiduMap mBaiduMap;
-	protected MapView mMapView;
-	private HashMap<String, OverlayManager> mRoutePlanOverlays;
-	private EBaiduMapRoutePlanOptions mRoutePlanOptions;
-	private RoutePlanSearch mRoutePlanSearch = null;
+    private String TAG = "EBaiduMapRoutePlanSearch";
+    protected Context mContext;
+    protected BaiduMap mBaiduMap;
+    protected MapView mMapView;
+    private HashMap<String, OverlayManager> mRoutePlanOverlays;
+    private EBaiduMapRoutePlanOptions mRoutePlanOptions;
+    private RoutePlanSearch mRoutePlanSearch = null;
     @SuppressWarnings("rawtypes")
-	private RouteLine mRouteLine = null; //保存路径数据的变量，供浏览节点时使用
-	private int routeNodeIndex = -1; //路径节点索引,供浏览节点时使用
+    private RouteLine mRouteLine = null; //保存路径数据的变量，供浏览节点时使用
+    private int routeNodeIndex = -1; //路径节点索引,供浏览节点时使用
     private EBaiduMapBaseFragment baseFragment;
 
-	public EBaiduMapRoutePlanSearch(EBaiduMapBaseFragment context, BaiduMap baiduMap,
-			MapView mapView) {
+    public EBaiduMapRoutePlanSearch(EBaiduMapBaseFragment context, BaiduMap baiduMap,
+                                    MapView mapView) {
         baseFragment = context;
-		mContext = context.getActivity();
-		mBaiduMap = baiduMap;
-		mMapView = mapView;
-		mRoutePlanOverlays = new HashMap<String, OverlayManager>();
-		// 初始化搜索模块，注册搜索事件监听
-		mRoutePlanSearch = RoutePlanSearch.newInstance();
-		mRoutePlanSearch.setOnGetRoutePlanResultListener(this);
-	}
-	
+        mContext = context.getActivity();
+        mBaiduMap = baiduMap;
+        mMapView = mapView;
+        mRoutePlanOverlays = new HashMap<String, OverlayManager>();
+        // 初始化搜索模块，注册搜索事件监听
+        mRoutePlanSearch = RoutePlanSearch.newInstance();
+        mRoutePlanSearch.setOnGetRoutePlanResultListener(this);
+    }
+
     /**
      * 发起路线规划搜索
+     *
      * @param routePlanOptions
      */
-	public void searchRoutePlan(EBaiduMapRoutePlanOptions routePlanOptions) {
-		Log.i(TAG, "searchRoutePlan");
+    public String searchRoutePlan(EBaiduMapRoutePlanOptions routePlanOptions) {
+        Log.i(TAG, "searchRoutePlan");
         //重置浏览节点的路线数据
         mRouteLine = null;
         mBaiduMap.clear();
@@ -76,164 +63,165 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
         // 处理搜索按钮响应
         // 实际使用中请对起点终点城市进行正确的设定
         switch (routePlanOptions.getType()) {
-			case EBaiduMapRoutePlanOptions.PLAN_TYPE_DRIVE:
-				mRoutePlanSearch.drivingSearch((new DrivingRoutePlanOption())
-						.from(stNode).to(enNode));
-				break;
-			case EBaiduMapRoutePlanOptions.PLAN_TYPE_WALK:
-				mRoutePlanSearch.walkingSearch((new WalkingRoutePlanOption())
-						.from(stNode).to(enNode));
-				break;
-			case EBaiduMapRoutePlanOptions.PLAN_TYPE_TRANS:
-				mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
-						.from(stNode).to(enNode).city(routePlanOptions.getStartCity()));
-				break;
-    		default:
-    			break;
-		}
+            case EBaiduMapRoutePlanOptions.PLAN_TYPE_DRIVE:
+                mRoutePlanSearch.drivingSearch((new DrivingRoutePlanOption())
+                        .from(stNode).to(enNode));
+                break;
+            case EBaiduMapRoutePlanOptions.PLAN_TYPE_WALK:
+                mRoutePlanSearch.walkingSearch((new WalkingRoutePlanOption())
+                        .from(stNode).to(enNode));
+                break;
+            case EBaiduMapRoutePlanOptions.PLAN_TYPE_TRANS:
+                mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
+                        .from(stNode).to(enNode).city(routePlanOptions.getStartCity()));
+                break;
+            default:
+                break;
+        }
+        return routePlanOptions.getId();
     }
-	
-	@Override
-	public void onGetDrivingRouteResult(DrivingRouteResult result) {
-		if (result == null) {
-        	Log.i(TAG, "onGetDrivingRouteResult result is null");
-			return;
-		}
-		jsonRouteResultCallback(result);
+
+    @Override
+    public void onGetDrivingRouteResult(DrivingRouteResult result) {
+        if (result == null) {
+            Log.i(TAG, "onGetDrivingRouteResult result is null");
+            return;
+        }
+        jsonRouteResultCallback(result);
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             routeNodeIndex = -1;
             mRouteLine = result.getRouteLines().get(0);
             MyDrivingRouteOverlay drivingRouteOverlay = new MyDrivingRouteOverlay(
-					mBaiduMap);
-			drivingRouteOverlay.setData(result.getRouteLines().get(0));
-			drivingRouteOverlay.addToMap();
-			drivingRouteOverlay.zoomToSpan();
-			mBaiduMap.setOnMarkerClickListener(drivingRouteOverlay);
-			mRoutePlanOverlays.put(mRoutePlanOptions.getId(),
-					drivingRouteOverlay);
+                    mBaiduMap);
+            drivingRouteOverlay.setData(result.getRouteLines().get(0));
+            drivingRouteOverlay.addToMap();
+            drivingRouteOverlay.zoomToSpan();
+            mBaiduMap.setOnMarkerClickListener(drivingRouteOverlay);
+            mRoutePlanOverlays.put(mRoutePlanOptions.getId(),
+                    drivingRouteOverlay);
         }
-	}
+    }
 
-	private class MyDrivingRouteOverlay extends DrivingRouteOverlay {
-		public MyDrivingRouteOverlay(BaiduMap baiduMap) {
-			super(baiduMap);
-		}
+    private class MyDrivingRouteOverlay extends DrivingRouteOverlay {
+        public MyDrivingRouteOverlay(BaiduMap baiduMap) {
+            super(baiduMap);
+        }
 
-		@Override
-		public boolean onRouteNodeClick(int index) {
-			mBaiduMap.hideInfoWindow();
-			routeNodeIndex = index;
-        	showRouteNode();
-			return false;
-		}
-	}
+        @Override
+        public boolean onRouteNodeClick(int index) {
+            mBaiduMap.hideInfoWindow();
+            routeNodeIndex = index;
+            showRouteNode();
+            return false;
+        }
+    }
 
-	@Override
-	public void onGetTransitRouteResult(TransitRouteResult result) {
-		if (result == null) {
-        	Log.i(TAG, "onGetTransitRouteResult result is null");
-			return;
-		}
-		jsonRouteResultCallback(result);
+    @Override
+    public void onGetTransitRouteResult(TransitRouteResult result) {
+        if (result == null) {
+            Log.i(TAG, "onGetTransitRouteResult result is null");
+            return;
+        }
+        jsonRouteResultCallback(result);
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             routeNodeIndex = -1;
             mRouteLine = result.getRouteLines().get(0);
             MyTransitRouteOverlay transitRouteOverlay = new MyTransitRouteOverlay(
-					mBaiduMap);
-			transitRouteOverlay.setData(result.getRouteLines().get(0));
-			transitRouteOverlay.addToMap();
-			transitRouteOverlay.zoomToSpan();
-			mBaiduMap.setOnMarkerClickListener(transitRouteOverlay);
-			mRoutePlanOverlays.put(mRoutePlanOptions.getId(),
-					transitRouteOverlay);
+                    mBaiduMap);
+            transitRouteOverlay.setData(result.getRouteLines().get(0));
+            transitRouteOverlay.addToMap();
+            transitRouteOverlay.zoomToSpan();
+            mBaiduMap.setOnMarkerClickListener(transitRouteOverlay);
+            mRoutePlanOverlays.put(mRoutePlanOptions.getId(),
+                    transitRouteOverlay);
         }
-	}
+    }
 
-	private class MyTransitRouteOverlay extends TransitRouteOverlay {
-		public MyTransitRouteOverlay(BaiduMap baiduMap) {
-			super(baiduMap);
-		}
+    private class MyTransitRouteOverlay extends TransitRouteOverlay {
+        public MyTransitRouteOverlay(BaiduMap baiduMap) {
+            super(baiduMap);
+        }
 
-		@Override
-		public boolean onRouteNodeClick(int index) {
-			mBaiduMap.hideInfoWindow();
-			routeNodeIndex = index;
-        	showRouteNode();
-			return false;
-		}
-	}
+        @Override
+        public boolean onRouteNodeClick(int index) {
+            mBaiduMap.hideInfoWindow();
+            routeNodeIndex = index;
+            showRouteNode();
+            return false;
+        }
+    }
 
-	@Override
-	public void onGetWalkingRouteResult(WalkingRouteResult result) {
-		if (result == null) {
-        	Log.i(TAG, "onGetWalkingRouteResult result is null");
-			return;
-		}
-		jsonRouteResultCallback(result);
+    @Override
+    public void onGetWalkingRouteResult(WalkingRouteResult result) {
+        if (result == null) {
+            Log.i(TAG, "onGetWalkingRouteResult result is null");
+            return;
+        }
+        jsonRouteResultCallback(result);
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             routeNodeIndex = -1;
             mRouteLine = result.getRouteLines().get(0);
-			MyWalkingRouteOverlay walkingRouteOverlay = new MyWalkingRouteOverlay(
-					mBaiduMap);
-			walkingRouteOverlay.setData(result.getRouteLines().get(0));
-			walkingRouteOverlay.addToMap();
-			walkingRouteOverlay.zoomToSpan();
-			mBaiduMap.setOnMarkerClickListener(walkingRouteOverlay);
-			mRoutePlanOverlays.put(mRoutePlanOptions.getId(),
-					walkingRouteOverlay);
+            MyWalkingRouteOverlay walkingRouteOverlay = new MyWalkingRouteOverlay(
+                    mBaiduMap);
+            walkingRouteOverlay.setData(result.getRouteLines().get(0));
+            walkingRouteOverlay.addToMap();
+            walkingRouteOverlay.zoomToSpan();
+            mBaiduMap.setOnMarkerClickListener(walkingRouteOverlay);
+            mRoutePlanOverlays.put(mRoutePlanOptions.getId(),
+                    walkingRouteOverlay);
         }
-	}
-	
-	private class MyWalkingRouteOverlay extends WalkingRouteOverlay {
-		public MyWalkingRouteOverlay(BaiduMap baiduMap) {
-			super(baiduMap);
-		}
+    }
 
-		@Override
-		public boolean onRouteNodeClick(int index) {
-			mBaiduMap.hideInfoWindow();
-			routeNodeIndex = index;
-        	showRouteNode();
-			return false;
-		}
-	}
-	
+    private class MyWalkingRouteOverlay extends WalkingRouteOverlay {
+        public MyWalkingRouteOverlay(BaiduMap baiduMap) {
+            super(baiduMap);
+        }
+
+        @Override
+        public boolean onRouteNodeClick(int index) {
+            mBaiduMap.hideInfoWindow();
+            routeNodeIndex = index;
+            showRouteNode();
+            return false;
+        }
+    }
+
     /**
      * 得到线路的上一个节点
      */
     public void preRouteNode() {
         if (routeNodeIndex == -1) {
-        	return;
+            return;
         }
         //设置节点索引
-    	if (routeNodeIndex > 0) {
-    		routeNodeIndex--;
-        	showRouteNode();
-    	} else {
-        	return;
+        if (routeNodeIndex > 0) {
+            routeNodeIndex--;
+            showRouteNode();
+        } else {
+            return;
         }
     }
-    
+
     /**
      * 得到线路的下一个节点
      */
     public void nextRouteNode() {
         //设置节点索引
-        if (mRouteLine != null 
-        		&& routeNodeIndex < mRouteLine.getAllStep().size() - 1) {
-        	routeNodeIndex++;
-        	showRouteNode();
+        if (mRouteLine != null
+                && routeNodeIndex < mRouteLine.getAllStep().size() - 1) {
+            routeNodeIndex++;
+            showRouteNode();
         } else {
-        	return;
+            return;
         }
     }
-	
+
     /**
      * 路径节点显示
      */
     private void showRouteNode() {
         if (mRouteLine == null ||
-        		mRouteLine.getAllStep() == null) {
+                mRouteLine.getAllStep() == null) {
             return;
         }
         //获取节结果信息
@@ -250,83 +238,83 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
             nodeLocation = ((TransitRouteLine.TransitStep) step).getEntrance().getLocation();
             nodeTitle = ((TransitRouteLine.TransitStep) step).getInstructions();
         }
-		showRouteNodeInfo(nodeLocation, nodeTitle);
+        showRouteNodeInfo(nodeLocation, nodeTitle);
     }
 
-	private void showRouteNodeInfo(LatLng location, String title) {
-		if (location == null || title == null) {
+    private void showRouteNodeInfo(LatLng location, String title) {
+        if (location == null || title == null) {
             return;
         }
-		// 移动到指定索引的坐标
-		mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(location));
-		// 弹出泡泡
-		TextView popupText = new TextView(mContext);
-		popupText.setBackgroundResource(EUExUtil.getResDrawableID("plugin_map_bubble_bg_default"));
-		popupText.setTextColor(0xFF000000);
-		popupText.setText(title);
-		mBaiduMap.showInfoWindow(new InfoWindow(popupText, location, 0));
-	}
-	
-	/**
-	 * 清除路线
-	 * 
-	 * @param routePlanOptions
-	 */
-	public void removeRoutePlan(String routePlanId) {
-		OverlayManager overlayManager = mRoutePlanOverlays.get(routePlanId);
-		if (overlayManager != null) {
-			overlayManager.removeFromMap();
-			mRoutePlanOverlays.remove(routePlanId);
-		}
-		mBaiduMap.hideInfoWindow();
-		mRouteLine = null;
-	}
+        // 移动到指定索引的坐标
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(location));
+        // 弹出泡泡
+        TextView popupText = new TextView(mContext);
+        popupText.setBackgroundResource(EUExUtil.getResDrawableID("plugin_map_bubble_bg_default"));
+        popupText.setTextColor(0xFF000000);
+        popupText.setText(title);
+        mBaiduMap.showInfoWindow(new InfoWindow(popupText, location, 0));
+    }
 
-	public void destroy() {
-		mRoutePlanSearch.destroy();
-	}
-	
-	private void jsonRouteResultCallback(SearchResult result) {
-		EBaiduMapBaseFragment activity;
-		activity = baseFragment;
-		if (activity != null) {
-			int resultId = -1;
-			switch (result.error) {
-			case NO_ERROR:
-				resultId = 0;
-				break;
-			case AMBIGUOUS_KEYWORD:
-				resultId = 1;
-				break;
-			case AMBIGUOUS_ROURE_ADDR:
-				resultId = 2;
-				break;
-			case NOT_SUPPORT_BUS:
-				resultId = 3;
-				break;
-			case NOT_SUPPORT_BUS_2CITY:
-				resultId = 4;
-				break;
-			case RESULT_NOT_FOUND:
-				resultId = 5;
-				break;
-			case ST_EN_TOO_NEAR:
-				resultId = 6;
-				break;
-			default:
-				break;
-			}
-			EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
-			String js = EUExBase.SCRIPT_HEADER + "if("
-					+ EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "){"
-					+ EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "("
-					+ resultId + ");}";
-			uexBaiduMap.onCallback(js);
-		}
-	}
+    /**
+     * 清除路线
+     *
+     * @param routePlanOptions
+     */
+    public void removeRoutePlan(String routePlanId) {
+        OverlayManager overlayManager = mRoutePlanOverlays.get(routePlanId);
+        if (overlayManager != null) {
+            overlayManager.removeFromMap();
+            mRoutePlanOverlays.remove(routePlanId);
+        }
+        mBaiduMap.hideInfoWindow();
+        mRouteLine = null;
+    }
 
-	@Override
-	public void onGetBikingRouteResult(BikingRouteResult arg0) {
-		
-	}
+    public void destroy() {
+        mRoutePlanSearch.destroy();
+    }
+
+    private void jsonRouteResultCallback(SearchResult result) {
+        EBaiduMapBaseFragment activity;
+        activity = baseFragment;
+        if (activity != null) {
+            int resultId = -1;
+            switch (result.error) {
+                case NO_ERROR:
+                    resultId = 0;
+                    break;
+                case AMBIGUOUS_KEYWORD:
+                    resultId = 1;
+                    break;
+                case AMBIGUOUS_ROURE_ADDR:
+                    resultId = 2;
+                    break;
+                case NOT_SUPPORT_BUS:
+                    resultId = 3;
+                    break;
+                case NOT_SUPPORT_BUS_2CITY:
+                    resultId = 4;
+                    break;
+                case RESULT_NOT_FOUND:
+                    resultId = 5;
+                    break;
+                case ST_EN_TOO_NEAR:
+                    resultId = 6;
+                    break;
+                default:
+                    break;
+            }
+            EUExBaiduMap uexBaiduMap = activity.getUexBaseObj();
+            String js = EUExBase.SCRIPT_HEADER + "if("
+                    + EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "){"
+                    + EBaiduMapUtils.MAP_FUN_ON_SEARCH_ROUTE_PLAN + "("
+                    + resultId + ");}";
+            uexBaiduMap.onCallback(js);
+        }
+    }
+
+    @Override
+    public void onGetBikingRouteResult(BikingRouteResult arg0) {
+
+    }
 }

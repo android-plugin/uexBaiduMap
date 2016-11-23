@@ -1,13 +1,7 @@
 package com.baidu.mapapi.overlayutil;
 
 import android.os.Bundle;
-
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.search.poi.PoiResult;
 
 import java.util.ArrayList;
@@ -24,9 +18,8 @@ public class PoiOverlay extends OverlayManager {
 
     /**
      * 构造函数
-     * 
-     * @param baiduMap
-     *            该 PoiOverlay 引用的 BaiduMap 对象
+     *
+     * @param baiduMap 该 PoiOverlay 引用的 BaiduMap 对象
      */
     public PoiOverlay(BaiduMap baiduMap) {
         super(baiduMap);
@@ -34,9 +27,8 @@ public class PoiOverlay extends OverlayManager {
 
     /**
      * 设置POI数据
-     * 
-     * @param poiResult
-     *            设置POI数据
+     *
+     * @param poiResult 设置POI数据
      */
     public void setData(PoiResult poiResult) {
         this.mPoiResult = poiResult;
@@ -61,14 +53,14 @@ public class PoiOverlay extends OverlayManager {
                     .icon(BitmapDescriptorFactory.fromAssetWithDpi("Icon_mark"
                             + markerSize + ".png")).extraInfo(bundle)
                     .position(mPoiResult.getAllPoi().get(i).location));
-            
+
         }
         return markerList;
     }
 
     /**
      * 获取该 PoiOverlay 的 poi数据
-     * 
+     *
      * @return
      */
     public PoiResult getPoiResult() {
@@ -77,10 +69,9 @@ public class PoiOverlay extends OverlayManager {
 
     /**
      * 覆写此方法以改变默认点击行为
-     * 
-     * @param i
-     *            被点击的poi在
-     *            {@link com.baidu.mapapi.search.poi.PoiResult#getAllPoi()} 中的索引
+     *
+     * @param i 被点击的poi在
+     *          {@link com.baidu.mapapi.search.poi.PoiResult#getAllPoi()} 中的索引
      * @return
      */
     public boolean onPoiClick(int i) {

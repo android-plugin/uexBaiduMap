@@ -11,42 +11,43 @@ public abstract class EBaiduMapOverlayOptions {
 
     private String idStr;
     private String extraStr;
-	private String visibleStr;
-	private String zIndexStr;
+    private String visibleStr;
+    private String zIndexStr;
 
     public EBaiduMapOverlayOptions() {
 
     }
-	public String getIdStr() {
-		return idStr;
-	}
 
-	public void setIdStr(String idStr) {
-		this.idStr = idStr;
-	}
+    public String getIdStr() {
+        return idStr;
+    }
 
-	public String getExtraStr() {
-		return extraStr;
-	}
+    public void setIdStr(String idStr) {
+        this.idStr = idStr;
+    }
 
-	public void setExtraStr(String extraStr) {
-		this.extraStr = extraStr;
-	}
+    public String getExtraStr() {
+        return extraStr;
+    }
 
-	public String getVisibleStr() {
-		return visibleStr;
-	}
+    public void setExtraStr(String extraStr) {
+        this.extraStr = extraStr;
+    }
 
-	public void setVisibleStr(String visibleStr) {
-		this.visibleStr = visibleStr;
-	}
+    public String getVisibleStr() {
+        return visibleStr;
+    }
 
-	public String getzIndexStr() {
-		return zIndexStr;
-	}
+    public void setVisibleStr(String visibleStr) {
+        this.visibleStr = visibleStr;
+    }
 
-	public void setzIndexStr(String zIndexStr) {
-		this.zIndexStr = zIndexStr;
-	}
+    public String getzIndexStr() {
+        return zIndexStr;
+    }
+
+    public void setzIndexStr(String zIndexStr) {
+        this.zIndexStr = zIndexStr;
+    }
 
 }
