@@ -1,7 +1,8 @@
-﻿﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="4.0.0" build="0">
-        <info>0:百度地图插件，封装最新的百度地图API</info>
+        uexName="uexBaiduMap" version="4.0.1" build="1">
+        <info>1:修复open中心点失效的问题</info>
+        <build>0:百度地图插件，封装最新的百度地图API</build>
     </plugin>
 </uexplugins>

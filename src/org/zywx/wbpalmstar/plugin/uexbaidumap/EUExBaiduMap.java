@@ -619,12 +619,12 @@ public class EUExBaiduMap extends EUExBase {
             w = (int) Double.parseDouble(params[2]);
             h = (int) Double.parseDouble(params[3]);
 
-            if (params.length == 6) {
+            if (params.length >= 6) {
                 lng = Double.parseDouble(params[4]);
                 lat = Double.parseDouble(params[5]);
                 isUseLngLat = true;
             }
-            if (params.length == 7) {
+            if (params.length >= 7) {
                 openFuncId = params[6];
             }
             if (mMapBaseFragment != null) {
