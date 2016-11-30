@@ -71,8 +71,10 @@ android {
     }
     defaultConfig {
         minSdkVersion 14
+        targetSdkVersion 14
         applicationId 'org.zywx.wbpalmstar.widgetone.uexbaidumap'
         signingConfig signingConfigs.config
+        multiDexEnabled true
     }
     productFlavors {
     }
