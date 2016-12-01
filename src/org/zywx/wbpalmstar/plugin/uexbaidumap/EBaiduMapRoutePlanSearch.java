@@ -16,6 +16,7 @@ import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.route.*;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 
 import java.util.HashMap;
@@ -62,21 +63,26 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
 
         // 处理搜索按钮响应
         // 实际使用中请对起点终点城市进行正确的设定
+        boolean isSuccess = false;
         switch (routePlanOptions.getType()) {
             case EBaiduMapRoutePlanOptions.PLAN_TYPE_DRIVE:
-                mRoutePlanSearch.drivingSearch((new DrivingRoutePlanOption())
+                isSuccess = mRoutePlanSearch.drivingSearch((new DrivingRoutePlanOption())
                         .from(stNode).to(enNode));
                 break;
             case EBaiduMapRoutePlanOptions.PLAN_TYPE_WALK:
-                mRoutePlanSearch.walkingSearch((new WalkingRoutePlanOption())
+                isSuccess = mRoutePlanSearch.walkingSearch((new WalkingRoutePlanOption())
                         .from(stNode).to(enNode));
                 break;
             case EBaiduMapRoutePlanOptions.PLAN_TYPE_TRANS:
-                mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
+                isSuccess = mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
                         .from(stNode).to(enNode).city(routePlanOptions.getStartCity()));
                 break;
             default:
                 break;
+        }
+        EUExBaiduMap uexBaiduMap = baseFragment.getUexBaseObj();
+        if (null != uexBaiduMap.searchRoutePlanId) {
+            uexBaiduMap.callbackToJs(Integer.parseInt(uexBaiduMap.searchRoutePlanId), false, isSuccess ? EUExCallback.F_C_SUCCESS : EUExCallback.F_C_FAILED);
         }
         return routePlanOptions.getId();
     }

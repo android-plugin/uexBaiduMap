@@ -568,14 +568,14 @@ if (UNIT_TEST) {
         },
 
         "onSearchRoutePlan":function () {
-            var assert=false;
-            uexBaiduMap.onSearchRoutePlan=function (data) {
-                if (!assert){
-                    UNIT_TEST.log(data);
-                    assert=true;
-                    UNIT_TEST.assert(true);
-                }
-            };
+//            var assert=false;
+//            uexBaiduMap.onSearchRoutePlan=function (data) {
+//                if (!assert){
+//                    UNIT_TEST.log(data);
+//                    assert=true;
+//                    UNIT_TEST.assert(true);
+//                }
+//            };
             var data = {
                 id: "rp345",
                 type: "0",
@@ -590,7 +590,14 @@ if (UNIT_TEST) {
                     latitude: "40.056957"
                 }
             };
-            uexBaiduMap.searchRoutePlan(data);
+            var id = uexBaiduMap.searchRoutePlan(data, function(error) {
+                if (!error){
+                    UNIT_TEST.assert(true);
+                } else {
+                    UNIT_TEST.assert(false);
+                }
+            });
+            UNIT_TEST.log("id:" + id);
         },
 
         "onZoomLevelChangeListener":function () {

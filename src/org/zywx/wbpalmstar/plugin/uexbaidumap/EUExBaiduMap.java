@@ -55,6 +55,7 @@ public class EUExBaiduMap extends EUExBase {
     public String reverseGeocodeFuncId;
     public String poiSearchFuncId; //poiSearchInCity, poiNearbySearch, poiBoundSearch相对应
     public String busLineSearchFuncId;
+    public String searchRoutePlanId;
 
     /**
      * 构造方法
@@ -300,8 +301,11 @@ public class EUExBaiduMap extends EUExBase {
     }
 
     public String searchRoutePlan(String[] params) {
-        if (mMapBaseFragment == null || params.length != 1) {
+        if (mMapBaseFragment == null || params.length < 1) {
             return null;
+        }
+        if (params.length == 2) {
+            searchRoutePlanId = params[1];
         }
 
         try {
