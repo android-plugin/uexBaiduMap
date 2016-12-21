@@ -2,11 +2,18 @@ package org.zywx.wbpalmstar.plugin.uexbaidumap.function;
 
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.*;
+import com.baidu.mapapi.search.geocode.GeoCodeOption;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.EBaiduMapUtils;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.EUExBaiduMap;
+import org.zywx.wbpalmstar.plugin.uexbaidumap.bean.GeoReverseResultVO;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
 /**
@@ -68,7 +75,7 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
             return;
         }
         // 获取反向地理编码结果
-        jsonAddressCallback(result.getAddress(), EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
+        jsonAddressCallback(result, EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
 
         destory();
     }
@@ -129,23 +136,33 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
     /**
      * 反地理编码给前端回调
-     *
-     * @param address
+     *  @param address
      * @param header
      */
-    private void jsonAddressCallback(String address, String header) {
+    private void jsonAddressCallback(ReverseGeoCodeResult address, String header) {
         if (mEUExBaiduMap != null) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
-                String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
-                mEUExBaiduMap.onCallback(js);
-                if (null != mEUExBaiduMap.reverseGeocodeFuncId) {
-                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.reverseGeocodeFuncId), false,0, jsonObject);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            GeoReverseResultVO reverseResultVO=new GeoReverseResultVO();
+            if (address!=null){
+                reverseResultVO.address=address.getAddress();
+                reverseResultVO.city=address.getAddressDetail().city;
+                reverseResultVO.district=address.getAddressDetail().district;
+                reverseResultVO.province=address.getAddressDetail().province;
+                reverseResultVO.street=address.getAddressDetail().street;
+                reverseResultVO.streetNumber=address.getAddressDetail().streetNumber;
+            }else{
+                reverseResultVO.address=null;
             }
+            if (null != mEUExBaiduMap.reverseGeocodeFuncId) {
+                mEUExBaiduMap.callbackToJs(
+                        Integer.parseInt(mEUExBaiduMap.reverseGeocodeFuncId),
+                        false,
+                        address==null?1:0,
+                        DataHelper.gson.toJsonTree(reverseResultVO));
+            } else {
+                String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + DataHelper.gson.toJson(reverseResultVO) + "');}";
+                mEUExBaiduMap.onCallback(js);
+            }
+
         }
     }
 

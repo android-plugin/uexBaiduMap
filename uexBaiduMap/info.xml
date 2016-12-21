@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="4.0.2" build="2">
-        <info>2:searchRoutePlan支持function传入</info>
+        uexName="uexBaiduMap" version="4.0.3" build="3">
+        <info>3:reverseGeocode返回详细信息</info>
+        <build>2:searchRoutePlan支持function传入</build>
         <build>1:修复open中心点失效的问题</build>
         <build>0:百度地图插件，封装最新的百度地图API</build>
     </plugin>
