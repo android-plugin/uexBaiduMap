@@ -12,17 +12,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.*;
-import com.baidu.mapapi.map.BaiduMap.*;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMap.OnMapClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMapDoubleClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMapLoadedCallback;
+import com.baidu.mapapi.map.BaiduMap.OnMapLongClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMapStatusChangeListener;
+import com.baidu.mapapi.map.BaiduMap.OnMyLocationClickListener;
+import com.baidu.mapapi.map.BaiduMap.SnapshotReadyCallback;
+import com.baidu.mapapi.map.BaiduMapOptions;
+import com.baidu.mapapi.map.MapPoi;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.*;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.view.BaseFragment;
@@ -31,7 +46,7 @@ import org.zywx.wbpalmstar.plugin.uexbaidumap.bean.MapStatusChangeBean;
 import org.zywx.wbpalmstar.plugin.uexbaidumap.utils.MLog;
 
 public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickListener, OnMapStatusChangeListener, OnMapLoadedCallback, OnMapDoubleClickListener, OnMapLongClickListener,
-        OnMyLocationClickListener, SnapshotReadyCallback, OnGetGeoCoderResultListener {
+        OnMyLocationClickListener, SnapshotReadyCallback {
 
     private static final String LTAG = EBaiduMapBaseFragment.class.getSimpleName();
     private MapView mMapView = null;
@@ -48,7 +63,6 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
     boolean isOneTimeLocation = false;// 是否是一次定位
     boolean isStartDurationLocation = false;// 是否开启持续定位
     private MyLocationListenner myListener = new MyLocationListenner();
-    private GeoCoder mGeoCoder = null;
     private float defaultLevel;
     private MapStatusChangeBean changeBean = null;
 
@@ -139,9 +153,6 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
         option.setScanSpan(2000);
         mLocClient.setLocOption(option);
 
-        mGeoCoder = GeoCoder.newInstance();
-        mGeoCoder.setOnGetGeoCodeResultListener(this);
-
         mBaiduMap.setOnMapClickListener(this);
         mBaiduMap.setOnMapStatusChangeListener(this);
         mBaiduMap.setOnMapLoadedCallback(this);
@@ -182,7 +193,6 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
         eBaiduMapPoiSearch.destroy();
         eBaiduMapBusLineSearch.destroy();
         eBaiduMapRoutePlanSearch.destroy();
-        mGeoCoder.destroy();
         stopLocation();
         // activity 销毁时同时销毁地图控件
         mMapView.onDestroy();
@@ -350,35 +360,6 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
         eBaiduMapRoutePlanSearch.nextRouteNode();
     }
 
-    public void geocode(String city, String address) {
-        Log.i(LTAG, "geocode-》" + city + "," + address);
-        mGeoCoder.geocode(new GeoCodeOption().city(city).address(address));
-    }
-
-    public void reverseGeoCode(double lng, double lat) {
-        Log.i(LTAG, "reverseGeoCode");
-        LatLng ll = new LatLng(lat, lng);
-        mGeoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(ll));
-    }
-
-    @Override
-    public void onGetGeoCodeResult(GeoCodeResult result) {
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            jsonLatLngCallback(null, EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
-            return;
-        }
-        jsonLatLngCallback(result.getLocation(), EBaiduMapUtils.MAP_FUN_CB_GEOCODE_RESULT);
-    }
-
-    @Override
-    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            jsonAddressCallback(null, EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
-            return;
-        }
-        jsonAddressCallback(result.getAddress(), EBaiduMapUtils.MAP_FUN_CB_REVERSE_GEOCODE_RESULT);
-    }
-
     /**
      * 获得当前位置
      */
@@ -503,9 +484,6 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
                 jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS, address);
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 uexBaseObj.onCallback(js);
-                if (null != uexBaseObj.reverseGeocodeFuncId) {
-                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.reverseGeocodeFuncId), false,0, jsonObject);
-                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -522,9 +500,6 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
                 }
                 String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
                 uexBaseObj.onCallback(js);
-                if (null != uexBaseObj.geocodeFuncId) {
-                    uexBaseObj.callbackToJs(Integer.parseInt(uexBaseObj.geocodeFuncId), false, 0,jsonObject);
-                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

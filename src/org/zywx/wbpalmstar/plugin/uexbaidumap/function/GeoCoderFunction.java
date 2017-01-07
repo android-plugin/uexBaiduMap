@@ -28,12 +28,14 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
     private GeoCoder mGeoCoder;
 
+    private String mCallbackId;
+
     /**
      * 构造方法
      *
      * @param uexBaiduMap
      */
-    public GeoCoderFunction(EUExBaiduMap uexBaiduMap) {
+    public GeoCoderFunction(EUExBaiduMap uexBaiduMap,String callbackId) {
 
         mEUExBaiduMap = uexBaiduMap;
 
@@ -42,6 +44,8 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
 
         // 第三步，设置地理编码检索监听者
         mGeoCoder.setOnGetGeoCodeResultListener(this);
+
+        this.mCallbackId =callbackId;
     }
 
     // 第二步，创建地理编码检索监听者
@@ -123,10 +127,11 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
                     jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG, Double.toString(point.longitude));
                     jsonObject.put(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LAT, Double.toString(point.latitude));
                 }
-                String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
-                mEUExBaiduMap.onCallback(js);
-                if (null != mEUExBaiduMap.geocodeFuncId) {
-                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mEUExBaiduMap.geocodeFuncId), false, 0,jsonObject);
+                if (null != mCallbackId) {
+                    mEUExBaiduMap.callbackToJs(Integer.parseInt(mCallbackId), false, 0,jsonObject);
+                }else{
+                    String js = EUExBaiduMap.SCRIPT_HEADER + "if(" + header + "){" + header + "('" + jsonObject.toString() + "');}";
+                    mEUExBaiduMap.onCallback(js);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -152,9 +157,9 @@ public class GeoCoderFunction implements OnGetGeoCoderResultListener {
             }else{
                 reverseResultVO.address=null;
             }
-            if (null != mEUExBaiduMap.reverseGeocodeFuncId) {
+            if (null != mCallbackId) {
                 mEUExBaiduMap.callbackToJs(
-                        Integer.parseInt(mEUExBaiduMap.reverseGeocodeFuncId),
+                        Integer.parseInt(mCallbackId),
                         false,
                         address==null?1:0,
                         DataHelper.gson.toJsonTree(reverseResultVO));

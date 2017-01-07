@@ -51,8 +51,6 @@ public class EUExBaiduMap extends EUExBase {
     //回调函数id
     public String openFuncId;
     public String getCurrentLocationFuncId;
-    public String geocodeFuncId;
-    public String reverseGeocodeFuncId;
     public String poiSearchFuncId; //poiSearchInCity, poiNearbySearch, poiBoundSearch相对应
     public String busLineSearchFuncId;
     public String searchRoutePlanId;
@@ -1026,7 +1024,9 @@ public class EUExBaiduMap extends EUExBase {
         try {
             if (params != null && params.length > 0) {
                 JSONObject jsonObject = new JSONObject(params[0]);
-                if (params.length == 2) {
+                String geocodeFuncId=null;
+
+                if (params.length > 1) {
                     geocodeFuncId = params[1];
                 }
                 if (jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_CITY) && jsonObject.has(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_ADDRESS)) {
@@ -1035,7 +1035,7 @@ public class EUExBaiduMap extends EUExBase {
                     // eBaiduMapBaseFragment.geocode(cityStr, addrStr);
 
                     // 不打开地图也能用地理编码
-                    GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this);
+                    GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this,geocodeFuncId);
                     geoCoderFunction.geocode(cityStr, addrStr);
                 }
             }
@@ -1047,7 +1047,9 @@ public class EUExBaiduMap extends EUExBase {
     private void handleReverseGeocode(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
         try {
             JSONObject json = new JSONObject(params[0]);
-            if (null != params && params.length == 2) {
+            String reverseGeocodeFuncId=null;
+            if (null != params && params.length >=1) {
+
                 reverseGeocodeFuncId = params[1];
             }
             double lng = Double.parseDouble(json.getString(EBaiduMapUtils.MAP_PARAMS_JSON_KEY_LNG));
@@ -1055,7 +1057,7 @@ public class EUExBaiduMap extends EUExBase {
             // eBaiduMapBaseFragment.reverseGeoCode(lng, lat);
 
             // 不打开地图也能用反地理编码
-            GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this);
+            GeoCoderFunction geoCoderFunction = new GeoCoderFunction(this,reverseGeocodeFuncId);
             geoCoderFunction.reverseGeoCode(lng, lat);
 
         } catch (Exception e) {
