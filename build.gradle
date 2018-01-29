@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
 apply plugin: 'com.android.application'
 
 dependencies {
@@ -14,7 +26,7 @@ android {
         }
     }
     compileSdkVersion 22
-    buildToolsVersion "23.0.0"
+    buildToolsVersion "23.0.2"
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -57,28 +69,4 @@ android {
     }
 }
 
-task clearJar(type: Delete) {
-    delete 'uexBaiduMap/jar/plugin_uexBaiduMap.jar'
-}
-
-task makeJar(type:org.gradle.api.tasks.bundling.Jar) {
-    //指定生成的jar名
-    baseName 'plugin_uexBaiduMap'
-    //从哪里打包class文件
-    from('build/intermediates/classes/debug/')
-    //打包到jar后的目录结构
-    into('')
-    //去掉不需要打包的目录和文件
-    exclude('uexbaidumap/', 'BuildConfig.class', 'R.class', 'Manifest.class')
-
-    //去掉R$开头的文件
-    exclude{it.name.startsWith('R$');it.name.startsWith('Manifest$');}
-
-}
-
-task copyNativeLibs(type: Copy) {
-    from fileTree(dir: 'build/libs', include: '*.jar') into 'uexBaiduMap/jar'
-}
-
-makeJar.dependsOn(clearJar, build)
-copyNativeLibs.dependsOn(makeJar, build)
+apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
