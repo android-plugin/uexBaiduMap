@@ -1,20 +1,27 @@
 package org.zywx.wbpalmstar.plugin.uexbaidumap;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.engine.EBrowserActivity;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExCallback;
@@ -54,6 +61,8 @@ public class EUExBaiduMap extends EUExBase {
     public String poiSearchFuncId; //poiSearchInCity, poiNearbySearch, poiBoundSearch相对应
     public String busLineSearchFuncId;
     public String searchRoutePlanId;
+
+    private String[] openParams;
 
     /**
      * 构造方法
@@ -102,7 +111,15 @@ public class EUExBaiduMap extends EUExBase {
 	 * 前端接口
 	 */
     public void open(String[] params) {
-        sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_OPEN, params);
+        openParams = params;
+        if (mContext.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_OPEN, params);
+        } else {
+            // android6.0以上动态权限申请
+            requsetPerssions(Manifest.permission.ACCESS_FINE_LOCATION, "请先申请权限"
+                    + Manifest.permission.ACCESS_FINE_LOCATION, 1);
+        }
     }
 
     public void close(String[] params) {
@@ -1181,6 +1198,29 @@ public class EUExBaiduMap extends EUExBase {
 
         } catch (NumberFormatException e) {
             e.getStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionResult(requestCode, permissions, grantResults);
+                Log.i("--grantResults.length-","grantResults----" + grantResults.length);
+        Log.i("--permissions.length-","permissions----" + permissions.length);
+        if (requestCode == 1){
+            if (grantResults[0] != PackageManager.PERMISSION_DENIED){
+                sendMessageWithType(EBaiduMapUtils.MAP_MSG_CODE_OPEN, openParams);
+            } else {
+                // 对于 ActivityCompat.shouldShowRequestPermissionRationale
+                // 1：用户拒绝了该权限，没有勾选"不再提醒"，此方法将返回true。
+                // 2：用户拒绝了该权限，有勾选"不再提醒"，此方法将返回 false。
+                // 3：如果用户同意了权限，此方法返回false
+                // 拒绝了权限且勾选了"不再提醒"
+                if (!ActivityCompat.shouldShowRequestPermissionRationale((EBrowserActivity)mContext, permissions[0])) {
+                    Toast.makeText(mContext, "请先设置权限" + permissions[0], Toast.LENGTH_LONG).show();
+                } else {
+                    requsetPerssions(Manifest.permission.ACCESS_FINE_LOCATION, "请先申请权限" + permissions[0], 1);
+                }
+            }
         }
     }
 }
