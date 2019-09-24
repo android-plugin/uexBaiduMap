@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="4.0.4" build="4">
-        <info>4:支持同时多个地理编码</info>
+        uexName="uexBaiduMap" version="4.3.4" build="5">
+        <info>5:添加动态权限申请</info>
+        <build>4:支持同时多个地理编码</build>
         <build>3:reverseGeocode返回详细信息</build>
         <build>2:searchRoutePlan支持function传入</build>
         <build>1:修复open中心点失效的问题</build>

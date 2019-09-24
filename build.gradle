@@ -14,7 +14,8 @@ apply plugin: 'com.android.application'
 
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
-    compile 'org.appcan:engine:+:systemRelease@aar'
+//    compile 'org.appcan:engine:+:systemRelease@aar'
+    compile(name: 'Engine-system-release', ext: 'aar')
 }
 
 
@@ -71,7 +72,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 14
+        targetSdkVersion 26
         applicationId 'org.zywx.wbpalmstar.widgetone.uexbaidumap'
         signingConfig signingConfigs.config
         multiDexEnabled true
