@@ -1,9 +1,10 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.android.tools.build:gradle:3.0.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -13,9 +14,9 @@ buildscript {
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile fileTree(include: '*.jar', dir: 'libs')
-//    compile 'org.appcan:engine:+:systemRelease@aar'
-    compile(name: 'Engine-system-release', ext: 'aar')
+    implementation fileTree(include: '*.jar', dir: 'libs')
+    implementation 'org.appcan:engine:4.4.27'
+//    compile(name: 'Engine-system-release', ext: 'aar')
 }
 
 
@@ -23,6 +24,7 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    google()
     maven {
         url 'https://raw.githubusercontent.com/android-plugin/mvn-repo/master/'
     }
@@ -41,8 +43,8 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion "23.0.0"
+    compileSdkVersion 28
+//    buildToolsVersion "23.0.0"
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -71,8 +73,8 @@ android {
         abortOnError false
     }
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion 18
+        targetSdkVersion 28
         applicationId 'org.zywx.wbpalmstar.widgetone.uexbaidumap'
         signingConfig signingConfigs.config
         multiDexEnabled true

@@ -520,8 +520,8 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
      *
      * @param poi 点击的 poi 信息
      */
-    public boolean onMapPoiClick(MapPoi poi) {
-        return false;
+    public void onMapPoiClick(MapPoi poi) {
+//        return false;
     }
 
     /**
@@ -530,6 +530,22 @@ public class EBaiduMapBaseFragment extends BaseFragment implements OnMapClickLis
      * @param status 地图状态改变开始时的地图状态
      */
     public void onMapStatusChangeStart(MapStatus status) {
+        if (changeBean == null) {
+            changeBean = new MapStatusChangeBean();
+        }
+        changeBean.setOldZoom(status.zoom);
+        changeBean.setOldOverlook(status.overlook);
+        changeBean.setOldRotate(status.rotate);
+        changeBean.setOldCenterLongitude(status.target.longitude);
+        changeBean.setOldCenterLatitude(status.target.latitude);
+        changeBean.setOldNortheastLatitude(status.bound.northeast.latitude);
+        changeBean.setOldNortheastLongitude(status.bound.northeast.longitude);
+        changeBean.setOldSouthwestLatitude(status.bound.southwest.latitude);
+        changeBean.setOldCenterLongitude(status.bound.southwest.longitude);
+    }
+
+    @Override
+    public void onMapStatusChangeStart(MapStatus status, int i) {
         if (changeBean == null) {
             changeBean = new MapStatusChangeBean();
         }

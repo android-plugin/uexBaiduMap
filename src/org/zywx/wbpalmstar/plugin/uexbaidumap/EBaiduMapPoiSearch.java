@@ -134,6 +134,20 @@ public class EBaiduMapPoiSearch implements OnGetPoiSearchResultListener, OnGetSu
         }
     }
 
+    @Override
+    public void onGetPoiDetailResult(PoiDetailSearchResult poiDetailSearchResult) {
+        if (poiDetailSearchResult.error != SearchResult.ERRORNO.NO_ERROR) {
+            jsonNoResultCallback();
+        } else {
+//            Toast.makeText(mContext, result.getName() + ": " + result.getAddress(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
+
+    }
+
     @SuppressWarnings("unused")
     private class MyPoiOverlay extends PoiOverlay {
         public MyPoiOverlay(BaiduMap baiduMap) {
