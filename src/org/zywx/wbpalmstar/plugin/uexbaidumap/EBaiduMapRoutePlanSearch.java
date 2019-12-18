@@ -108,6 +108,11 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
         }
     }
 
+    @Override
+    public void onGetIndoorRouteResult(IndoorRouteResult indoorRouteResult) {
+
+    }
+
     private class MyDrivingRouteOverlay extends DrivingRouteOverlay {
         public MyDrivingRouteOverlay(BaiduMap baiduMap) {
             super(baiduMap);
@@ -141,6 +146,11 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
             mRoutePlanOverlays.put(mRoutePlanOptions.getId(),
                     transitRouteOverlay);
         }
+    }
+
+    @Override
+    public void onGetMassTransitRouteResult(MassTransitRouteResult massTransitRouteResult) {
+
     }
 
     private class MyTransitRouteOverlay extends TransitRouteOverlay {
@@ -264,7 +274,7 @@ public class EBaiduMapRoutePlanSearch implements OnGetRoutePlanResultListener {
     /**
      * 清除路线
      *
-     * @param routePlanOptions
+     * @param
      */
     public void removeRoutePlan(String routePlanId) {
         OverlayManager overlayManager = mRoutePlanOverlays.get(routePlanId);

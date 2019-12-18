@@ -145,6 +145,22 @@ public class EBaiduMapBusLineSearch implements OnGetPoiSearchResultListener,
         }
     }
 
+    @Override
+    public void onGetPoiDetailResult(PoiDetailSearchResult poiDetailSearchResult) {
+        if (poiDetailSearchResult.error != SearchResult.ERRORNO.NO_ERROR) {
+            jsonNoResultCallback();
+        } else {
+            Toast.makeText(mContext,
+                    poiDetailSearchResult.getPoiDetailInfoList()+"",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
+
+    }
+
     private void jsonBusLineResultCallback(BusLineResult result) {
         EBaiduMapBaseFragment activity;
         activity = baseFragment;
