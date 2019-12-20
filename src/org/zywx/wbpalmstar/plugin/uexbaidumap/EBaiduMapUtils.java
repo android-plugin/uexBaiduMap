@@ -8,22 +8,19 @@ import android.graphics.drawable.StateListDrawable;
 import android.webkit.URLUtil;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.route.PlanNode;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+import org.zywx.wbpalmstar.platform.certificates.Http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class EBaiduMapUtils {
 
@@ -405,14 +402,23 @@ public class EBaiduMapUtils {
         InputStream is = null;
         Bitmap bitmap = null;
         try {
-            HttpGet httpGet = new HttpGet(url);
-            BasicHttpParams httpParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
-            HttpConnectionParams.setSoTimeout(httpParams, 30000);
-            HttpResponse httpResponse = new DefaultHttpClient(httpParams).execute(httpGet);
-            int responseCode = httpResponse.getStatusLine().getStatusCode();
+            URL urlObject = new URL(url);
+            HttpURLConnection defaultHttpConnection = null;
+            if ("https".equalsIgnoreCase(urlObject.getProtocol())){
+                // https
+                defaultHttpConnection = Http.getHttpsURLConnection(urlObject);
+            }else{
+                // http
+                defaultHttpConnection = (HttpURLConnection) urlObject.openConnection();
+            }
+            defaultHttpConnection.setConnectTimeout(15000);
+            defaultHttpConnection.setReadTimeout(30000);
+            defaultHttpConnection.setRequestMethod("GET");
+            defaultHttpConnection.setInstanceFollowRedirects(true);
+            defaultHttpConnection.connect();
+            int responseCode = defaultHttpConnection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                is = httpResponse.getEntity().getContent();
+                is = defaultHttpConnection.getInputStream();
                 byte[] data = transStreamToBytes(is, 4096);
                 if (data != null) {
                     bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
