@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexBaiduMap" version="4.4.6" build="6">
-        <info>6:修复reverseGeocode方法不支持3.0的写法问题（判断错误），移除HttpClient的代码</info>
+        uexName="uexBaiduMap" version="4.4.7" build="7">
+        <info>7:修复reverseGeocode方法不支持3.0的写法问题（判断错误），移除HttpClient的代码</info>
         <build>5:更新SDK中so文件；添加动态权限申请</build>
         <build>4:支持同时多个地理编码</build>
         <build>3:reverseGeocode返回详细信息</build>
