@@ -1064,8 +1064,8 @@ public class EUExBaiduMap extends EUExBase {
     private void handleReverseGeocode(String[] params, EBaiduMapBaseFragment eBaiduMapBaseFragment) {
         try {
             JSONObject json = new JSONObject(params[0]);
-            String reverseGeocodeFuncId=null;
-            if (null != params && params.length >=1) {
+            String reverseGeocodeFuncId = null;
+            if (params.length > 1) {
 
                 reverseGeocodeFuncId = params[1];
             }
